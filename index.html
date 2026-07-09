@@ -35,9 +35,9 @@
       text-transform: uppercase;
     }
     .section-header {
-      margin: -0.25rem -0.5rem 0.75rem;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      margin: 0;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0;
       border-left-width: 4px;
       border-left-style: solid;
     }
@@ -296,12 +296,11 @@
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <section class="card card-border bg-base-100 shadow-md card-animate card-animate-1">
+        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
+          <div class="section-header section-header--primary">
+            <h2 class="section-title">Key Update</h2>
+          </div>
           <div class="card-body gap-2 p-4 sm:p-5">
-            <div class="section-header section-header--primary">
-              <h2 class="section-title">Key Update</h2>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row">
                 <span class="field-row-label" id="key-update-label">What's the key update for your case at this time?</span>
@@ -334,12 +333,11 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md card-animate card-animate-2">
+        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
+          <div class="section-header section-header--accent">
+            <h2 class="section-title">Case Basics</h2>
+          </div>
           <div class="card-body gap-2 p-4 sm:p-5">
-            <div class="section-header section-header--accent">
-              <h2 class="section-title">Case Basics</h2>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
@@ -433,12 +431,11 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md card-animate card-animate-3">
+        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
+          <div class="section-header section-header--info">
+            <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
+          </div>
           <div class="card-body gap-2 p-4 sm:p-5">
-            <div class="section-header section-header--info">
-              <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row field-row--center">
                 <span class="field-row-label" id="application-location-label">Service Center</span>
@@ -562,12 +559,11 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md card-animate card-animate-4">
+        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
+          <div class="section-header section-header--warning">
+            <h2 class="section-title">Adjudication &amp; Mandamus</h2>
+          </div>
           <div class="card-body gap-2 p-4 sm:p-5">
-            <div class="section-header section-header--warning">
-              <h2 class="section-title">Adjudication &amp; Mandamus</h2>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row">
                 <label class="field-row-label" for="i526-date">I-526 Adjudication Date</label>
@@ -772,12 +768,11 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md card-animate card-animate-5">
+        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
+          <div class="section-header section-header--neutral">
+            <h2 class="section-title">SOF Composition</h2>
+          </div>
           <div class="card-body gap-2 p-4 sm:p-5">
-            <div class="section-header section-header--neutral">
-              <h2 class="section-title">SOF Composition</h2>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row">
                 <div class="field-row-label">Source of Funds <span class="font-normal text-base-content/60">(tap all that apply)</span></div>
@@ -897,20 +892,20 @@
         </section>
       </form>
 
-      <section id="preview-panel" class="card card-border bg-base-100 shadow-md lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
-        <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
-          <div class="w-full pb-1 mb-1">
-            <div class="flex items-start justify-between gap-3">
-              <div class="section-header section-header--success flex-1 min-w-0 mb-0">
-                <h2 id="preview-heading" class="section-title">Live Preview</h2>
-                <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                  WhatsApp paste preview
-                </p>
-              </div>
-              <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
+      <section id="preview-panel" class="card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
+        <div class="section-header section-header--success">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h2 id="preview-heading" class="section-title">Live Preview</h2>
+              <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                WhatsApp paste preview
+              </p>
             </div>
+            <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
           </div>
+        </div>
+        <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
           <p class="text-sm text-base-content/60 -mt-2 mb-1">Edit freely. Changes here won't update the form.</p>
 
           <div class="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-200/50">
