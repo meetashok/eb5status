@@ -42,10 +42,14 @@
     return Boolean(el && el.checked);
   }
 
-  function formatApprovalValue(inputId, pendingId) {
+  function formatPendingDateValue(inputId, pendingId) {
     if (isPending(pendingId)) return "Pending";
-    const formatted = formatDate(getFieldValue(inputId));
-    if (!formatted) return "";
+    return formatDate(getFieldValue(inputId));
+  }
+
+  function formatApprovalValue(inputId, pendingId) {
+    const formatted = formatPendingDateValue(inputId, pendingId);
+    if (!formatted || formatted === "Pending") return formatted;
     return `${formatted} ${CELEBRATION_EMOJI}`;
   }
 
@@ -475,7 +479,7 @@
       ["SOF composition", getSofComposition()],
       ["Attorney", getFieldValue("attorney")],
       ["Service center", getRadioValue("applicationLocation")],
-      ["Biometric notice", formatDate(getFieldValue("biometric-notice"))],
+      ["Biometric notice", formatPendingDateValue("biometric-notice", "biometric-notice-pending")],
       ["EAD approved", formatApprovalValue("ead-approval", "ead-approval-pending")],
       ["AP approved", formatApprovalValue("ap-approval", "ap-approval-pending")],
       ["Combo card", getComboCardValue()],
