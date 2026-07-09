@@ -432,6 +432,35 @@
                 </div>
               </div>
             </div>
+
+            <div class="form-control w-full">
+              <div class="field-row field-row--center">
+                <span class="field-row-label" id="used-agent-label">Used Agent</span>
+                <div class="field-row-control">
+                  <div class="join" role="radiogroup" aria-labelledby="used-agent-label">
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
+                      <input class="sr-only" type="radio" name="usedAgent" id="used-agent-yes" value="Yes">
+                      Yes
+                    </label>
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
+                      <input class="sr-only" type="radio" name="usedAgent" id="used-agent-no" value="No">
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="agent-name-wrap" class="form-control w-full hidden conditional-reveal">
+              <div class="field-row">
+                <label class="field-row-label" for="agent-name">Agent Name</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                    <input type="text" id="agent-name" name="agentName" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="Agent or firm name" autocomplete="off">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

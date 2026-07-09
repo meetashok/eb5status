@@ -616,6 +616,7 @@
     syncRadioGroup("womStatus");
     syncRadioGroup("applicationLocation");
     syncRadioGroup("keyUpdate");
+    syncRadioGroup("usedAgent");
   }
 
   function initChoiceButtons() {
@@ -767,6 +768,27 @@
     if (!show) clearWomDetails();
   }
 
+  function getUsedAgentLine() {
+    const usedAgent = getRadioValue("usedAgent");
+    if (!usedAgent) return "";
+    if (usedAgent === "Yes") {
+      const name = getFieldValue("agent-name");
+      return name ? `Yes (${name})` : "Yes";
+    }
+    return usedAgent;
+  }
+
+  function updateAgentNameVisibility() {
+    const wrap = document.getElementById("agent-name-wrap");
+    if (!wrap) return;
+    const show = getRadioValue("usedAgent") === "Yes";
+    wrap.classList.toggle("hidden", !show);
+    if (!show) {
+      const input = document.getElementById("agent-name");
+      if (input) input.value = "";
+    }
+  }
+
   function updateWomAttorneyVisibility() {
     const wrap = document.getElementById("wom-attorney-name-wrap");
     if (!wrap) return;
@@ -802,6 +824,7 @@
     updateI526StatusVisibility();
     updateWomDetailsVisibility();
     updateWomAttorneyVisibility();
+    updateAgentNameVisibility();
     updateComboCardVisibility();
   }
 
@@ -837,6 +860,12 @@
     form.querySelectorAll('input[name="womCounsel"]').forEach((radio) => {
       radio.addEventListener("change", () => {
         updateWomAttorneyVisibility();
+        updatePreviewFromFormIfAllowed();
+      });
+    });
+    form.querySelectorAll('input[name="usedAgent"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        updateAgentNameVisibility();
         updatePreviewFromFormIfAllowed();
       });
     });
@@ -925,6 +954,7 @@
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
       ["Attorney", getFieldValue("attorney")],
+      ["Used agent", getUsedAgentLine()],
       ["Service center", getRadioValue("applicationLocation")],
       ["Biometric notice", formatPendingDateValue("biometric-notice", "biometric-notice-pending")],
       ["EAD approved", formatApprovalValue("ead-approval", "ead-approval-pending")],
@@ -1048,6 +1078,7 @@
   initOptionalRadioDeselect("womCounsel");
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
+  initOptionalRadioDeselect("usedAgent");
   initOptionalRadioDeselect("keyUpdate");
   initKeyUpdateCelebration();
   initAutocompleteFields();
