@@ -112,6 +112,7 @@
     .card-animate-4 { animation-delay: 120ms; }
     .card-animate-5 { animation-delay: 160ms; }
     .card-animate-6 { animation-delay: 200ms; }
+    .card-animate-7 { animation-delay: 240ms; }
     #preview-panel.preview-panel-enter {
       animation: fadeSlideUp 0.25s ease both;
     }
@@ -301,6 +302,39 @@
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
         <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
+          <div class="section-header section-header--neutral">
+            <h2 class="section-title">Data Randomization</h2>
+          </div>
+          <div class="card-body gap-3 p-4 sm:p-5">
+            <div class="alert alert-soft alert-info text-sm leading-relaxed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <div>
+                <p>Optional privacy feature. Enter your real dates in the form; the live preview shifts each date by 10–20 days earlier or later (never within ±10 days of the real date).</p>
+                <p class="mt-1.5">Your most recent date stays exact if it falls within the last week. Days-from-PD offsets are hidden in the preview when this is on.</p>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row field-row--center">
+                <span class="field-row-label" id="data-randomization-label">Randomize dates in preview</span>
+                <div class="field-row-control">
+                  <div class="join" role="radiogroup" aria-labelledby="data-randomization-label">
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
+                      <input class="sr-only" type="radio" name="dataRandomization" id="data-randomization-yes" value="Yes">
+                      Yes
+                    </label>
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
+                      <input class="sr-only" type="radio" name="dataRandomization" id="data-randomization-no" value="No">
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
           <div class="section-header section-header--primary">
             <h2 class="section-title">Key Update</h2>
           </div>
@@ -337,7 +371,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
           <div class="section-header section-header--accent">
             <h2 class="section-title">Case Basics</h2>
           </div>
@@ -464,7 +498,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
           <div class="section-header section-header--info">
             <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
           </div>
@@ -592,7 +626,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
           <div class="section-header section-header--warning">
             <h2 class="section-title">Adjudication &amp; Mandamus</h2>
           </div>
@@ -801,7 +835,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-6">
           <div class="section-header section-header--neutral">
             <h2 class="section-title">SOF Composition</h2>
           </div>
@@ -925,7 +959,7 @@
         </section>
       </form>
 
-      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
+      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-7" aria-labelledby="preview-heading">
         <div class="section-header section-header--success">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">

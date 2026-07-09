@@ -12,6 +12,16 @@
     "i485-date",
   ];
 
+  const DATE_FIELD_META = [
+    { id: "priority-date" },
+    { id: "biometric-notice", pendingId: "biometric-notice-pending" },
+    { id: "ead-approval", pendingId: "ead-approval-pending" },
+    { id: "ap-approval", pendingId: "ap-approval-pending" },
+    { id: "i526-date", pendingId: "i526-date-pending" },
+    { id: "wom-date", notFiledId: "wom-date-not-filed" },
+    { id: "i485-date", pendingId: "i485-date-pending" },
+  ];
+
   const form = document.getElementById("status-form");
   const preview = document.getElementById("preview");
   const copyBtn = document.getElementById("copy-btn");
@@ -68,10 +78,80 @@
     return Boolean(el && el.checked);
   }
 
-  function formatDateWithPdOffset(isoDate) {
-    const formatted = formatDate(isoDate);
+  function isDataRandomizationEnabled() {
+    return getRadioValue("dataRandomization") === "Yes";
+  }
+
+  function toLocalDateFromIso(iso) {
+    const [year, month, day] = iso.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  function isoFromLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function addDaysToIsoDate(isoDate, days) {
+    const date = toLocalDateFromIso(isoDate);
+    date.setDate(date.getDate() + days);
+    return isoFromLocalDate(date);
+  }
+
+  function isWithinLastWeek(isoDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const date = toLocalDateFromIso(isoDate);
+    const diffDays = Math.round((today.getTime() - date.getTime()) / (24 * 60 * 60 * 1000));
+    return diffDays >= 0 && diffDays <= 7;
+  }
+
+  function getRandomizationOffset(isoDate, fieldId) {
+    let hash = 0;
+    const seed = `${isoDate}:${fieldId}`;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+    }
+    hash = Math.abs(hash);
+    const sign = hash % 2 === 0 ? 1 : -1;
+    const days = 10 + (hash % 11);
+    return sign * days;
+  }
+
+  function getActiveFormDateEntries() {
+    const entries = [];
+    DATE_FIELD_META.forEach(({ id, pendingId, notFiledId }) => {
+      if (pendingId && isPending(pendingId)) return;
+      if (notFiledId && isPending(notFiledId)) return;
+      const iso = parseIsoDate(getFieldValue(id));
+      if (iso) entries.push({ id, iso });
+    });
+    return entries;
+  }
+
+  function getLatestFormDateIso() {
+    const entries = getActiveFormDateEntries();
+    if (!entries.length) return "";
+    return entries.reduce((latest, entry) => (entry.iso > latest ? entry.iso : latest), entries[0].iso);
+  }
+
+  function getPreviewIsoDate(isoDate, fieldId) {
+    if (!isDataRandomizationEnabled()) return isoDate;
+    const latest = getLatestFormDateIso();
+    if (isoDate === latest && isWithinLastWeek(isoDate)) return isoDate;
+    return addDaysToIsoDate(isoDate, getRandomizationOffset(isoDate, fieldId));
+  }
+
+  function formatDateWithPdOffset(isoDate, fieldId) {
+    const actual = parseIsoDate(isoDate);
+    if (!actual) return "";
+    const displayIso = fieldId ? getPreviewIsoDate(actual, fieldId) : actual;
+    const formatted = formatDate(displayIso);
     if (!formatted) return "";
-    const offset = daysFromPriorityDate(isoDate);
+    if (isDataRandomizationEnabled()) return formatted;
+    const offset = daysFromPriorityDate(actual);
     return offset ? `${formatted} (${offset})` : formatted;
   }
 
@@ -126,6 +206,9 @@
     if (!title) return "EB5 Status Update";
 
     const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
+    if (isDataRandomizationEnabled()) {
+      return `EB5 Status Update: ${title}`;
+    }
     const daysAfter = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
     return daysAfter
       ? `EB5 Status Update: ${title} (${daysAfter})`
@@ -152,7 +235,7 @@
 
   function formatPendingDateValue(inputId, pendingId) {
     if (isPending(pendingId)) return "Pending";
-    return formatDateWithPdOffset(getFieldValue(inputId));
+    return formatDateWithPdOffset(getFieldValue(inputId), inputId);
   }
 
   function formatApprovalValue(inputId, pendingId) {
@@ -260,12 +343,16 @@
     }
 
     if (statDaysPd) {
-      const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
-      const days =
-        referenceDate && parseIsoDate(getFieldValue("priority-date"))
-          ? daysFromPriorityDate(referenceDate)
-          : "";
-      statDaysPd.textContent = days || "—";
+      if (isDataRandomizationEnabled()) {
+        statDaysPd.textContent = "—";
+      } else {
+        const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
+        const days =
+          referenceDate && parseIsoDate(getFieldValue("priority-date"))
+            ? daysFromPriorityDate(referenceDate)
+            : "";
+        statDaysPd.textContent = days || "—";
+      }
     }
 
     if (statFieldsFilled) {
@@ -617,6 +704,7 @@
     syncRadioGroup("applicationLocation");
     syncRadioGroup("keyUpdate");
     syncRadioGroup("usedAgent");
+    syncRadioGroup("dataRandomization");
   }
 
   function initChoiceButtons() {
@@ -716,7 +804,7 @@
 
   function getWomFiledOnValue() {
     if (isWomNotFiled()) return "Not filed";
-    return formatDateWithPdOffset(getFieldValue("wom-date"));
+    return formatDateWithPdOffset(getFieldValue("wom-date"), "wom-date");
   }
 
   function getWomFiledForValue() {
@@ -929,7 +1017,7 @@
       return "I-526: Pending";
     }
 
-    const formattedDate = formatDateWithPdOffset(date);
+    const formattedDate = formatDateWithPdOffset(date, "i526-date");
     if (!status && !formattedDate) return null;
     if (!status && formattedDate) return `I-526 adjudication date: ${formattedDate}`;
 
@@ -949,7 +1037,7 @@
     const bulletLines = [];
 
     const entries = [
-      ["Priority date", formatDate(getFieldValue("priority-date"))],
+      ["Priority date", formatDateWithPdOffset(getFieldValue("priority-date"), "priority-date")],
       ["Project category", getProjectCategory()],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
@@ -1079,6 +1167,7 @@
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
   initOptionalRadioDeselect("usedAgent");
+  initOptionalRadioDeselect("dataRandomization");
   initOptionalRadioDeselect("keyUpdate");
   initKeyUpdateCelebration();
   initAutocompleteFields();
