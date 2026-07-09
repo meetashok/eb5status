@@ -194,7 +194,35 @@
     });
   }
 
-  function hasPreviewContent() {
+  function getSofComposition() {
+    return getCheckedValues("sof")
+      .map((value) => {
+        if (value !== "Other") return value;
+        const detail = getFieldValue("sof-other-detail");
+        return detail ? `Other (${detail})` : "Other";
+      })
+      .join(", ");
+  }
+
+  function toggleSofOtherDetail() {
+    const otherCheckbox = document.getElementById("sof-other");
+    const wrap = document.getElementById("sof-other-detail-wrap");
+    const detailInput = document.getElementById("sof-other-detail");
+    if (!otherCheckbox || !wrap || !detailInput) return;
+
+    const show = otherCheckbox.checked;
+    wrap.classList.toggle("hidden", !show);
+    if (!show) detailInput.value = "";
+  }
+
+  function initSofOtherDetail() {
+    const otherCheckbox = document.getElementById("sof-other");
+    if (!otherCheckbox) return;
+
+    otherCheckbox.addEventListener("change", toggleSofOtherDetail);
+    toggleSofOtherDetail();
+  }
+
     return preview.value.trim().length > 0;
   }
 
@@ -233,7 +261,7 @@
       ["Priority date", formatDate(getFieldValue("priority-date"))],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
-      ["SOF composition", getCheckedValues("sof").join(", ")],
+      ["SOF composition", getSofComposition()],
       ["Attorney", getFieldValue("attorney")],
       ["Biometric notice", formatDate(getFieldValue("biometric-notice"))],
       ["EAD approved", formatDate(getFieldValue("ead-approval"))],
@@ -304,6 +332,7 @@
   initDatePickers();
   initComboCardToggle();
   initChoiceButtons();
+  initSofOtherDetail();
   initOptionalRadioDeselect("i526Status");
   initOptionalRadioDeselect("womCounsel");
   updateCopyButton();
