@@ -17,6 +17,7 @@
   const copyBtn = document.getElementById("copy-btn");
   const copyFeedback = document.getElementById("copy-feedback");
   const refreshBtn = document.getElementById("refresh-preview");
+  const previewPanel = document.getElementById("preview-panel");
   const comboCardToggle = document.getElementById("combo-card");
   const themeToggle = document.getElementById("theme-toggle");
 
@@ -672,21 +673,32 @@
       bulletLines.push(label ? `${label}: ${value}` : value);
     }
 
-    if (bulletLines.length === 0 && !getRadioValue("keyUpdate")) return "";
+    if (!getRadioValue("keyUpdate") || bulletLines.length === 0) return "";
 
-    const messageParts = [buildTitleLine()];
-    if (bulletLines.length > 0) {
-      messageParts.push("", ...bulletLines.map((line) => `• ${line}`));
-    }
-    messageParts.push("", "Generated via bit.ly/eb5status");
+    return [
+      buildTitleLine(),
+      "",
+      ...bulletLines.map((line) => `• ${line}`),
+      "",
+      "Generated via bit.ly/eb5status",
+    ].join("\n");
+  }
 
-    return messageParts.join("\n");
+  function shouldShowPreviewPanel() {
+    if (previewManuallyEdited && preview.value.trim()) return true;
+    return Boolean(generateMessage());
+  }
+
+  function updatePreviewPanelVisibility() {
+    if (!previewPanel) return;
+    previewPanel.classList.toggle("hidden", !shouldShowPreviewPanel());
   }
 
   function updatePreviewFromFormIfAllowed() {
     if (!previewManuallyEdited) {
       preview.value = generateMessage();
     }
+    updatePreviewPanelVisibility();
     updateCopyButton();
   }
 
@@ -694,6 +706,7 @@
     preview.value = generateMessage();
     previewManuallyEdited = false;
     updateRefreshButton();
+    updatePreviewPanelVisibility();
     updateCopyButton();
   }
 
@@ -707,6 +720,7 @@
   preview.addEventListener("input", () => {
     previewManuallyEdited = true;
     updateRefreshButton();
+    updatePreviewPanelVisibility();
     updateCopyButton();
   });
 
@@ -743,5 +757,6 @@
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
   initOptionalRadioDeselect("keyUpdate");
+  updatePreviewPanelVisibility();
   updateCopyButton();
 })();
