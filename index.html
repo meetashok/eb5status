@@ -125,11 +125,19 @@
       color: color-mix(in oklch, var(--color-base-content) 75%, transparent);
     }
     .choice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
       background: transparent;
       border: 1px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
       color: var(--color-base-content);
       opacity: 0.7;
+    }
+    .choice-btn.tooltip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .choice-btn:has(input:checked) {
       background: color-mix(in oklch, var(--color-primary) 20%, transparent);
@@ -142,6 +150,50 @@
     }
     .choice-btn:active {
       transform: scale(0.98);
+    }
+    .tooltip {
+      --tt-bg: #1A2332;
+      --tt-fg: #E8ECF1;
+      position: relative;
+      z-index: 50;
+    }
+    [data-theme="light"] .tooltip {
+      --tt-bg: var(--color-base-300);
+      --tt-fg: var(--color-base-content);
+    }
+    /* DaisyUI v5 tooltips use [data-tip]:before / :after; force opaque, compact tips. */
+    .tooltip[data-tip]:before,
+    .tooltip > .tooltip-content {
+      background-color: var(--tt-bg) !important;
+      color: var(--tt-fg) !important;
+      font-size: 0.75rem !important;
+      line-height: 1.3 !important;
+      font-weight: 500 !important;
+      max-width: 16rem !important;
+      white-space: normal !important;
+      text-align: left !important;
+      padding: 0.4rem 0.55rem !important;
+      border-radius: 0.375rem !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+      z-index: 60 !important;
+      backdrop-filter: none !important;
+    }
+    .tooltip:after {
+      background-color: var(--tt-bg) !important;
+      z-index: 60 !important;
+    }
+    /* Keep choice buttons centered even when DaisyUI sets tooltip to inline-block. */
+    label.choice-btn.tooltip {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    /* Let tooltips escape section cards (DaisyUI tips are position:absolute). */
+    #status-form .section-card.overflow-hidden {
+      overflow: visible;
+    }
+    #status-form .section-card .card-body {
+      overflow: visible;
     }
     .progress-bar-row {
       display: flex;
@@ -562,7 +614,7 @@
           <span class="progress-count" id="progress-count">0/15</span>
         </div>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-1">
           <div class="section-header section-header--neutral">
             <h2 class="section-title">Date Privacy</h2>
           </div>
@@ -588,7 +640,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-2">
           <div class="section-header section-header--info">
             <h2 class="section-title">Key Update</h2>
           </div>
@@ -602,15 +654,15 @@
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-eb5-filed" value="eb5-filed">
                       EB5 filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="EAD: work permit. AP: travel authorization.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="EAD: work permit. AP: travel authorization.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-ead-ap" value="ead-ap-approval">
                       EAD/AP approval
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="Writ of Mandamus — a federal lawsuit to compel USCIS to act on a long-pending petition.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="Writ of Mandamus: a federal lawsuit to compel USCIS to act on a long-pending petition.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-wom" value="wom-filed">
                       WOM filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="The immigrant investor petition. I-526E is the post-RIA version filed after March 2022.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="The immigrant investor petition. I-526E is the post-RIA version filed after March 2022.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i526" value="i526-approval">
                       I-526 approval
                     </label>
@@ -625,7 +677,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-3">
           <div class="section-header section-header--info">
             <h2 class="section-title">Case Basics</h2>
           </div>
@@ -634,7 +686,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="priority-date">Priority Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The date USCIS received your I-526/I-526E petition, or your visa bulletin priority date. This anchors your processing timeline.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="The date USCIS received your I-526/I-526E petition, or your visa bulletin priority date. This anchors your processing timeline.">
                     <button type="button" class="help-tip" aria-label="What is Priority Date?">?</button>
                   </span>
                 </div>
@@ -660,7 +712,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="i956f-approval">I-956F Approval Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="USCIS approval of the regional center's project filing. Required before investors in that project can be adjudicated.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="USCIS approval of the regional center's project filing. Required before investors in that project can be adjudicated.">
                     <button type="button" class="help-tip" aria-label="What is I-956F?">?</button>
                   </span>
                 </div>
@@ -700,7 +752,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5" id="project-category-label">
                   <span>Project Category</span>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="TEA: Targeted Employment Area — a rural or high-unemployment area that qualifies for the lower $800K investment amount.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="TEA: Targeted Employment Area. A rural or high-unemployment area that qualifies for the lower $800K investment amount.">
                     <button type="button" class="help-tip" aria-label="What is TEA?">?</button>
                   </span>
                 </div>
@@ -710,15 +762,15 @@
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-rural" value="Rural">
                       Rural
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="High Unemployment Area — a geographic area with unemployment at 150%+ of the national average, qualifying as a TEA.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="High Unemployment Area. A geographic area with unemployment at 150%+ of the national average, qualifying as a TEA.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-hua" value="HUA">
                       HUA
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="Infrastructure project — a specific category of EB-5 project.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="Infrastructure project. A specific category of EB-5 project.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-infra" value="Infra">
                       Infra
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="Direct investment — an EB-5 investment made directly into a commercial enterprise, not through a regional center.">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-50" data-tip="Direct investment: an EB-5 investment made directly into a commercial enterprise, not through a regional center.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-direct" value="Direct">
                       Direct
                     </label>
@@ -731,7 +783,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="regional-center">Regional Center</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Regional Center — a USCIS-designated entity that sponsors EB-5 projects and pools investor capital.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Regional Center: a USCIS-designated entity that sponsors EB-5 projects and pools investor capital.">
                     <button type="button" class="help-tip" aria-label="What is a Regional Center?">?</button>
                   </span>
                 </div>
@@ -759,13 +811,13 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="attorney">Attorney</label>
+                <label class="field-row-label" for="attorney">Immigration Attorney</label>
                 <div class="field-row-control">
                   <div class="autocomplete-wrap" style="anchor-name:--attorney-anchor">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="attorney" name="attorney" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Billable Hours Unlimited LLP" autocomplete="off">
                     </div>
-                    <ul id="attorney-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Attorney suggestions" style="position-anchor:--attorney-anchor"></ul>
+                    <ul id="attorney-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Immigration attorney suggestions" style="position-anchor:--attorney-anchor"></ul>
                   </div>
                 </div>
               </div>
@@ -802,7 +854,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-4">
           <div class="section-header section-header--info">
             <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
           </div>
@@ -811,7 +863,7 @@
               <div class="field-row field-row--center">
                 <div class="field-row-label flex items-center gap-1.5" id="application-location-label">
                   <span>Service Center</span>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The USCIS office processing your petition. WAC = California, LIN = Nebraska, SRC = Texas, MSC = Missouri.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="The USCIS office processing your petition. WAC = California, LIN = Nebraska, SRC = Texas, MSC = Missouri.">
                     <button type="button" class="help-tip" aria-label="What is a Service Center?">?</button>
                   </span>
                 </div>
@@ -871,7 +923,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="ead-approval">EAD Approval Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Employment Authorization Document — a work permit issued while your green card application is pending.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Employment Authorization Document. A work permit issued while your green card application is pending.">
                     <button type="button" class="help-tip" aria-label="What is EAD?">?</button>
                   </span>
                 </div>
@@ -905,7 +957,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="ap-approval">AP Approval Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Advance Parole — travel authorization that lets you leave and re-enter the US while your adjustment of status is pending.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Advance Parole: travel authorization that lets you leave and re-enter the US while your adjustment of status is pending.">
                     <button type="button" class="help-tip" aria-label="What is AP?">?</button>
                   </span>
                 </div>
@@ -939,7 +991,7 @@
               <div class="field-row field-row--center">
                 <div class="field-row-label flex items-center gap-1.5" id="combo-card-label">
                   <span>Combo Card</span>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="A single card that serves as both EAD (work permit) and AP (travel document).">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="A single card that serves as both EAD (work permit) and AP (travel document).">
                     <button type="button" class="help-tip" aria-label="What is a Combo Card?">?</button>
                   </span>
                 </div>
@@ -954,7 +1006,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-5">
           <div class="section-header section-header--info">
             <h2 class="section-title">Adjudication &amp; Mandamus</h2>
           </div>
@@ -963,7 +1015,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="i526-date">I-526 Adjudication Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The immigrant investor petition. I-526E is the post-RIA (Reform and Integrity Act) version filed after March 2022.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="The immigrant investor petition. I-526E is the post-RIA (Reform and Integrity Act) version filed after March 2022.">
                     <button type="button" class="help-tip" aria-label="What is I-526 / I-526E?">?</button>
                   </span>
                 </div>
@@ -1004,11 +1056,11 @@
                       <input class="sr-only" type="radio" name="i526Status" value="Approved" checked>
                       Approved
                     </label>
-                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-20" data-tip="Request for Evidence — USCIS asking for additional documentation before making a decision on your petition.">
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-50" data-tip="Request for Evidence. USCIS is asking for additional documentation before making a decision on your petition.">
                       <input class="sr-only" type="radio" name="i526Status" value="RFE">
                       RFE
                     </label>
-                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-20" data-tip="Notice of Intent to Deny — a warning that USCIS plans to deny your petition, giving you a chance to respond.">
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-50" data-tip="Notice of Intent to Deny. A warning that USCIS plans to deny your petition, giving you a chance to respond.">
                       <input class="sr-only" type="radio" name="i526Status" value="NOID">
                       NOID
                     </label>
@@ -1036,7 +1088,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="wom-date">WOM Filing Date</label>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Writ of Mandamus — a federal lawsuit to compel USCIS to act on a long-pending petition.">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Writ of Mandamus: a federal lawsuit to compel USCIS to act on a long-pending petition.">
                     <button type="button" class="help-tip" aria-label="What is WOM?">?</button>
                   </span>
                 </div>
@@ -1140,7 +1192,7 @@
                 <div class="field-row field-row--center">
                   <span class="field-row-label flex items-center gap-1.5" id="wom-status-label">
                     <span>WOM Status</span>
-                    <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="MTD: Motion to Dismiss — the government's response asking the court to throw out a WOM lawsuit.">
+                    <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="MTD: Motion to Dismiss. The government's response asking the court to throw out a WOM lawsuit.">
                       <button type="button" class="help-tip" aria-label="What is MTD?">?</button>
                     </span>
                   </span>
@@ -1222,7 +1274,7 @@
           </div>
         </section>
 
-        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-6">
+        <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-6">
           <div class="section-header section-header--info">
             <h2 class="section-title">SOF Composition</h2>
           </div>
@@ -1231,7 +1283,7 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <span>Source of Funds</span>
-                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Source of Funds — documentation proving where your investment capital came from (savings, property sale, gift, loan, etc.).">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Source of Funds: documentation proving where your investment capital came from (savings, property sale, gift, loan, etc.).">
                     <button type="button" class="help-tip" aria-label="What is SOF?">?</button>
                   </span>
                   <span class="font-normal text-base-content/60">(tap all that apply)</span>
@@ -1406,21 +1458,36 @@
       </section>
     </main>
 
-    <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-1.5">
-      <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
-      <p>
-        <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
-      </p>
-      <p>
-        Open source on
-        <a class="underline hover:text-base-content/70" href="https://github.com/meetashok/eb5status" target="_blank" rel="noopener noreferrer">GitHub</a>
-        — contributions and pull requests welcome.
-      </p>
-      <p>
-        Have feedback?
-        <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
-        or ping me on WhatsApp if you have my number.
-      </p>
+    <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-3">
+      <div class="space-y-1 text-sm text-base-content/60">
+        <p class="font-medium text-base-content/70">Community Resources</p>
+        <ul class="space-y-0.5 list-none">
+          <li>
+            EB-5 FAQs:
+            <a class="underline hover:text-base-content/80" href="https://bit.ly/EB5faqs" target="_blank" rel="noopener noreferrer">bit.ly/EB5faqs</a>
+          </li>
+          <li>
+            I-829 FAQs:
+            <a class="underline hover:text-base-content/80" href="https://bit.ly/829info" target="_blank" rel="noopener noreferrer">bit.ly/829info</a>
+          </li>
+        </ul>
+      </div>
+      <div class="space-y-1.5">
+        <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
+        <p>
+          <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
+        </p>
+        <p>
+          Open source on
+          <a class="underline hover:text-base-content/70" href="https://github.com/meetashok/eb5status" target="_blank" rel="noopener noreferrer">GitHub</a>.
+          Contributions and pull requests welcome.
+        </p>
+        <p>
+          Have feedback?
+          <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
+          or ping me on WhatsApp if you have my number.
+        </p>
+      </div>
     </footer>
   </div>
 
