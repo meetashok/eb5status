@@ -100,6 +100,17 @@
     return isoFromLocalDate(date);
   }
 
+  function getTodayIso() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return isoFromLocalDate(today);
+  }
+
+  function clampIsoDateToToday(isoDate) {
+    const today = getTodayIso();
+    return isoDate > today ? today : isoDate;
+  }
+
   function isWithinLastWeek(isoDate) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
