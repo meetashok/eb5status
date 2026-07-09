@@ -131,27 +131,9 @@
     return sign * days;
   }
 
-  function getActiveFormDateEntries() {
-    const entries = [];
-    DATE_FIELD_META.forEach(({ id, pendingId, notFiledId }) => {
-      if (pendingId && isPending(pendingId)) return;
-      if (notFiledId && isPending(notFiledId)) return;
-      const iso = parseIsoDate(getFieldValue(id));
-      if (iso) entries.push({ id, iso });
-    });
-    return entries;
-  }
-
-  function getLatestFormDateIso() {
-    const entries = getActiveFormDateEntries();
-    if (!entries.length) return "";
-    return entries.reduce((latest, entry) => (entry.iso > latest ? entry.iso : latest), entries[0].iso);
-  }
-
   function getPreviewIsoDate(isoDate, fieldId) {
     if (!isDataRandomizationEnabled()) return isoDate;
-    const latest = getLatestFormDateIso();
-    if (isoDate === latest && isWithinLastWeek(isoDate)) {
+    if (isWithinLastWeek(isoDate)) {
       return clampIsoDateToToday(isoDate);
     }
 
@@ -173,6 +155,7 @@
     const formatted = formatDate(displayIso);
     if (!formatted) return "";
     if (isDataRandomizationEnabled()) return formatted;
+    if (fieldId === "priority-date") return formatted;
     const offset = daysFromPriorityDate(actual);
     return offset ? `${formatted} (${offset})` : formatted;
   }
