@@ -15,11 +15,15 @@
   const form = document.getElementById("status-form");
   const preview = document.getElementById("preview");
   const copyBtn = document.getElementById("copy-btn");
-  const copyFeedback = document.getElementById("copy-feedback");
   const refreshBtn = document.getElementById("refresh-preview");
   const previewPanel = document.getElementById("preview-panel");
   const celebrationToast = document.getElementById("celebration-toast");
   const celebrationToastText = document.getElementById("celebration-toast-text");
+  const copyToast = document.getElementById("copy-toast");
+  const emptyStateAlert = document.getElementById("empty-state-alert");
+  const statKeyUpdate = document.getElementById("stat-key-update");
+  const statDaysPd = document.getElementById("stat-days-pd");
+  const statFieldsFilled = document.getElementById("stat-fields-filled");
   const comboCardToggle = document.getElementById("combo-card");
   const themeToggle = document.getElementById("theme-toggle");
 
@@ -51,9 +55,13 @@
     "i485-approval": "Congratulations on your I-485 approval! 🎉",
   };
   const CELEBRATION_EMOJI = "🎉";
+  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Direct"]);
+  const BTN_COLOR_NAMES = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
+
   let comboCardValue = "";
   let previewManuallyEdited = false;
   let celebrationToastTimer = null;
+  let copyToastTimer = null;
   let lastCelebratedKeyUpdate = "";
 
   function isPending(pendingId) {
@@ -195,6 +203,140 @@
   function getRadioValue(name) {
     const selected = form.querySelector(`input[name="${name}"]:checked`);
     return selected ? selected.value : "";
+  }
+
+  function showCopyToast() {
+    if (!copyToast) return;
+
+    copyToast.classList.add("is-visible");
+    copyToast.setAttribute("aria-hidden", "false");
+
+    if (copyToastTimer) clearTimeout(copyToastTimer);
+    copyToastTimer = setTimeout(() => {
+      copyToast.classList.remove("is-visible");
+      copyToast.setAttribute("aria-hidden", "true");
+    }, 2500);
+
+    copyBtn.classList.add("btn-success");
+    copyBtn.classList.remove("btn-primary");
+    setTimeout(() => {
+      copyBtn.classList.remove("btn-success");
+      copyBtn.classList.add("btn-primary");
+    }, 1000);
+  }
+
+  function countFilledFields() {
+    let count = 0;
+
+    form.querySelectorAll('input[type="text"]:not([disabled])').forEach((input) => {
+      if (input.value.trim()) count += 1;
+    });
+
+    form.querySelectorAll(".pending-date-toggle:checked").forEach(() => {
+      count += 1;
+    });
+
+    const countedRadioGroups = new Set();
+    form.querySelectorAll('input[type="radio"]:checked').forEach((input) => {
+      if (countedRadioGroups.has(input.name)) return;
+      countedRadioGroups.add(input.name);
+      count += 1;
+    });
+
+    form.querySelectorAll('input[type="checkbox"]:checked').forEach((input) => {
+      if (input.classList.contains("pending-date-toggle")) return;
+      count += 1;
+    });
+
+    if (getComboCardValue()) count += 1;
+
+    return count;
+  }
+
+  function updatePreviewStats() {
+    const keyUpdate = getRadioValue("keyUpdate");
+
+    if (statKeyUpdate) {
+      statKeyUpdate.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
+    }
+
+    if (statDaysPd) {
+      const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
+      const days =
+        referenceDate && parseIsoDate(getFieldValue("priority-date"))
+          ? daysFromPriorityDate(referenceDate)
+          : "";
+      statDaysPd.textContent = days || "—";
+    }
+
+    if (statFieldsFilled) {
+      statFieldsFilled.textContent = String(countFilledFields());
+    }
+  }
+
+  function updateEmptyStateAlert() {
+    if (!emptyStateAlert) return;
+    emptyStateAlert.classList.toggle("hidden", Boolean(getRadioValue("keyUpdate")));
+  }
+
+  function sectionHasCaseBasicsData() {
+    return Boolean(
+      getFieldValue("priority-date") ||
+        getCheckedValues("projectCategory").length ||
+        getFieldValue("regional-center") ||
+        getFieldValue("project-name") ||
+        getFieldValue("attorney")
+    );
+  }
+
+  function sectionHasBiometricsData() {
+    return Boolean(
+      getRadioValue("applicationLocation") ||
+        isPending("biometric-notice-pending") ||
+        getFieldValue("biometric-notice") ||
+        isPending("ead-approval-pending") ||
+        getFieldValue("ead-approval") ||
+        isPending("ap-approval-pending") ||
+        getFieldValue("ap-approval") ||
+        getComboCardValue()
+    );
+  }
+
+  function sectionHasAdjudicationData() {
+    return Boolean(
+      isPending("i526-date-pending") ||
+        getFieldValue("i526-date") ||
+        getRadioValue("i526Status") ||
+        isPending("wom-date-not-filed") ||
+        getFieldValue("wom-date") ||
+        getCheckedValues("wom").length ||
+        getRadioValue("womCounsel") ||
+        getFieldValue("wom-attorney-name") ||
+        getFieldValue("wom-court") ||
+        getRadioValue("womStatus") ||
+        isPending("i485-date-pending") ||
+        getFieldValue("i485-date")
+    );
+  }
+
+  function sectionHasSofData() {
+    if (getCheckedValues("sof").length) return true;
+    return SOF_DETAIL_FIELDS.some(({ inputId }) => Boolean(getFieldValue(inputId)));
+  }
+
+  function syncSectionOpenState() {
+    const sections = [
+      { toggleId: "section-case-basics-open", hasData: sectionHasCaseBasicsData },
+      { toggleId: "section-biometrics-open", hasData: sectionHasBiometricsData },
+      { toggleId: "section-adjudication-open", hasData: sectionHasAdjudicationData },
+      { toggleId: "section-sof-open", hasData: sectionHasSofData },
+    ];
+
+    sections.forEach(({ toggleId, hasData }) => {
+      const toggle = document.getElementById(toggleId);
+      if (!toggle || toggle.checked) return;
+      if (hasData()) toggle.checked = true;
+    });
   }
 
   function showCelebrationToast(message) {
@@ -450,14 +592,26 @@
     return comboCardValue;
   }
 
+  function getButtonColor(el) {
+    return el.dataset.btnColor || "primary";
+  }
+
+  function clearButtonColorClasses(el) {
+    BTN_COLOR_NAMES.forEach((color) => {
+      el.classList.remove(`btn-${color}`, "btn-soft", "btn-active");
+    });
+  }
+
   function setSelectedButtonStyle(el) {
-    el.classList.remove("btn-soft");
-    el.classList.add("btn-primary", "btn-active");
+    const color = getButtonColor(el);
+    clearButtonColorClasses(el);
+    el.classList.add(`btn-${color}`, "btn-active");
   }
 
   function setUnselectedButtonStyle(el) {
-    el.classList.remove("btn-active");
-    el.classList.add("btn-soft", "btn-primary");
+    const color = getButtonColor(el);
+    clearButtonColorClasses(el);
+    el.classList.add("btn-soft", `btn-${color}`);
   }
 
   function setComboCardValue(value) {
@@ -863,7 +1017,19 @@
 
   function updatePreviewPanelVisibility() {
     if (!previewPanel) return;
-    previewPanel.classList.toggle("hidden", !shouldShowPreviewPanel());
+    const shouldShow = shouldShowPreviewPanel();
+    const wasHidden = previewPanel.classList.contains("hidden");
+    previewPanel.classList.toggle("hidden", !shouldShow);
+    if (shouldShow && wasHidden) {
+      previewPanel.classList.add("preview-panel-enter");
+      previewPanel.addEventListener(
+        "animationend",
+        () => {
+          previewPanel.classList.remove("preview-panel-enter");
+        },
+        { once: true }
+      );
+    }
   }
 
   function updatePreviewFromFormIfAllowed() {
@@ -871,6 +1037,9 @@
       preview.value = generateMessage();
     }
     updatePreviewPanelVisibility();
+    updatePreviewStats();
+    updateEmptyStateAlert();
+    syncSectionOpenState();
     updateCopyButton();
   }
 
@@ -879,6 +1048,9 @@
     previewManuallyEdited = false;
     updateRefreshButton();
     updatePreviewPanelVisibility();
+    updatePreviewStats();
+    updateEmptyStateAlert();
+    syncSectionOpenState();
     updateCopyButton();
   }
 
@@ -893,6 +1065,7 @@
     previewManuallyEdited = true;
     updateRefreshButton();
     updatePreviewPanelVisibility();
+    updatePreviewStats();
     updateCopyButton();
   });
 
@@ -904,16 +1077,12 @@
 
     try {
       await navigator.clipboard.writeText(text);
-      copyFeedback.textContent = "Copied!";
+      showCopyToast();
     } catch {
       preview.select();
       document.execCommand("copy");
-      copyFeedback.textContent = "Copied!";
+      showCopyToast();
     }
-
-    setTimeout(() => {
-      copyFeedback.textContent = "";
-    }, 2500);
   });
 
   initTheme();
@@ -932,5 +1101,8 @@
   initKeyUpdateCelebration();
   initAutocompleteFields();
   updatePreviewPanelVisibility();
+  updatePreviewStats();
+  updateEmptyStateAlert();
+  syncSectionOpenState();
   updateCopyButton();
 })();

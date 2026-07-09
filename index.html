@@ -5,11 +5,112 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Build and copy structured EB5 status updates for WhatsApp groups">
   <title>EB5 Status Update Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module" src="https://unpkg.com/cally"></script>
   <style>
+    body {
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+    .page-header-band {
+      position: relative;
+    }
+    .page-header-band::before {
+      content: "";
+      position: absolute;
+      inset: -1.5rem -1rem 0;
+      background: linear-gradient(to bottom, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent);
+      border-radius: 1rem;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .field-row-label {
+      color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
+    }
+    .choice-btn {
+      transition: transform 0.15s ease;
+    }
+    .choice-btn:active {
+      transform: scale(0.98);
+    }
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card-animate {
+      animation: fadeSlideUp 0.4s ease both;
+    }
+    .card-animate-1 { animation-delay: 0ms; }
+    .card-animate-2 { animation-delay: 40ms; }
+    .card-animate-3 { animation-delay: 80ms; }
+    .card-animate-4 { animation-delay: 120ms; }
+    .card-animate-5 { animation-delay: 160ms; }
+    .card-animate-6 { animation-delay: 200ms; }
+    #preview-panel.preview-panel-enter {
+      animation: fadeSlideUp 0.25s ease both;
+    }
+    .conditional-reveal {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .conditional-reveal.hidden {
+      display: none;
+    }
+    .whatsapp-bubble-wrap {
+      border-left: 4px solid #25d366;
+      border-radius: 1rem;
+      background: color-mix(in oklch, #dcf8c6 18%, var(--color-base-100));
+      box-shadow: 0 4px 16px color-mix(in oklch, var(--color-base-content) 8%, transparent);
+    }
+    [data-theme="light"] .whatsapp-bubble-wrap {
+      background: color-mix(in oklch, #dcf8c6 55%, var(--color-base-100));
+    }
+    .whatsapp-bubble-wrap textarea {
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+    .section-collapse.collapse:not(.collapse-open) > .collapse-title {
+      border-bottom: none;
+    }
+    .section-collapse > .collapse-title {
+      min-height: 3rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    .section-collapse > .collapse-content {
+      padding-top: 0;
+    }
+    #celebration-toast,
+    #copy-toast {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: scale(0.95);
+    }
+    #celebration-toast.is-visible,
+    #copy-toast.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
     .field-row {
       display: flex;
       flex-direction: column;
@@ -41,7 +142,6 @@
       flex-shrink: 0;
       font-size: 0.875rem;
       font-weight: 500;
-      color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
     }
     .field-row-control {
       flex: 1;
@@ -135,9 +235,9 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-base-200">
+<body class="min-h-screen bg-base-200 font-sans">
   <div class="max-w-6xl mx-auto px-4 py-6">
-    <header class="text-center mb-6 relative">
+    <header class="page-header-band text-center mb-6 relative">
       <div class="absolute right-0 top-0">
         <label class="swap swap-rotate btn btn-ghost btn-circle text-base-content border border-base-content/20 hover:border-base-content/40" aria-label="Toggle light or dark theme">
           <input type="checkbox" id="theme-toggle" class="theme-controller" value="light">
@@ -148,38 +248,41 @@
         </label>
       </div>
       <div class="badge badge-primary badge-outline mb-3">EB5 Community Tool</div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">EB5 Status Update Builder</h1>
-      <p class="text-base-content/70 mt-2 max-w-xl mx-auto text-base leading-relaxed">Fill in your milestones, preview the message live, and paste it into WhatsApp. All fields are optional. Fill in whatever applies to your case. The live preview is built based on provided data.</p>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">EB5 Status Update Builder</h1>
+      <div class="mt-3 max-w-xl mx-auto space-y-1">
+        <p class="text-base sm:text-lg text-base-content/85 leading-relaxed">Fill in your milestones, preview the message live, and paste to WhatsApp to share with the investor community.</p>
+        <p class="text-sm text-base-content/50 leading-relaxed">All fields are optional. The live preview updates as you fill in whatever applies.</p>
+      </div>
     </header>
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <section class="card card-border bg-base-100 shadow-md">
+        <section class="card card-border bg-base-100 shadow-md border-l-4 border-primary bg-primary/5 card-animate card-animate-1">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Key Update</h2>
+            <h2 class="section-title text-primary border-b border-primary/30 pb-2.5 mb-1">Key Update</h2>
 
             <div class="form-control w-full">
               <div class="field-row">
                 <span class="field-row-label" id="key-update-label">What's the key update for your case at this time?</span>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2" role="radiogroup" aria-labelledby="key-update-label">
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11" data-btn-color="primary">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-eb5-filed" value="eb5-filed">
                       EB5 filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-success min-h-11" data-btn-color="success">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-ead-ap" value="ead-ap-approval">
                       EAD/AP approval
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-warning min-h-11" data-btn-color="warning">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-wom" value="wom-filed">
                       WOM filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-accent min-h-11" data-btn-color="accent">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i526" value="i526-approval">
                       I-526 approval
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-info min-h-11" data-btn-color="info">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i485" value="i485-approval">
                       I-485 approval
                     </label>
@@ -190,11 +293,15 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Case Basics</h2>
+        <div id="empty-state-alert" class="alert alert-info alert-soft card-animate card-animate-2" role="status">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Pick a key update above to start building your message.</span>
+        </div>
 
-            <div class="form-control w-full">
+        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-accent card-animate card-animate-2">
+          <input type="checkbox" id="section-case-basics-open" checked aria-label="Toggle Case Basics section">
+          <div class="collapse-title section-title text-accent">Case Basics</div>
+          <div class="collapse-content space-y-2">
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="priority-date">Priority Date</label>
@@ -225,19 +332,19 @@
                 <span class="field-row-label" id="project-category-label">Project Category</span>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2" role="group" aria-labelledby="project-category-label">
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11" data-btn-color="success">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-rural" value="Rural">
                       Rural
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11" data-btn-color="info">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-hua" value="HUA">
                       HUA
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11" data-btn-color="warning">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-infra" value="Infra">
                       Infra
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11" data-btn-color="neutral">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-direct" value="Direct">
                       Direct
                     </label>
@@ -288,11 +395,12 @@
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Biometrics &amp; Travel Documents</h2>
+        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-info card-animate card-animate-3">
+          <input type="checkbox" id="section-biometrics-open" aria-label="Toggle Biometrics and Travel Documents section">
+          <div class="collapse-title section-title text-info">Biometrics &amp; Travel Documents</div>
+          <div class="collapse-content space-y-2">
 
             <div class="form-control w-full">
               <div class="field-row field-row--center">
@@ -403,23 +511,24 @@
               </div>
             </div>
 
-            <div id="combo-card-wrap" class="form-control w-full hidden">
+            <div id="combo-card-wrap" class="form-control w-full hidden conditional-reveal">
               <div class="field-row field-row--center">
                 <span class="field-row-label" id="combo-card-label">Combo Card</span>
                 <div class="field-row-control">
                   <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
-                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" aria-pressed="false">No</button>
-                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="Yes" aria-pressed="false">Yes</button>
+                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" data-btn-color="primary" aria-pressed="false">No</button>
+                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="Yes" data-btn-color="primary" aria-pressed="false">Yes</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Adjudication &amp; Mandamus</h2>
+        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-warning card-animate card-animate-4">
+          <input type="checkbox" id="section-adjudication-open" aria-label="Toggle Adjudication and Mandamus section">
+          <div class="collapse-title section-title text-warning">Adjudication &amp; Mandamus</div>
+          <div class="collapse-content space-y-2">
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -450,7 +559,7 @@
               </div>
             </div>
 
-            <div id="i526-status-wrap" class="form-control w-full hidden">
+            <div id="i526-status-wrap" class="form-control w-full hidden conditional-reveal">
               <div class="field-row">
                 <span class="field-row-label">I-526 Adjudication</span>
                 <div class="field-row-control">
@@ -505,7 +614,7 @@
               </div>
             </div>
 
-            <div id="wom-details-wrap" class="space-y-2 hidden">
+            <div id="wom-details-wrap" class="space-y-2 hidden conditional-reveal">
               <div class="form-control w-full">
                 <div class="field-row">
                   <div class="field-row-label">WOM Filing <span class="font-normal text-base-content/60">(tap all that apply)</span></div>
@@ -550,7 +659,7 @@
                 </div>
               </div>
 
-              <div id="wom-attorney-name-wrap" class="form-control w-full hidden">
+              <div id="wom-attorney-name-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="wom-attorney-name">WOM Attorney Name</label>
                   <div class="field-row-control">
@@ -623,11 +732,12 @@
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">SOF Composition</h2>
+        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-neutral card-animate card-animate-5">
+          <input type="checkbox" id="section-sof-open" aria-label="Toggle SOF Composition section">
+          <div class="collapse-title section-title">SOF Composition</div>
+          <div class="collapse-content space-y-2">
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -689,7 +799,7 @@
             </div>
 
             <div class="space-y-2">
-              <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden">
+              <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="sof-sbloc-detail">Margin Loan / SBLOC: Provider Name</label>
                   <div class="field-row-control">
@@ -700,7 +810,7 @@
                 </div>
               </div>
 
-              <div id="sof-heloc-detail-wrap" class="form-control w-full hidden">
+              <div id="sof-heloc-detail-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="sof-heloc-detail">HELOC: Provider Name</label>
                   <div class="field-row-control">
@@ -711,7 +821,7 @@
                 </div>
               </div>
 
-              <div id="sof-sdira-detail-wrap" class="form-control w-full hidden">
+              <div id="sof-sdira-detail-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="sof-sdira-detail">SDIRA: Custodian Name</label>
                   <div class="field-row-control">
@@ -722,7 +832,7 @@
                 </div>
               </div>
 
-              <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden">
+              <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="sof-personal-loan-detail">Personal Loan: From Where</label>
                   <div class="field-row-control">
@@ -733,7 +843,7 @@
                 </div>
               </div>
 
-              <div id="sof-other-detail-wrap" class="form-control w-full hidden">
+              <div id="sof-other-detail-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
                   <label class="field-row-label" for="sof-other-detail">Other SOF Detail</label>
                   <div class="field-row-control">
@@ -745,23 +855,44 @@
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </form>
 
-      <section id="preview-panel" class="card card-border bg-base-100 shadow-md lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden" aria-labelledby="preview-heading">
+      <section id="preview-panel" class="card card-border bg-base-100 shadow-md border-l-4 border-[#25d366] lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
-          <div class="w-full border-b border-secondary pb-2.5 mb-1">
+          <div class="w-full border-b border-[#25d366]/40 pb-2.5 mb-1">
             <div class="flex items-start justify-between gap-3">
-              <h2 id="preview-heading" class="text-base font-bold text-secondary tracking-wide">Live Preview</h2>
+              <div>
+                <h2 id="preview-heading" class="section-title text-[#25d366]">Live Preview</h2>
+                <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  WhatsApp paste preview
+                </p>
+              </div>
               <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
             </div>
           </div>
-          <p class="text-sm text-base-content/60 mt-1 mb-1">Edit freely. Changes here won't update the form.</p>
+          <p class="text-sm text-base-content/60 -mt-2 mb-1">Edit freely. Changes here won't update the form.</p>
 
-          <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] flex flex-col flex-1 min-h-56 lg:min-h-0">
+          <div class="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-200/50">
+            <div class="stat py-3 px-4">
+              <div class="stat-title text-xs">Key update</div>
+              <div id="stat-key-update" class="stat-value text-sm font-semibold">—</div>
+            </div>
+            <div class="stat py-3 px-4">
+              <div class="stat-title text-xs">Days from PD</div>
+              <div id="stat-days-pd" class="stat-value text-sm font-semibold">—</div>
+            </div>
+            <div class="stat py-3 px-4">
+              <div class="stat-title text-xs">Fields filled</div>
+              <div id="stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
+            </div>
+          </div>
+
+          <div class="whatsapp-bubble-wrap flex flex-col flex-1 min-h-56 lg:min-h-0 focus-within:ring-2 focus-within:ring-[#25d366]/40 transition-shadow">
             <textarea
               id="preview"
-              class="textarea w-full flex-1 border-0 rounded-none bg-transparent px-3 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-56 lg:min-h-0"
+              class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-56 lg:min-h-0"
               rows="14"
               placeholder="Your status update will appear here as you fill in the form…"
               aria-label="Status update message preview"
@@ -769,17 +900,15 @@
           </div>
 
           <div class="flex items-center gap-3 flex-wrap mt-auto">
-            <button type="button" id="copy-btn" class="btn btn-primary flex-1 min-h-11" disabled>
+            <button type="button" id="copy-btn" class="btn btn-primary flex-1 min-h-11 transition-colors" disabled>
               Copy to clipboard
             </button>
-            <span id="copy-feedback" class="text-success font-semibold text-sm min-h-5" role="status" aria-live="polite"></span>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-1.5">
-      <p>All fields are optional. Fill in whatever applies to your case.</p>
       <p>This is a static page. Nothing you enter is sent to a server or stored by the maintainer. Your information stays in your browser only.</p>
       <p>
         Have feedback?
@@ -792,6 +921,13 @@
   <div id="celebration-toast" class="toast toast-top toast-center z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
     <div class="alert alert-success shadow-lg max-w-md">
       <span id="celebration-toast-text"></span>
+    </div>
+  </div>
+
+  <div id="copy-toast" class="toast toast-bottom toast-end z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
+    <div class="alert alert-success shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      <span>Copied to clipboard</span>
     </div>
   </div>
 
