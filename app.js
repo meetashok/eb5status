@@ -357,10 +357,31 @@
     }
   }
 
+  function hasApprovalDate(inputId, pendingId) {
+    if (isPending(pendingId)) return false;
+    return Boolean(parseIsoDate(getFieldValue(inputId)));
+  }
+
+  function hasEadAndApApprovalDates() {
+    return (
+      hasApprovalDate("ead-approval", "ead-approval-pending") &&
+      hasApprovalDate("ap-approval", "ap-approval-pending")
+    );
+  }
+
+  function updateComboCardVisibility() {
+    const wrap = document.getElementById("combo-card-wrap");
+    if (!wrap) return;
+    const show = hasEadAndApApprovalDates();
+    wrap.classList.toggle("hidden", !show);
+    if (!show) setComboCardValue("");
+  }
+
   function updateConditionalSections() {
     updateI526StatusVisibility();
     updateWomDetailsVisibility();
     updateWomAttorneyVisibility();
+    updateComboCardVisibility();
   }
 
   function setPendingState(toggle) {
@@ -482,7 +503,7 @@
       ["Biometric notice", formatPendingDateValue("biometric-notice", "biometric-notice-pending")],
       ["EAD approved", formatApprovalValue("ead-approval", "ead-approval-pending")],
       ["AP approved", formatApprovalValue("ap-approval", "ap-approval-pending")],
-      ["Combo card", getComboCardValue()],
+      ["Combo card", hasEadAndApApprovalDates() ? getComboCardValue() : ""],
       [
         null,
         hasI526DateContext()
