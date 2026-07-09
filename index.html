@@ -98,6 +98,32 @@
 
             <div class="form-control w-full">
               <div class="field-row">
+                <span class="field-row-label" id="project-category-label">Project Category</span>
+                <div class="field-row-control">
+                  <div class="flex flex-wrap gap-2" role="group" aria-labelledby="project-category-label">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="checkbox" name="projectCategory" id="cat-rural" value="Rural">
+                      Rural
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="checkbox" name="projectCategory" id="cat-hua" value="HUA">
+                      HUA
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="checkbox" name="projectCategory" id="cat-infra" value="Infra">
+                      Infra
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="checkbox" name="projectCategory" id="cat-direct" value="Direct">
+                      Direct
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row">
                 <label class="field-row-label" for="regional-center">Regional Center</label>
                 <div class="field-row-control">
                   <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
@@ -479,13 +505,13 @@
 
       <section class="card card-border bg-base-100 shadow-md lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full" aria-labelledby="preview-heading">
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <h2 id="preview-heading" class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Live Preview</h2>
-              <p class="text-sm text-base-content/60 mt-1">Edit freely — changes here won't update the form.</p>
+          <div class="w-full border-b border-secondary pb-2.5 mb-1">
+            <div class="flex items-start justify-between gap-3">
+              <h2 id="preview-heading" class="text-base font-bold text-secondary tracking-wide">Live Preview</h2>
+              <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
             </div>
-            <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden" hidden>Refresh from form</button>
           </div>
+          <p class="text-sm text-base-content/60 mt-1 mb-1">Edit freely — changes here won't update the form.</p>
 
           <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] flex flex-col flex-1 min-h-56 lg:min-h-0">
             <textarea

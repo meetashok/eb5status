@@ -32,6 +32,7 @@
     SOF_DETAIL_FIELDS.map((field) => [field.value, field.inputId])
   );
 
+  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Infra", "Direct"]);
   let comboCardValue = "";
   let previewManuallyEdited = false;
 
@@ -227,6 +228,35 @@
     });
   }
 
+  function getProjectCategory() {
+    return getCheckedValues("projectCategory").join(", ");
+  }
+
+  function initProjectCategory() {
+    form.querySelectorAll('input[name="projectCategory"]').forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        if (!checkbox.checked) {
+          syncChoiceButton(checkbox);
+          updatePreviewFromFormIfAllowed();
+          return;
+        }
+
+        if (EXCLUSIVE_PROJECT_CATEGORIES.has(checkbox.value)) {
+          form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
+            if (other !== checkbox) other.checked = false;
+          });
+        } else {
+          form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
+            if (EXCLUSIVE_PROJECT_CATEGORIES.has(other.value)) other.checked = false;
+          });
+        }
+
+        form.querySelectorAll('input[name="projectCategory"]').forEach(syncChoiceButton);
+        updatePreviewFromFormIfAllowed();
+      });
+    });
+  }
+
   function getSofComposition() {
     return getCheckedValues("sof")
       .map((value) => {
@@ -295,6 +325,7 @@
 
     const entries = [
       ["Priority date", formatDate(getFieldValue("priority-date"))],
+      ["Project category", getProjectCategory()],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
       ["SOF composition", getSofComposition()],
@@ -368,6 +399,7 @@
   initCallyDatePickers();
   initComboCardToggle();
   initChoiceButtons();
+  initProjectCategory();
   initSofConditionalDetails();
   initOptionalRadioDeselect("i526Status");
   initOptionalRadioDeselect("womCounsel");
