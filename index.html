@@ -9,6 +9,25 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module" src="https://unpkg.com/cally"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+      .section-heading {
+        @apply text-base font-bold text-primary tracking-wide border-b border-primary/25 pb-2.5 mb-1;
+      }
+      .field-label {
+        @apply text-sm font-semibold text-base-content mb-2 block;
+      }
+      .field-shell {
+        @apply w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow];
+      }
+      .field-input {
+        @apply input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none;
+      }
+      .field-textarea {
+        @apply textarea w-full flex-1 border-0 rounded-none bg-transparent px-3 py-3 focus:outline-none focus:ring-0 shadow-none resize-none;
+      }
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-base-200">
   <div class="max-w-6xl mx-auto px-4 py-8">
@@ -21,23 +40,23 @@
         </label>
       </div>
       <div class="badge badge-primary badge-outline mb-3">EB-5 Community Tool</div>
-      <h1 class="text-3xl font-bold tracking-tight">Status Update Draft</h1>
-      <p class="text-base-content/70 mt-2 max-w-xl mx-auto">Fill in your milestones, preview the message live, and paste it into WhatsApp.</p>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Status Update Draft</h1>
+      <p class="text-base-content/70 mt-2 max-w-xl mx-auto text-base leading-relaxed">Fill in your milestones, preview the message live, and paste it into WhatsApp.</p>
     </header>
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-4" autocomplete="off">
-        <section class="card card-border bg-base-100 shadow-sm">
+        <section class="card card-border bg-base-100 shadow-md">
           <div class="card-body gap-4">
-            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Case basics</h2>
+            <h2 class="section-heading">Case Basics</h2>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="priority-date"><span class="label-text font-medium">Priority date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--priority-date-anchor">
+              <label class="field-label" for="priority-date">Priority Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--priority-date-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="priority-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="priority-date" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="priority-date" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="priority-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--priority-date-anchor">
                 <calendar-date class="cally" data-input-id="priority-date">
@@ -49,34 +68,39 @@
               <label class="label py-0"><span class="label-text-alt text-base-content/60">Date USCIS received your I-526 / I-526E</span></label>
             </div>
 
-            <label class="form-control w-full">
-              <div class="label py-1"><span class="label-text font-medium">Regional Center</span></div>
-              <input type="text" id="regional-center" name="regionalCenter" class="input input-bordered w-full min-h-11" placeholder="e.g. XYZ Regional Center">
-            </label>
+            <div class="form-control w-full">
+              <label class="field-label" for="regional-center">Regional Center</label>
+              <div class="field-shell">
+                <input type="text" id="regional-center" name="regionalCenter" class="field-input" placeholder="e.g. XYZ Regional Center">
+              </div>
+            </div>
 
-            <label class="form-control w-full">
-              <div class="label py-1"><span class="label-text font-medium">Project name</span></div>
-              <input type="text" id="project-name" name="projectName" class="input input-bordered w-full min-h-11" placeholder="e.g. Downtown Tower EB-5">
-            </label>
+            <div class="form-control w-full">
+              <label class="field-label" for="project-name">Project Name</label>
+              <div class="field-shell">
+                <input type="text" id="project-name" name="projectName" class="field-input" placeholder="e.g. Downtown Tower EB-5">
+              </div>
+            </div>
 
-            <label class="form-control w-full">
-              <div class="label py-1"><span class="label-text font-medium">Attorney</span></div>
-              <input type="text" id="attorney" name="attorney" class="input input-bordered w-full min-h-11" placeholder="e.g. Smith &amp; Associates">
-            </label>
+            <div class="form-control w-full">
+              <label class="field-label" for="attorney">Attorney</label>
+              <div class="field-shell">
+                <input type="text" id="attorney" name="attorney" class="field-input" placeholder="e.g. Smith &amp; Associates">
+              </div>
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-sm">
+        <section class="card card-border bg-base-100 shadow-md">
           <div class="card-body gap-4">
-            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Biometrics &amp; travel documents</h2>
+            <h2 class="section-heading">Biometrics &amp; Travel Documents</h2>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="biometric-notice"><span class="label-text font-medium">Biometric notice date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--biometric-notice-anchor">
+              <label class="field-label" for="biometric-notice">Biometric Notice Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--biometric-notice-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="biometric-notice-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="biometric-notice" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="biometric-notice" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="biometric-notice-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--biometric-notice-anchor">
                 <calendar-date class="cally" data-input-id="biometric-notice">
@@ -88,12 +112,12 @@
             </div>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="ead-approval"><span class="label-text font-medium">EAD approval date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--ead-approval-anchor">
+              <label class="field-label" for="ead-approval">EAD Approval Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--ead-approval-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ead-approval-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ead-approval" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="ead-approval" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="ead-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ead-approval-anchor">
                 <calendar-date class="cally" data-input-id="ead-approval">
@@ -105,12 +129,12 @@
             </div>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="ap-approval"><span class="label-text font-medium">AP approval date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--ap-approval-anchor">
+              <label class="field-label" for="ap-approval">AP Approval Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--ap-approval-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ap-approval-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ap-approval" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="ap-approval" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="ap-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ap-approval-anchor">
                 <calendar-date class="cally" data-input-id="ap-approval">
@@ -122,7 +146,7 @@
             </div>
 
             <div class="form-control w-full">
-              <span class="label-text font-medium mb-2 block" id="combo-card-label">Combo card</span>
+              <span class="field-label" id="combo-card-label">Combo Card</span>
               <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
                 <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" aria-pressed="false">No</button>
                 <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="Yes" aria-pressed="false">Yes</button>
@@ -131,13 +155,13 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-sm">
+        <section class="card card-border bg-base-100 shadow-md">
           <div class="card-body gap-4">
-            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Adjudication &amp; mandamus</h2>
+            <h2 class="section-heading">Adjudication &amp; Mandamus</h2>
 
             <div class="form-control w-full">
-              <span class="label-text font-medium mb-2 block">I-526 adjudication</span>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 adjudication" id="i526-status-group">
+              <span class="field-label">I-526 Adjudication</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 Adjudication" id="i526-status-group">
                 <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
                   <input class="sr-only" type="radio" name="i526Status" value="Approved">
                   Approved
@@ -158,12 +182,12 @@
             </div>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="i526-date"><span class="label-text font-medium">I-526 adjudication date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--i526-date-anchor">
+              <label class="field-label" for="i526-date">I-526 Adjudication Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--i526-date-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i526-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i526-date" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="i526-date" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="i526-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i526-date-anchor">
                 <calendar-date class="cally" data-input-id="i526-date">
@@ -175,7 +199,7 @@
             </div>
 
             <fieldset>
-              <legend class="label-text font-medium mb-2 block">WOM filing <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
+              <legend class="field-label">WOM Filing <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                 <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
                   <input class="sr-only" type="checkbox" name="wom" id="wom-526" value="I-526">
@@ -200,12 +224,12 @@
             </fieldset>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="wom-date"><span class="label-text font-medium">WOM filing date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--wom-date-anchor">
+              <label class="field-label" for="wom-date">WOM Filing Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--wom-date-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="wom-date" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="wom-date" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
                 <calendar-date class="cally" data-input-id="wom-date">
@@ -217,7 +241,7 @@
             </div>
 
             <fieldset class="form-control w-full">
-              <legend class="label-text font-medium mb-2 block" id="wom-counsel-label">WOM counsel</legend>
+              <legend class="field-label" id="wom-counsel-label">WOM Counsel</legend>
               <div class="join w-full max-w-xs" role="radiogroup" aria-labelledby="wom-counsel-label">
                 <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 flex-1 justify-center">
                   <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
@@ -231,12 +255,12 @@
             </fieldset>
 
             <div class="form-control w-full">
-              <label class="label py-1" for="i485-date"><span class="label-text font-medium">I-485 adjudication date</span></label>
-              <div class="join w-full min-h-11 border border-base-300 rounded-lg overflow-hidden focus-within:border-primary" style="anchor-name:--i485-date-anchor">
+              <label class="field-label" for="i485-date">I-485 Adjudication Date</label>
+              <div class="field-shell join min-h-11" style="anchor-name:--i485-date-anchor">
                 <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i485-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i485-date" class="join-item input grow min-h-11 w-full border-0 rounded-none focus:outline-none" placeholder="YYYY-MM-DD" autocomplete="off">
+                <input type="text" id="i485-date" class="join-item field-input grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
               </div>
               <div popover id="i485-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i485-date-anchor">
                 <calendar-date class="cally" data-input-id="i485-date">
@@ -249,12 +273,12 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-sm">
+        <section class="card card-border bg-base-100 shadow-md">
           <div class="card-body gap-4">
-            <h2 class="card-title text-primary text-sm uppercase tracking-wider">SOF composition</h2>
+            <h2 class="section-heading">SOF Composition</h2>
 
             <fieldset>
-              <legend class="label-text font-medium mb-2 block">Source of funds <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
+              <legend class="field-label">Source of Funds <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
               <div class="flex flex-wrap gap-2">
                 <label class="choice-btn btn btn-sm btn-soft btn-primary">
                   <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Cash from savings">
@@ -310,51 +334,62 @@
 
             <div class="space-y-3">
               <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden">
-                <label class="label py-1" for="sof-sbloc-detail"><span class="label-text font-medium">Margin loan / SBLOC — provider name</span></label>
-                <input type="text" id="sof-sbloc-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Morgan Stanley">
+                <label class="field-label" for="sof-sbloc-detail">Margin Loan / SBLOC — Provider Name</label>
+                <div class="field-shell">
+                  <input type="text" id="sof-sbloc-detail" class="field-input" placeholder="e.g. Morgan Stanley">
+                </div>
               </div>
 
               <div id="sof-heloc-detail-wrap" class="form-control w-full hidden">
-                <label class="label py-1" for="sof-heloc-detail"><span class="label-text font-medium">HELOC — provider name</span></label>
-                <input type="text" id="sof-heloc-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Chase">
+                <label class="field-label" for="sof-heloc-detail">HELOC — Provider Name</label>
+                <div class="field-shell">
+                  <input type="text" id="sof-heloc-detail" class="field-input" placeholder="e.g. Chase">
+                </div>
               </div>
 
               <div id="sof-sdira-detail-wrap" class="form-control w-full hidden">
-                <label class="label py-1" for="sof-sdira-detail"><span class="label-text font-medium">SDIRA — custodian name</span></label>
-                <input type="text" id="sof-sdira-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Equity Trust">
+                <label class="field-label" for="sof-sdira-detail">SDIRA — Custodian Name</label>
+                <div class="field-shell">
+                  <input type="text" id="sof-sdira-detail" class="field-input" placeholder="e.g. Equity Trust">
+                </div>
               </div>
 
               <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden">
-                <label class="label py-1" for="sof-personal-loan-detail"><span class="label-text font-medium">Personal loan — from where</span></label>
-                <input type="text" id="sof-personal-loan-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. family member, bank name">
+                <label class="field-label" for="sof-personal-loan-detail">Personal Loan — From Where</label>
+                <div class="field-shell">
+                  <input type="text" id="sof-personal-loan-detail" class="field-input" placeholder="e.g. family member, bank name">
+                </div>
               </div>
 
               <div id="sof-other-detail-wrap" class="form-control w-full hidden">
-                <label class="label py-1" for="sof-other-detail"><span class="label-text font-medium">Other SOF detail</span></label>
-                <input type="text" id="sof-other-detail" class="input input-bordered w-full min-h-11" placeholder="Describe your other source of funds">
-              </div>
+                <label class="field-label" for="sof-other-detail">Other SOF Detail</label>
+                <div class="field-shell">
+                  <input type="text" id="sof-other-detail" class="field-input" placeholder="Describe your other source of funds">
+                </div>
             </div>
           </div>
         </section>
       </form>
 
-      <section class="card card-border bg-base-100 shadow-sm lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full" aria-labelledby="preview-heading">
+      <section class="card card-border bg-base-100 shadow-md lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full" aria-labelledby="preview-heading">
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <h2 id="preview-heading" class="card-title text-base">Live preview</h2>
+              <h2 id="preview-heading" class="section-heading">Live Preview</h2>
               <p class="text-sm text-base-content/60 mt-1">Edit freely — changes here won't update the form.</p>
             </div>
             <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden" hidden>Refresh from form</button>
           </div>
 
-          <textarea
-            id="preview"
-            class="textarea textarea-bordered w-full flex-1 min-h-56 lg:min-h-0"
-            rows="14"
-            placeholder="Your status update will appear here as you fill in the form…"
-            aria-label="Status update message preview"
-          ></textarea>
+          <div class="field-shell flex flex-col flex-1 min-h-56 lg:min-h-0">
+            <textarea
+              id="preview"
+              class="field-textarea min-h-56 lg:min-h-0"
+              rows="14"
+              placeholder="Your status update will appear here as you fill in the form…"
+              aria-label="Status update message preview"
+            ></textarea>
+          </div>
 
           <div class="flex items-center gap-3 flex-wrap mt-auto">
             <button type="button" id="copy-btn" class="btn btn-primary flex-1 min-h-11" disabled>
