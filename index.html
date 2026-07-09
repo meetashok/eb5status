@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Build and copy structured EB5 status updates for WhatsApp groups">
-  <title>EB5 Status Update Builder</title>
+  <title>EB5 status update builder</title>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -90,6 +90,11 @@
       outline: 2px solid var(--color-primary);
       outline-offset: 1px;
     }
+    .page-footer-notes {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: color-mix(in oklch, var(--color-base-content) 42%, transparent);
+    }
   </style>
 </head>
 <body class="min-h-screen bg-base-200">
@@ -105,7 +110,7 @@
         </label>
       </div>
       <div class="badge badge-primary badge-outline mb-3">EB5 Community Tool</div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Status Update Builder</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">EB5 status update builder</h1>
       <p class="text-base-content/70 mt-2 max-w-xl mx-auto text-base leading-relaxed">Fill in your milestones, preview the message live, and paste it into WhatsApp. All fields are optional, the live preview is built based on provided data.</p>
     </header>
 
@@ -636,7 +641,7 @@
             <div class="space-y-2">
               <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden">
                 <div class="field-row">
-                  <label class="field-row-label" for="sof-sbloc-detail">Margin Loan / SBLOC — Provider Name</label>
+                  <label class="field-row-label" for="sof-sbloc-detail">Margin Loan / SBLOC: Provider Name</label>
                   <div class="field-row-control">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="sof-sbloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Morgan Stanley">
@@ -647,7 +652,7 @@
 
               <div id="sof-heloc-detail-wrap" class="form-control w-full hidden">
                 <div class="field-row">
-                  <label class="field-row-label" for="sof-heloc-detail">HELOC — Provider Name</label>
+                  <label class="field-row-label" for="sof-heloc-detail">HELOC: Provider Name</label>
                   <div class="field-row-control">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="sof-heloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Chase">
@@ -658,7 +663,7 @@
 
               <div id="sof-sdira-detail-wrap" class="form-control w-full hidden">
                 <div class="field-row">
-                  <label class="field-row-label" for="sof-sdira-detail">SDIRA — Custodian Name</label>
+                  <label class="field-row-label" for="sof-sdira-detail">SDIRA: Custodian Name</label>
                   <div class="field-row-control">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="sof-sdira-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Equity Trust">
@@ -669,7 +674,7 @@
 
               <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden">
                 <div class="field-row">
-                  <label class="field-row-label" for="sof-personal-loan-detail">Personal Loan — From Where</label>
+                  <label class="field-row-label" for="sof-personal-loan-detail">Personal Loan: From Where</label>
                   <div class="field-row-control">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="sof-personal-loan-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. family member, bank name">
@@ -701,7 +706,7 @@
               <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
             </div>
           </div>
-          <p class="text-sm text-base-content/60 mt-1 mb-1">Edit freely — changes here won't update the form.</p>
+          <p class="text-sm text-base-content/60 mt-1 mb-1">Edit freely. Changes here won't update the form.</p>
 
           <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] flex flex-col flex-1 min-h-56 lg:min-h-0">
             <textarea
@@ -723,9 +728,9 @@
       </section>
     </main>
 
-    <footer class="text-center mt-6 text-base-content/60 text-sm space-y-2 max-w-xl mx-auto">
+    <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-1.5">
       <p>All fields are optional. Fill in whatever applies to your case.</p>
-      <p>This is a static page. Nothing you enter is sent to a server or stored by the maintainer—your information stays in your browser only.</p>
+      <p>This is a static page. Nothing you enter is sent to a server or stored by the maintainer. Your information stays in your browser only.</p>
     </footer>
   </div>
 
