@@ -26,6 +26,8 @@ Then visit `http://localhost:8080`.
 - One-click copy to clipboard
 - All fields optional — copy is enabled when at least one field has content
 - Mobile responsive with dark mode support
+- Modern UI via [Shoelace](https://shoelace.style/) components (CDN, no build step)
+- Animated Yes/No pill toggle for combo card
 
 ## Fields
 

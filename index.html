@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Draft structured EB-5 status updates for WhatsApp groups">
   <title>EB-5 Status Update Draft</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import { setBasePath } from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/utilities/base-path.js";
+    setBasePath("https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/");
+  </script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 </head>
 <body>
   <div class="app">
     <header class="header">
-      <h1>EB-5 Status Update</h1>
-      <p class="subtitle">Fill in your details, preview the message, and copy it to your WhatsApp group.</p>
+      <div class="header-badge">EB-5 Community Tool</div>
+      <h1>Status Update Draft</h1>
+      <p class="subtitle">Fill in your milestones, preview the message live, and paste it into WhatsApp.</p>
     </header>
 
     <main class="workspace">
@@ -19,140 +30,127 @@
         <section class="form-section">
           <h2>Case basics</h2>
 
-          <label class="field">
-            <span class="field-label">Priority date</span>
-            <input type="date" id="priority-date" name="priorityDate">
-          </label>
+          <sl-input
+            id="priority-date"
+            type="date"
+            label="Priority date"
+            help-text="Date USCIS received your I-526 / I-526E"
+          ></sl-input>
 
-          <label class="field">
-            <span class="field-label">Regional Center</span>
-            <input type="text" id="regional-center" name="regionalCenter" placeholder="e.g. XYZ Regional Center">
-          </label>
+          <sl-input
+            id="regional-center"
+            label="Regional Center"
+            placeholder="e.g. XYZ Regional Center"
+            clearable
+          ></sl-input>
 
-          <label class="field">
-            <span class="field-label">Project name</span>
-            <input type="text" id="project-name" name="projectName" placeholder="e.g. Downtown Tower EB-5">
-          </label>
+          <sl-input
+            id="project-name"
+            label="Project name"
+            placeholder="e.g. Downtown Tower EB-5"
+            clearable
+          ></sl-input>
 
-          <fieldset class="field">
-            <legend class="field-label">SOF composition <span class="hint">(select all that apply)</span></legend>
-            <div class="checkbox-grid" id="sof-options">
-              <label class="checkbox"><input type="checkbox" name="sof" value="Employment / salary"> Employment / salary</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Business income"> Business income</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Real estate sale"> Real estate sale</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Stocks / securities sale"> Stocks / securities sale</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Savings / accumulated funds"> Savings / accumulated funds</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Inheritance"> Inheritance</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Gift"> Gift</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Loan"> Loan</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Retirement funds"> Retirement funds</label>
-              <label class="checkbox"><input type="checkbox" name="sof" value="Other"> Other</label>
+          <fieldset class="choice-field">
+            <legend>SOF composition <span class="hint">(select all that apply)</span></legend>
+            <div class="checkbox-grid">
+              <sl-checkbox name="sof" value="Employment / salary">Employment / salary</sl-checkbox>
+              <sl-checkbox name="sof" value="Business income">Business income</sl-checkbox>
+              <sl-checkbox name="sof" value="Real estate sale">Real estate sale</sl-checkbox>
+              <sl-checkbox name="sof" value="Stocks / securities sale">Stocks / securities sale</sl-checkbox>
+              <sl-checkbox name="sof" value="Savings / accumulated funds">Savings / accumulated funds</sl-checkbox>
+              <sl-checkbox name="sof" value="Inheritance">Inheritance</sl-checkbox>
+              <sl-checkbox name="sof" value="Gift">Gift</sl-checkbox>
+              <sl-checkbox name="sof" value="Loan">Loan</sl-checkbox>
+              <sl-checkbox name="sof" value="Retirement funds">Retirement funds</sl-checkbox>
+              <sl-checkbox name="sof" value="Other">Other</sl-checkbox>
             </div>
           </fieldset>
 
-          <label class="field">
-            <span class="field-label">Attorney</span>
-            <input type="text" id="attorney" name="attorney" placeholder="e.g. Smith &amp; Associates">
-          </label>
+          <sl-input
+            id="attorney"
+            label="Attorney"
+            placeholder="e.g. Smith &amp; Associates"
+            clearable
+          ></sl-input>
         </section>
 
         <section class="form-section">
           <h2>Biometrics &amp; travel documents</h2>
 
-          <label class="field">
-            <span class="field-label">Biometric notice date</span>
-            <input type="date" id="biometric-notice" name="biometricNotice">
-          </label>
+          <sl-input id="biometric-notice" type="date" label="Biometric notice date"></sl-input>
+          <sl-input id="ead-approval" type="date" label="EAD approval date"></sl-input>
+          <sl-input id="ap-approval" type="date" label="AP approval date"></sl-input>
 
-          <label class="field">
-            <span class="field-label">EAD approval date</span>
-            <input type="date" id="ead-approval" name="eadApproval">
-          </label>
-
-          <label class="field">
-            <span class="field-label">AP approval date</span>
-            <input type="date" id="ap-approval" name="apApproval">
-          </label>
-
-          <fieldset class="field">
-            <legend class="field-label">Combo card</legend>
-            <div class="radio-row">
-              <label class="radio"><input type="radio" name="comboCard" value="Yes"> Yes</label>
-              <label class="radio"><input type="radio" name="comboCard" value="No"> No</label>
+          <div class="field-block">
+            <span class="field-label">Combo card</span>
+            <div class="pill-toggle" id="combo-card" role="radiogroup" aria-label="Combo card">
+              <span class="pill-toggle__slider" aria-hidden="true"></span>
+              <button type="button" class="pill-toggle__option" data-value="No" aria-pressed="false">No</button>
+              <button type="button" class="pill-toggle__option" data-value="Yes" aria-pressed="false">Yes</button>
             </div>
-          </fieldset>
+          </div>
         </section>
 
         <section class="form-section">
           <h2>Adjudication &amp; mandamus</h2>
 
           <div class="field-group">
-            <label class="field">
-              <span class="field-label">I-526 adjudication</span>
-              <select id="i526-status" name="i526Status">
-                <option value="">— Select status —</option>
-                <option value="Approved">Approved</option>
-                <option value="RFE">RFE</option>
-                <option value="NOID">NOID</option>
-                <option value="Denied">Denied</option>
-              </select>
-            </label>
-            <label class="field">
-              <span class="field-label">I-526 adjudication date</span>
-              <input type="date" id="i526-date" name="i526Date">
-            </label>
+            <sl-select id="i526-status" label="I-526 adjudication" placeholder="Select status" clearable>
+              <sl-option value="Approved">Approved</sl-option>
+              <sl-option value="RFE">RFE</sl-option>
+              <sl-option value="NOID">NOID</sl-option>
+              <sl-option value="Denied">Denied</sl-option>
+            </sl-select>
+
+            <sl-input id="i526-date" type="date" label="I-526 adjudication date"></sl-input>
           </div>
 
-          <fieldset class="field">
-            <legend class="field-label">WOM filing <span class="hint">(select all that apply)</span></legend>
-            <div class="checkbox-grid" id="wom-options">
-              <label class="checkbox"><input type="checkbox" name="wom" value="I-526"> I-526</label>
-              <label class="checkbox"><input type="checkbox" name="wom" value="I-485"> I-485</label>
-              <label class="checkbox"><input type="checkbox" name="wom" value="EAD"> EAD</label>
-              <label class="checkbox"><input type="checkbox" name="wom" value="AP"> AP</label>
+          <fieldset class="choice-field">
+            <legend>WOM filing <span class="hint">(select all that apply)</span></legend>
+            <div class="checkbox-grid checkbox-grid--compact">
+              <sl-checkbox name="wom" value="I-526">I-526</sl-checkbox>
+              <sl-checkbox name="wom" value="I-485">I-485</sl-checkbox>
+              <sl-checkbox name="wom" value="EAD">EAD</sl-checkbox>
+              <sl-checkbox name="wom" value="AP">AP</sl-checkbox>
             </div>
           </fieldset>
 
-          <label class="field">
-            <span class="field-label">WOM filing date</span>
-            <input type="date" id="wom-date" name="womDate">
-          </label>
+          <sl-input id="wom-date" type="date" label="WOM filing date"></sl-input>
 
-          <fieldset class="field">
-            <legend class="field-label">WOM counsel</legend>
-            <div class="radio-row">
-              <label class="radio"><input type="radio" name="womCounsel" value="Attorney"> Attorney</label>
-              <label class="radio"><input type="radio" name="womCounsel" value="Pro se"> Pro se</label>
-            </div>
-          </fieldset>
+          <sl-radio-group id="wom-counsel" label="WOM counsel">
+            <sl-radio-button value="Attorney">Attorney</sl-radio-button>
+            <sl-radio-button value="Pro se">Pro se</sl-radio-button>
+          </sl-radio-group>
 
-          <label class="field">
-            <span class="field-label">I-485 adjudication date</span>
-            <input type="date" id="i485-date" name="i485Date">
-          </label>
+          <sl-input id="i485-date" type="date" label="I-485 adjudication date"></sl-input>
         </section>
       </form>
 
       <section class="preview-section" aria-labelledby="preview-heading">
         <div class="preview-header">
-          <h2 id="preview-heading">Message preview</h2>
-          <button type="button" id="refresh-preview" class="btn btn-secondary hidden" hidden>
+          <div>
+            <h2 id="preview-heading">Live preview</h2>
+            <p class="preview-hint">Edit freely — changes here won't update the form.</p>
+          </div>
+          <sl-button id="refresh-preview" variant="default" size="small" class="hidden" hidden>
             Refresh from form
-          </button>
+          </sl-button>
         </div>
-        <p class="preview-hint">You can edit this text directly. Changes here won't update the form fields.</p>
-        <textarea
+
+        <sl-textarea
           id="preview"
           class="preview"
-          rows="14"
           placeholder="Your status update will appear here as you fill in the form…"
-          aria-label="Status update message preview"
-        ></textarea>
+          resize="auto"
+          rows="14"
+        ></sl-textarea>
 
         <div class="actions">
-          <button type="button" id="copy-btn" class="btn btn-primary" disabled>
+          <sl-button id="copy-btn" variant="primary" size="large" disabled>
+            <sl-icon slot="prefix" name="clipboard"></sl-icon>
             Copy to clipboard
-          </button>
+          </sl-button>
           <span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>
         </div>
       </section>
@@ -163,6 +161,6 @@
     </footer>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
