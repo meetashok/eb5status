@@ -84,17 +84,6 @@
       font-size: 0.875rem;
       line-height: 1.6;
     }
-    .section-collapse.collapse:not(.collapse-open) > .collapse-title {
-      border-bottom: none;
-    }
-    .section-collapse > .collapse-title {
-      min-height: 3rem;
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-    .section-collapse > .collapse-content {
-      padding-top: 0;
-    }
     #celebration-toast,
     #copy-toast {
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -195,12 +184,6 @@
       line-height: 1.4;
       color: color-mix(in oklch, var(--color-base-content) 42%, transparent);
     }
-    #celebration-toast {
-      transition: opacity 0.3s ease;
-    }
-    #celebration-toast.is-visible {
-      opacity: 1;
-    }
     .autocomplete-wrap {
       position: relative;
       width: 100%;
@@ -298,10 +281,11 @@
           <span>Pick a key update above to start building your message.</span>
         </div>
 
-        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-accent card-animate card-animate-2">
-          <input type="checkbox" id="section-case-basics-open" checked aria-label="Toggle Case Basics section">
-          <div class="collapse-title section-title text-accent">Case Basics</div>
-          <div class="collapse-content space-y-2">
+        <section class="card card-border bg-base-100 shadow-md border-l-4 border-accent card-animate card-animate-2">
+          <div class="card-body gap-2 p-4 sm:p-5">
+            <h2 class="section-title text-accent border-b border-accent/30 pb-2.5 mb-1">Case Basics</h2>
+
+            <div class="form-control w-full">
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="priority-date">Priority Date</label>
@@ -395,12 +379,11 @@
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-info card-animate card-animate-3">
-          <input type="checkbox" id="section-biometrics-open" aria-label="Toggle Biometrics and Travel Documents section">
-          <div class="collapse-title section-title text-info">Biometrics &amp; Travel Documents</div>
-          <div class="collapse-content space-y-2">
+        <section class="card card-border bg-base-100 shadow-md border-l-4 border-info card-animate card-animate-3">
+          <div class="card-body gap-2 p-4 sm:p-5">
+            <h2 class="section-title text-info border-b border-info/30 pb-2.5 mb-1">Biometrics &amp; Travel Documents</h2>
 
             <div class="form-control w-full">
               <div class="field-row field-row--center">
@@ -523,12 +506,11 @@
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-warning card-animate card-animate-4">
-          <input type="checkbox" id="section-adjudication-open" aria-label="Toggle Adjudication and Mandamus section">
-          <div class="collapse-title section-title text-warning">Adjudication &amp; Mandamus</div>
-          <div class="collapse-content space-y-2">
+        <section class="card card-border bg-base-100 shadow-md border-l-4 border-warning card-animate card-animate-4">
+          <div class="card-body gap-2 p-4 sm:p-5">
+            <h2 class="section-title text-warning border-b border-warning/30 pb-2.5 mb-1">Adjudication &amp; Mandamus</h2>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -732,12 +714,11 @@
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div tabindex="0" class="section-collapse collapse collapse-arrow card card-border bg-base-100 shadow-md border-l-4 border-neutral card-animate card-animate-5">
-          <input type="checkbox" id="section-sof-open" aria-label="Toggle SOF Composition section">
-          <div class="collapse-title section-title">SOF Composition</div>
-          <div class="collapse-content space-y-2">
+        <section class="card card-border bg-base-100 shadow-md border-l-4 border-neutral card-animate card-animate-5">
+          <div class="card-body gap-2 p-4 sm:p-5">
+            <h2 class="section-title border-b border-base-content/15 pb-2.5 mb-1">SOF Composition</h2>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -855,7 +836,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </form>
 
       <section id="preview-panel" class="card card-border bg-base-100 shadow-md border-l-4 border-[#25d366] lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">

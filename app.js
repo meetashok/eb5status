@@ -279,66 +279,6 @@
     emptyStateAlert.classList.toggle("hidden", Boolean(getRadioValue("keyUpdate")));
   }
 
-  function sectionHasCaseBasicsData() {
-    return Boolean(
-      getFieldValue("priority-date") ||
-        getCheckedValues("projectCategory").length ||
-        getFieldValue("regional-center") ||
-        getFieldValue("project-name") ||
-        getFieldValue("attorney")
-    );
-  }
-
-  function sectionHasBiometricsData() {
-    return Boolean(
-      getRadioValue("applicationLocation") ||
-        isPending("biometric-notice-pending") ||
-        getFieldValue("biometric-notice") ||
-        isPending("ead-approval-pending") ||
-        getFieldValue("ead-approval") ||
-        isPending("ap-approval-pending") ||
-        getFieldValue("ap-approval") ||
-        getComboCardValue()
-    );
-  }
-
-  function sectionHasAdjudicationData() {
-    return Boolean(
-      isPending("i526-date-pending") ||
-        getFieldValue("i526-date") ||
-        getRadioValue("i526Status") ||
-        isPending("wom-date-not-filed") ||
-        getFieldValue("wom-date") ||
-        getCheckedValues("wom").length ||
-        getRadioValue("womCounsel") ||
-        getFieldValue("wom-attorney-name") ||
-        getFieldValue("wom-court") ||
-        getRadioValue("womStatus") ||
-        isPending("i485-date-pending") ||
-        getFieldValue("i485-date")
-    );
-  }
-
-  function sectionHasSofData() {
-    if (getCheckedValues("sof").length) return true;
-    return SOF_DETAIL_FIELDS.some(({ inputId }) => Boolean(getFieldValue(inputId)));
-  }
-
-  function syncSectionOpenState() {
-    const sections = [
-      { toggleId: "section-case-basics-open", hasData: sectionHasCaseBasicsData },
-      { toggleId: "section-biometrics-open", hasData: sectionHasBiometricsData },
-      { toggleId: "section-adjudication-open", hasData: sectionHasAdjudicationData },
-      { toggleId: "section-sof-open", hasData: sectionHasSofData },
-    ];
-
-    sections.forEach(({ toggleId, hasData }) => {
-      const toggle = document.getElementById(toggleId);
-      if (!toggle || toggle.checked) return;
-      if (hasData()) toggle.checked = true;
-    });
-  }
-
   function showCelebrationToast(message) {
     if (!celebrationToast || !celebrationToastText || !message) return;
 
@@ -1039,7 +979,6 @@
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateEmptyStateAlert();
-    syncSectionOpenState();
     updateCopyButton();
   }
 
@@ -1050,7 +989,6 @@
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateEmptyStateAlert();
-    syncSectionOpenState();
     updateCopyButton();
   }
 
@@ -1103,6 +1041,5 @@
   updatePreviewPanelVisibility();
   updatePreviewStats();
   updateEmptyStateAlert();
-  syncSectionOpenState();
   updateCopyButton();
 })();
