@@ -207,11 +207,31 @@
     }
   }
 
+  function enhanceCalendarNavigation(calendar) {
+    if (calendar.querySelector("calendar-select-month")) return;
+
+    const monthSelect = document.createElement("calendar-select-month");
+    monthSelect.setAttribute("slot", "heading");
+    monthSelect.setAttribute("format-month", "short");
+
+    const yearSelect = document.createElement("calendar-select-year");
+    yearSelect.setAttribute("slot", "heading");
+    yearSelect.setAttribute("max-years", "40");
+
+    const monthEl = calendar.querySelector("calendar-month");
+    if (!monthEl) return;
+
+    calendar.insertBefore(yearSelect, monthEl);
+    calendar.insertBefore(monthSelect, yearSelect);
+  }
+
   function initCallyDatePickers() {
     DATE_FIELD_IDS.forEach((inputId) => {
       const input = document.getElementById(inputId);
       const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
       if (!input || !calendar) return;
+
+      enhanceCalendarNavigation(calendar);
 
       const popover = calendar.closest("[popover]");
 
