@@ -34,6 +34,52 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
+    .section-header {
+      margin: -0.25rem -0.5rem 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border-left-width: 4px;
+      border-left-style: solid;
+    }
+    .section-header--primary {
+      background: color-mix(in oklch, var(--color-primary) 14%, transparent);
+      border-left-color: var(--color-primary);
+    }
+    .section-header--primary .section-title {
+      color: var(--color-primary);
+    }
+    .section-header--accent {
+      background: color-mix(in oklch, var(--color-accent) 14%, transparent);
+      border-left-color: var(--color-accent);
+    }
+    .section-header--accent .section-title {
+      color: var(--color-accent);
+    }
+    .section-header--info {
+      background: color-mix(in oklch, var(--color-info) 14%, transparent);
+      border-left-color: var(--color-info);
+    }
+    .section-header--info .section-title {
+      color: var(--color-info);
+    }
+    .section-header--warning {
+      background: color-mix(in oklch, var(--color-warning) 14%, transparent);
+      border-left-color: var(--color-warning);
+    }
+    .section-header--warning .section-title {
+      color: var(--color-warning);
+    }
+    .section-header--neutral {
+      background: color-mix(in oklch, var(--color-neutral) 14%, transparent);
+      border-left-color: var(--color-neutral);
+    }
+    .section-header--success {
+      background: color-mix(in oklch, #25d366 14%, transparent);
+      border-left-color: #25d366;
+    }
+    .section-header--success .section-title {
+      color: #25d366;
+    }
     .field-row-label {
       color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
     }
@@ -199,15 +245,13 @@
       z-index: 40;
     }
     .autocomplete-list {
-      position: absolute;
-      top: calc(100% + 0.25rem);
-      left: 0;
-      right: 0;
-      z-index: 50;
-      max-height: 16rem;
+      position: fixed;
+      z-index: 100;
+      max-height: min(16rem, calc(100vh - 6rem));
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       margin: 0;
       padding: 0.25rem 0;
       list-style: none;
@@ -254,7 +298,9 @@
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
         <section class="card card-border bg-base-100 shadow-md card-animate card-animate-1">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="section-title text-base-content/80 pb-1 mb-1">Key Update</h2>
+            <div class="section-header section-header--primary">
+              <h2 class="section-title">Key Update</h2>
+            </div>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -290,7 +336,9 @@
 
         <section class="card card-border bg-base-100 shadow-md card-animate card-animate-2">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="section-title text-base-content/80 pb-1 mb-1">Case Basics</h2>
+            <div class="section-header section-header--accent">
+              <h2 class="section-title">Case Basics</h2>
+            </div>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -387,7 +435,9 @@
 
         <section class="card card-border bg-base-100 shadow-md card-animate card-animate-3">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="section-title text-base-content/80 pb-1 mb-1">Biometrics &amp; Travel Documents</h2>
+            <div class="section-header section-header--info">
+              <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
+            </div>
 
             <div class="form-control w-full">
               <div class="field-row field-row--center">
@@ -514,7 +564,9 @@
 
         <section class="card card-border bg-base-100 shadow-md card-animate card-animate-4">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="section-title text-base-content/80 pb-1 mb-1">Adjudication &amp; Mandamus</h2>
+            <div class="section-header section-header--warning">
+              <h2 class="section-title">Adjudication &amp; Mandamus</h2>
+            </div>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -722,7 +774,9 @@
 
         <section class="card card-border bg-base-100 shadow-md card-animate card-animate-5">
           <div class="card-body gap-2 p-4 sm:p-5">
-            <h2 class="section-title text-base-content/80 pb-1 mb-1">SOF Composition</h2>
+            <div class="section-header section-header--neutral">
+              <h2 class="section-title">SOF Composition</h2>
+            </div>
 
             <div class="form-control w-full">
               <div class="field-row">
@@ -847,8 +901,8 @@
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
           <div class="w-full pb-1 mb-1">
             <div class="flex items-start justify-between gap-3">
-              <div>
-                <h2 id="preview-heading" class="section-title text-base-content/80">Live Preview</h2>
+              <div class="section-header section-header--success flex-1 min-w-0 mb-0">
+                <h2 id="preview-heading" class="section-title">Live Preview</h2>
                 <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                   WhatsApp paste preview

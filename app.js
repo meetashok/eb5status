@@ -310,13 +310,10 @@
     });
   }
 
-  function filterSuggestions(suggestions, query, limit = 12) {
+  function filterSuggestions(suggestions, query) {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return suggestions.slice(0, limit);
-
-    return suggestions
-      .filter((item) => item.toLowerCase().includes(normalized))
-      .slice(0, limit);
+    if (!normalized) return suggestions;
+    return suggestions.filter((item) => item.toLowerCase().includes(normalized));
   }
 
   function initAutocomplete(inputId, listId, suggestions) {
@@ -326,11 +323,29 @@
 
     let activeIndex = -1;
     let hideTimer = null;
+    let isOpen = false;
+
+    function positionDropdown() {
+      const rect = input.getBoundingClientRect();
+      if (!list.isConnected || list.parentElement !== document.body) {
+        document.body.appendChild(list);
+      }
+      list.style.left = `${rect.left}px`;
+      list.style.top = `${rect.bottom + 4}px`;
+      list.style.width = `${rect.width}px`;
+    }
+
+    function onViewportChange() {
+      if (isOpen) positionDropdown();
+    }
 
     function hideSuggestions() {
+      isOpen = false;
       list.classList.add("hidden");
       list.innerHTML = "";
       activeIndex = -1;
+      window.removeEventListener("scroll", onViewportChange, true);
+      window.removeEventListener("resize", onViewportChange);
     }
 
     function selectSuggestion(value) {
@@ -366,7 +381,11 @@
         list.appendChild(option);
       });
 
+      isOpen = true;
       list.classList.remove("hidden");
+      positionDropdown();
+      window.addEventListener("scroll", onViewportChange, true);
+      window.addEventListener("resize", onViewportChange);
     }
 
     function updateSuggestions() {
@@ -411,14 +430,6 @@
       event.preventDefault();
       if (hideTimer) clearTimeout(hideTimer);
     });
-
-    list.addEventListener(
-      "wheel",
-      (event) => {
-        event.stopPropagation();
-      },
-      { passive: true }
-    );
   }
 
   async function initAutocompleteFields() {
