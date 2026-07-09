@@ -20,7 +20,18 @@
   const comboCardToggle = document.getElementById("combo-card");
   const themeToggle = document.getElementById("theme-toggle");
 
-  let previewManuallyEdited = false;
+  const SOF_DETAIL_FIELDS = [
+    { checkboxId: "sof-sbloc", wrapId: "sof-sbloc-detail-wrap", inputId: "sof-sbloc-detail", value: "Margin loan / SBLOC" },
+    { checkboxId: "sof-heloc", wrapId: "sof-heloc-detail-wrap", inputId: "sof-heloc-detail", value: "HELOC" },
+    { checkboxId: "sof-sdira", wrapId: "sof-sdira-detail-wrap", inputId: "sof-sdira-detail", value: "SDIRA" },
+    { checkboxId: "sof-personal-loan", wrapId: "sof-personal-loan-detail-wrap", inputId: "sof-personal-loan-detail", value: "Personal loan" },
+    { checkboxId: "sof-other", wrapId: "sof-other-detail-wrap", inputId: "sof-other-detail", value: "Other" },
+  ];
+
+  const SOF_DETAIL_BY_VALUE = Object.fromEntries(
+    SOF_DETAIL_FIELDS.map((field) => [field.value, field.inputId])
+  );
+
   let comboCardValue = "";
   const flatpickrInstances = [];
 
@@ -197,30 +208,32 @@
   function getSofComposition() {
     return getCheckedValues("sof")
       .map((value) => {
-        if (value !== "Other") return value;
-        const detail = getFieldValue("sof-other-detail");
-        return detail ? `Other (${detail})` : "Other";
+        const detailInputId = SOF_DETAIL_BY_VALUE[value];
+        if (!detailInputId) return value;
+        const detail = getFieldValue(detailInputId);
+        return detail ? `${value} (${detail})` : value;
       })
       .join(", ");
   }
 
-  function toggleSofOtherDetail() {
-    const otherCheckbox = document.getElementById("sof-other");
-    const wrap = document.getElementById("sof-other-detail-wrap");
-    const detailInput = document.getElementById("sof-other-detail");
-    if (!otherCheckbox || !wrap || !detailInput) return;
+  function toggleSofConditionalDetails() {
+    SOF_DETAIL_FIELDS.forEach(({ checkboxId, wrapId, inputId }) => {
+      const checkbox = document.getElementById(checkboxId);
+      const wrap = document.getElementById(wrapId);
+      const detailInput = document.getElementById(inputId);
+      if (!checkbox || !wrap || !detailInput) return;
 
-    const show = otherCheckbox.checked;
-    wrap.classList.toggle("hidden", !show);
-    if (!show) detailInput.value = "";
+      const show = checkbox.checked;
+      wrap.classList.toggle("hidden", !show);
+      if (!show) detailInput.value = "";
+    });
   }
 
-  function initSofOtherDetail() {
-    const otherCheckbox = document.getElementById("sof-other");
-    if (!otherCheckbox) return;
-
-    otherCheckbox.addEventListener("change", toggleSofOtherDetail);
-    toggleSofOtherDetail();
+  function initSofConditionalDetails() {
+    form.querySelectorAll('input[name="sof"]').forEach((checkbox) => {
+      checkbox.addEventListener("change", toggleSofConditionalDetails);
+    });
+    toggleSofConditionalDetails();
   }
 
   function hasPreviewContent() {
@@ -333,7 +346,7 @@
   initDatePickers();
   initComboCardToggle();
   initChoiceButtons();
-  initSofOtherDetail();
+  initSofConditionalDetails();
   initOptionalRadioDeselect("i526Status");
   initOptionalRadioDeselect("womCounsel");
   updateCopyButton();

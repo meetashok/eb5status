@@ -52,66 +52,6 @@
               <input type="text" id="project-name" name="projectName" class="input input-bordered w-full min-h-11" placeholder="e.g. Downtown Tower EB-5">
             </label>
 
-            <fieldset>
-              <legend class="label-text font-medium mb-2 block">SOF composition <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
-              <div class="flex flex-wrap gap-2">
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Cash from savings">
-                  Cash from savings
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-equity" value="Equity sale">
-                  Equity sale
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-sbloc" value="Margin loan / SBLOC">
-                  Margin loan / SBLOC
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-heloc" value="HELOC">
-                  HELOC
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-sdira" value="SDIRA">
-                  SDIRA
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-401k" value="401k loan">
-                  401k loan
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-personal-loan" value="Personal loan">
-                  Personal loan
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-gift" value="Gift from friends / family">
-                  Gift from friends / family
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-india" value="Funds from India">
-                  Funds from India
-                </label>
-
-                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-other" value="Other">
-                  Other
-                </label>
-              </div>
-
-              <div id="sof-other-detail-wrap" class="form-control w-full hidden mt-3">
-                <label class="label py-1" for="sof-other-detail"><span class="label-text font-medium">Other SOF detail</span></label>
-                <input type="text" id="sof-other-detail" class="input input-bordered w-full min-h-11" placeholder="Describe your other source of funds">
-              </div>
-            </fieldset>
-
             <label class="form-control w-full">
               <div class="label py-1"><span class="label-text font-medium">Attorney</span></div>
               <input type="text" id="attorney" name="attorney" class="input input-bordered w-full min-h-11" placeholder="e.g. Smith &amp; Associates">
@@ -255,6 +195,94 @@
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
                 <input type="text" id="i485-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-border bg-base-100 shadow-sm">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-primary text-sm uppercase tracking-wider">SOF composition</h2>
+
+            <fieldset>
+              <legend class="label-text font-medium mb-2 block">Source of funds <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
+              <div class="flex flex-wrap gap-2">
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Cash from savings">
+                  Cash from savings
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-equity" value="Equity sale">
+                  Equity sale
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-sbloc" value="Margin loan / SBLOC">
+                  Margin loan / SBLOC
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-heloc" value="HELOC">
+                  HELOC
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-sdira" value="SDIRA">
+                  SDIRA
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-401k" value="401k loan">
+                  401k loan
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-personal-loan" value="Personal loan">
+                  Personal loan
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-gift" value="Gift from friends / family">
+                  Gift from friends / family
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-india" value="Funds from India">
+                  Funds from India
+                </label>
+
+                <label class="choice-btn btn btn-sm btn-ghost bg-base-200/40">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-other" value="Other">
+                  Other
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="space-y-3">
+              <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden">
+                <label class="label py-1" for="sof-sbloc-detail"><span class="label-text font-medium">Margin loan / SBLOC — provider name</span></label>
+                <input type="text" id="sof-sbloc-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Morgan Stanley">
+              </div>
+
+              <div id="sof-heloc-detail-wrap" class="form-control w-full hidden">
+                <label class="label py-1" for="sof-heloc-detail"><span class="label-text font-medium">HELOC — provider name</span></label>
+                <input type="text" id="sof-heloc-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Chase">
+              </div>
+
+              <div id="sof-sdira-detail-wrap" class="form-control w-full hidden">
+                <label class="label py-1" for="sof-sdira-detail"><span class="label-text font-medium">SDIRA — custodian name</span></label>
+                <input type="text" id="sof-sdira-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. Equity Trust">
+              </div>
+
+              <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden">
+                <label class="label py-1" for="sof-personal-loan-detail"><span class="label-text font-medium">Personal loan — from where</span></label>
+                <input type="text" id="sof-personal-loan-detail" class="input input-bordered w-full min-h-11" placeholder="e.g. family member, bank name">
+              </div>
+
+              <div id="sof-other-detail-wrap" class="form-control w-full hidden">
+                <label class="label py-1" for="sof-other-detail"><span class="label-text font-medium">Other SOF detail</span></label>
+                <input type="text" id="sof-other-detail" class="input input-bordered w-full min-h-11" placeholder="Describe your other source of funds">
               </div>
             </div>
           </div>
