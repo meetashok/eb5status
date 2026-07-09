@@ -140,12 +140,45 @@
     });
   }
 
+  function syncChoiceButton(input) {
+    const label = input.closest("label.choice-btn");
+    if (!label) return;
+    label.classList.toggle("btn-primary", input.checked);
+    label.classList.toggle("btn-outline", !input.checked);
+  }
+
+  function syncRadioGroup(groupName) {
+    form.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
+      syncChoiceButton(radio);
+    });
+  }
+
+  function syncAllChoiceButtons() {
+    form.querySelectorAll('label.choice-btn input[type="checkbox"]').forEach(syncChoiceButton);
+    syncRadioGroup("i526Status");
+    syncRadioGroup("womCounsel");
+  }
+
+  function initChoiceButtons() {
+    form.querySelectorAll("label.choice-btn input").forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.type === "radio") {
+          syncRadioGroup(input.name);
+        } else {
+          syncChoiceButton(input);
+        }
+      });
+    });
+    syncAllChoiceButtons();
+  }
+
   function initOptionalRadioDeselect(groupName) {
     form.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
       radio.addEventListener("click", () => {
         if (radio.dataset.wasChecked === "true") {
           radio.checked = false;
           radio.dataset.wasChecked = "false";
+          syncRadioGroup(groupName);
           updatePreviewFromFormIfAllowed();
           return;
         }
@@ -154,6 +187,7 @@
           item.dataset.wasChecked = "false";
         });
         radio.dataset.wasChecked = "true";
+        syncRadioGroup(groupName);
       });
     });
   }
@@ -233,7 +267,10 @@
   }
 
   form.addEventListener("input", updatePreviewFromFormIfAllowed);
-  form.addEventListener("change", updatePreviewFromFormIfAllowed);
+  form.addEventListener("change", () => {
+    syncAllChoiceButtons();
+    updatePreviewFromFormIfAllowed();
+  });
 
   preview.addEventListener("input", () => {
     previewManuallyEdited = true;
@@ -264,6 +301,7 @@
   initTheme();
   initDatePickers();
   initComboCardToggle();
+  initChoiceButtons();
   initOptionalRadioDeselect("i526Status");
   initOptionalRadioDeselect("womCounsel");
   updateCopyButton();
