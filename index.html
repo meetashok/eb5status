@@ -41,6 +41,10 @@
       border-left-width: 4px;
       border-left-style: solid;
     }
+    .section-card {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
     .section-header--primary {
       background: color-mix(in oklch, var(--color-primary) 14%, transparent);
       border-left-color: var(--color-primary);
@@ -296,7 +300,7 @@
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
           <div class="section-header section-header--primary">
             <h2 class="section-title">Key Update</h2>
           </div>
@@ -333,7 +337,7 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-2">
           <div class="section-header section-header--accent">
             <h2 class="section-title">Case Basics</h2>
           </div>
@@ -431,7 +435,7 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-3">
           <div class="section-header section-header--info">
             <h2 class="section-title">Biometrics &amp; Travel Documents</h2>
           </div>
@@ -559,7 +563,7 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-4">
           <div class="section-header section-header--warning">
             <h2 class="section-title">Adjudication &amp; Mandamus</h2>
           </div>
@@ -768,7 +772,7 @@
           </div>
         </section>
 
-        <section class="card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
+        <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-5">
           <div class="section-header section-header--neutral">
             <h2 class="section-title">SOF Composition</h2>
           </div>
@@ -892,7 +896,7 @@
         </section>
       </form>
 
-      <section id="preview-panel" class="card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
+      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-6" aria-labelledby="preview-heading">
         <div class="section-header section-header--success">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
