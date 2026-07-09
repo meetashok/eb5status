@@ -9,10 +9,49 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module" src="https://unpkg.com/cally"></script>
+  <style>
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    @media (min-width: 640px) {
+      .field-row {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .field-row-label {
+        width: 11rem;
+        padding-top: 0.625rem;
+      }
+      .field-row--center {
+        align-items: center;
+      }
+      .field-row--center .field-row-label {
+        padding-top: 0;
+      }
+    }
+    @media (min-width: 1024px) {
+      .field-row-label {
+        width: 12rem;
+      }
+    }
+    .field-row-label {
+      flex-shrink: 0;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+    }
+    .field-row-control {
+      flex: 1;
+      min-width: 0;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-base-200">
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <header class="text-center mb-8 relative">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <header class="text-center mb-6 relative">
       <div class="absolute right-0 top-0">
         <label class="swap swap-rotate btn btn-ghost btn-circle" aria-label="Toggle light or dark theme">
           <input type="checkbox" id="theme-toggle" class="theme-controller" value="light">
@@ -26,327 +65,407 @@
     </header>
 
     <main class="flex flex-col lg:flex-row gap-4">
-      <form id="status-form" class="flex-1 min-w-0 space-y-4" autocomplete="off">
+      <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
         <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-4">
+          <div class="card-body gap-2 p-4 sm:p-5">
             <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Case Basics</h2>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="priority-date">Priority Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--priority-date-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="priority-date-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="priority-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="priority-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--priority-date-anchor">
-                <calendar-date class="cally" data-input-id="priority-date">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
-              </div>
-              <label class="label py-0"><span class="label-text-alt text-base-content/60">Date USCIS received your I-526 / I-526E</span></label>
-            </div>
-
-            <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="regional-center">Regional Center</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                <input type="text" id="regional-center" name="regionalCenter" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. XYZ Regional Center">
+              <div class="field-row">
+                <label class="field-row-label" for="priority-date">Priority Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--priority-date-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="priority-date-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="priority-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="priority-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--priority-date-anchor">
+                    <calendar-date class="cally" data-input-id="priority-date">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                  <p class="text-xs text-base-content/60 mt-1">Date USCIS received your I-526 / I-526E</p>
+                </div>
               </div>
             </div>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="project-name">Project Name</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                <input type="text" id="project-name" name="projectName" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Downtown Tower EB-5">
+              <div class="field-row">
+                <label class="field-row-label" for="regional-center">Regional Center</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                    <input type="text" id="regional-center" name="regionalCenter" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. XYZ Regional Center">
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="attorney">Attorney</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                <input type="text" id="attorney" name="attorney" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Smith &amp; Associates">
+              <div class="field-row">
+                <label class="field-row-label" for="project-name">Project Name</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                    <input type="text" id="project-name" name="projectName" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Downtown Tower EB-5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row">
+                <label class="field-row-label" for="attorney">Attorney</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                    <input type="text" id="attorney" name="attorney" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Smith &amp; Associates">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-4">
+          <div class="card-body gap-2 p-4 sm:p-5">
             <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Biometrics &amp; Travel Documents</h2>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="biometric-notice">Biometric Notice Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--biometric-notice-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="biometric-notice-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="biometric-notice" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="biometric-notice-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--biometric-notice-anchor">
-                <calendar-date class="cally" data-input-id="biometric-notice">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
-              </div>
-            </div>
-
-            <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="ead-approval">EAD Approval Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ead-approval-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ead-approval-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="ead-approval" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="ead-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ead-approval-anchor">
-                <calendar-date class="cally" data-input-id="ead-approval">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
+              <div class="field-row">
+                <label class="field-row-label" for="biometric-notice">Biometric Notice Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--biometric-notice-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="biometric-notice-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="biometric-notice" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="biometric-notice-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--biometric-notice-anchor">
+                    <calendar-date class="cally" data-input-id="biometric-notice">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="ap-approval">AP Approval Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ap-approval-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ap-approval-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="ap-approval" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="ap-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ap-approval-anchor">
-                <calendar-date class="cally" data-input-id="ap-approval">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
+              <div class="field-row">
+                <label class="field-row-label" for="ead-approval">EAD Approval Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ead-approval-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ead-approval-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="ead-approval" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="ead-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ead-approval-anchor">
+                    <calendar-date class="cally" data-input-id="ead-approval">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="form-control w-full">
-              <span class="text-sm font-medium text-base-content/70 mb-2 block" id="combo-card-label">Combo Card</span>
-              <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
-                <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" aria-pressed="false">No</button>
-                <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="Yes" aria-pressed="false">Yes</button>
+              <div class="field-row">
+                <label class="field-row-label" for="ap-approval">AP Approval Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ap-approval-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="ap-approval-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="ap-approval" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="ap-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ap-approval-anchor">
+                    <calendar-date class="cally" data-input-id="ap-approval">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row field-row--center">
+                <span class="field-row-label" id="combo-card-label">Combo Card</span>
+                <div class="field-row-control">
+                  <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
+                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" aria-pressed="false">No</button>
+                    <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="Yes" aria-pressed="false">Yes</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-4">
+          <div class="card-body gap-2 p-4 sm:p-5">
             <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Adjudication &amp; Mandamus</h2>
 
             <div class="form-control w-full">
-              <span class="text-sm font-medium text-base-content/70 mb-2 block">I-526 Adjudication</span>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 Adjudication" id="i526-status-group">
-                <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
-                  <input class="sr-only" type="radio" name="i526Status" value="Approved">
-                  Approved
-                </label>
-                <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
-                  <input class="sr-only" type="radio" name="i526Status" value="RFE">
-                  RFE
-                </label>
-                <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
-                  <input class="sr-only" type="radio" name="i526Status" value="NOID">
-                  NOID
-                </label>
-                <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
-                  <input class="sr-only" type="radio" name="i526Status" value="Denied">
-                  Denied
-                </label>
+              <div class="field-row">
+                <span class="field-row-label">I-526 Adjudication</span>
+                <div class="field-row-control">
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 Adjudication" id="i526-status-group">
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="i526Status" value="Approved">
+                      Approved
+                    </label>
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="i526Status" value="RFE">
+                      RFE
+                    </label>
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="i526Status" value="NOID">
+                      NOID
+                    </label>
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="i526Status" value="Denied">
+                      Denied
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="i526-date">I-526 Adjudication Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i526-date-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i526-date-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="i526-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="i526-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i526-date-anchor">
-                <calendar-date class="cally" data-input-id="i526-date">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
-              </div>
-            </div>
-
-            <fieldset>
-              <legend class="text-sm font-medium text-base-content/70 mb-2 block">WOM Filing <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
-                <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
-                  <input class="sr-only" type="checkbox" name="wom" id="wom-526" value="I-526">
-                  I-526
-                </label>
-
-                <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
-                  <input class="sr-only" type="checkbox" name="wom" id="wom-485" value="I-485">
-                  I-485
-                </label>
-
-                <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
-                  <input class="sr-only" type="checkbox" name="wom" id="wom-ead" value="EAD">
-                  EAD
-                </label>
-
-                <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
-                  <input class="sr-only" type="checkbox" name="wom" id="wom-ap" value="AP">
-                  AP
-                </label>
-              </div>
-            </fieldset>
-
-            <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="wom-date">WOM Filing Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-date-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-date-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="wom-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-              </div>
-              <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
-                <calendar-date class="cally" data-input-id="wom-date">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
+              <div class="field-row">
+                <label class="field-row-label" for="i526-date">I-526 Adjudication Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i526-date-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i526-date-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="i526-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="i526-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i526-date-anchor">
+                    <calendar-date class="cally" data-input-id="i526-date">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <fieldset class="form-control w-full">
-              <legend class="text-sm font-medium text-base-content/70 mb-2 block" id="wom-counsel-label">WOM Counsel</legend>
-              <div class="join w-full max-w-xs" role="radiogroup" aria-labelledby="wom-counsel-label">
-                <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 flex-1 justify-center">
-                  <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
-                  Attorney
-                </label>
-                <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 flex-1 justify-center">
-                  <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-prose" value="Pro se">
-                  Pro se
-                </label>
+            <div class="form-control w-full">
+              <div class="field-row">
+                <div class="field-row-label">WOM Filing <span class="font-normal text-base-content/60">(tap all that apply)</span></div>
+                <div class="field-row-control">
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                    <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
+                      <input class="sr-only" type="checkbox" name="wom" id="wom-526" value="I-526">
+                      I-526
+                    </label>
+
+                    <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
+                      <input class="sr-only" type="checkbox" name="wom" id="wom-485" value="I-485">
+                      I-485
+                    </label>
+
+                    <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
+                      <input class="sr-only" type="checkbox" name="wom" id="wom-ead" value="EAD">
+                      EAD
+                    </label>
+
+                    <label class="choice-btn btn btn-soft btn-primary btn-sm w-full min-h-11 justify-center">
+                      <input class="sr-only" type="checkbox" name="wom" id="wom-ap" value="AP">
+                      AP
+                    </label>
+                  </div>
+                </div>
               </div>
-            </fieldset>
+            </div>
 
             <div class="form-control w-full">
-              <label class="text-sm font-medium text-base-content/70 mb-2 block" for="i485-date">I-485 Adjudication Date</label>
-              <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i485-date-anchor">
-                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i485-date-popover" aria-label="Open calendar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </button>
-                <input type="text" id="i485-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              <div class="field-row">
+                <label class="field-row-label" for="wom-date">WOM Filing Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-date-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-date-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="wom-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
+                    <calendar-date class="cally" data-input-id="wom-date">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
               </div>
-              <div popover id="i485-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i485-date-anchor">
-                <calendar-date class="cally" data-input-id="i485-date">
-                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row field-row--center">
+                <div class="field-row-label" id="wom-counsel-label">WOM Counsel</div>
+                <div class="field-row-control">
+                  <div class="join w-full max-w-xs" role="radiogroup" aria-labelledby="wom-counsel-label">
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 flex-1 justify-center">
+                      <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
+                      Attorney
+                    </label>
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 flex-1 justify-center">
+                      <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-prose" value="Pro se">
+                      Pro se
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row">
+                <label class="field-row-label" for="i485-date">I-485 Adjudication Date</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i485-date-anchor">
+                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i485-date-popover" aria-label="Open calendar">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input type="text" id="i485-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                  </div>
+                  <div popover id="i485-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i485-date-anchor">
+                    <calendar-date class="cally" data-input-id="i485-date">
+                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                      <calendar-month></calendar-month>
+                    </calendar-date>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section class="card card-border bg-base-100 shadow-md">
-          <div class="card-body gap-4">
+          <div class="card-body gap-2 p-4 sm:p-5">
             <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">SOF Composition</h2>
 
-            <fieldset>
-              <legend class="text-sm font-medium text-base-content/70 mb-2 block">Source of Funds <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
-              <div class="flex flex-wrap gap-2">
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Cash from savings">
-                  Cash from savings
-                </label>
+            <div class="form-control w-full">
+              <div class="field-row">
+                <div class="field-row-label">Source of Funds <span class="font-normal text-base-content/60">(tap all that apply)</span></div>
+                <div class="field-row-control">
+                  <div class="flex flex-wrap gap-2">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Cash from savings">
+                      Cash from savings
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-equity" value="Equity sale">
-                  Equity sale
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-equity" value="Equity sale">
+                      Equity sale
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-sbloc" value="Margin loan / SBLOC">
-                  Margin loan / SBLOC
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-sbloc" value="Margin loan / SBLOC">
+                      Margin loan / SBLOC
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-heloc" value="HELOC">
-                  HELOC
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-heloc" value="HELOC">
+                      HELOC
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-sdira" value="SDIRA">
-                  SDIRA
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-sdira" value="SDIRA">
+                      SDIRA
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-401k" value="401k loan">
-                  401k loan
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-401k" value="401k loan">
+                      401k loan
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-personal-loan" value="Personal loan">
-                  Personal loan
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-personal-loan" value="Personal loan">
+                      Personal loan
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-gift" value="Gift from friends / family">
-                  Gift from friends / family
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-gift" value="Gift from friends / family">
+                      Gift from friends / family
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-india" value="Funds from India">
-                  Funds from India
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-india" value="Funds from India">
+                      Funds from India
+                    </label>
 
-                <label class="choice-btn btn btn-sm btn-soft btn-primary">
-                  <input class="sr-only" type="checkbox" name="sof" id="sof-other" value="Other">
-                  Other
-                </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary">
+                      <input class="sr-only" type="checkbox" name="sof" id="sof-other" value="Other">
+                      Other
+                    </label>
+                  </div>
+                </div>
               </div>
-            </fieldset>
+            </div>
 
-            <div class="space-y-3">
+            <div class="space-y-2">
               <div id="sof-sbloc-detail-wrap" class="form-control w-full hidden">
-                <label class="text-sm font-medium text-base-content/70 mb-2 block" for="sof-sbloc-detail">Margin Loan / SBLOC — Provider Name</label>
-                <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                  <input type="text" id="sof-sbloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Morgan Stanley">
+                <div class="field-row">
+                  <label class="field-row-label" for="sof-sbloc-detail">Margin Loan / SBLOC — Provider Name</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="sof-sbloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Morgan Stanley">
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div id="sof-heloc-detail-wrap" class="form-control w-full hidden">
-                <label class="text-sm font-medium text-base-content/70 mb-2 block" for="sof-heloc-detail">HELOC — Provider Name</label>
-                <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                  <input type="text" id="sof-heloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Chase">
+                <div class="field-row">
+                  <label class="field-row-label" for="sof-heloc-detail">HELOC — Provider Name</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="sof-heloc-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Chase">
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div id="sof-sdira-detail-wrap" class="form-control w-full hidden">
-                <label class="text-sm font-medium text-base-content/70 mb-2 block" for="sof-sdira-detail">SDIRA — Custodian Name</label>
-                <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                  <input type="text" id="sof-sdira-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Equity Trust">
+                <div class="field-row">
+                  <label class="field-row-label" for="sof-sdira-detail">SDIRA — Custodian Name</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="sof-sdira-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Equity Trust">
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div id="sof-personal-loan-detail-wrap" class="form-control w-full hidden">
-                <label class="text-sm font-medium text-base-content/70 mb-2 block" for="sof-personal-loan-detail">Personal Loan — From Where</label>
-                <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                  <input type="text" id="sof-personal-loan-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. family member, bank name">
+                <div class="field-row">
+                  <label class="field-row-label" for="sof-personal-loan-detail">Personal Loan — From Where</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="sof-personal-loan-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. family member, bank name">
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div id="sof-other-detail-wrap" class="form-control w-full hidden">
-                <label class="text-sm font-medium text-base-content/70 mb-2 block" for="sof-other-detail">Other SOF Detail</label>
-                <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                  <input type="text" id="sof-other-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="Describe your other source of funds">
+                <div class="field-row">
+                  <label class="field-row-label" for="sof-other-detail">Other SOF Detail</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="sof-other-detail" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="Describe your other source of funds">
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
