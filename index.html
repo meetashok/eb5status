@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Draft structured EB-5 status updates for WhatsApp groups">
+  <title>EB-5 Status Update Draft</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>EB-5 Status Update</h1>
+      <p class="subtitle">Fill in your details, preview the message, and copy it to your WhatsApp group.</p>
+    </header>
+
+    <main>
+      <form id="status-form" class="form" autocomplete="off">
+        <section class="form-section">
+          <h2>Case basics</h2>
+
+          <label class="field">
+            <span class="field-label">Priority date</span>
+            <input type="date" id="priority-date" name="priorityDate">
+          </label>
+
+          <label class="field">
+            <span class="field-label">Regional Center</span>
+            <input type="text" id="regional-center" name="regionalCenter" placeholder="e.g. XYZ Regional Center">
+          </label>
+
+          <label class="field">
+            <span class="field-label">Project name</span>
+            <input type="text" id="project-name" name="projectName" placeholder="e.g. Downtown Tower EB-5">
+          </label>
+
+          <fieldset class="field">
+            <legend class="field-label">SOF composition <span class="hint">(select all that apply)</span></legend>
+            <div class="checkbox-grid" id="sof-options">
+              <label class="checkbox"><input type="checkbox" name="sof" value="Employment / salary"> Employment / salary</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Business income"> Business income</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Real estate sale"> Real estate sale</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Stocks / securities sale"> Stocks / securities sale</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Savings / accumulated funds"> Savings / accumulated funds</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Inheritance"> Inheritance</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Gift"> Gift</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Loan"> Loan</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Retirement funds"> Retirement funds</label>
+              <label class="checkbox"><input type="checkbox" name="sof" value="Other"> Other</label>
+            </div>
+          </fieldset>
+
+          <label class="field">
+            <span class="field-label">Attorney</span>
+            <input type="text" id="attorney" name="attorney" placeholder="e.g. Smith &amp; Associates">
+          </label>
+        </section>
+
+        <section class="form-section">
+          <h2>Biometrics &amp; travel documents</h2>
+
+          <label class="field">
+            <span class="field-label">Biometric notice date</span>
+            <input type="date" id="biometric-notice" name="biometricNotice">
+          </label>
+
+          <label class="field">
+            <span class="field-label">EAD approval date</span>
+            <input type="date" id="ead-approval" name="eadApproval">
+          </label>
+
+          <label class="field">
+            <span class="field-label">AP approval date</span>
+            <input type="date" id="ap-approval" name="apApproval">
+          </label>
+
+          <fieldset class="field">
+            <legend class="field-label">Combo card</legend>
+            <div class="radio-row">
+              <label class="radio"><input type="radio" name="comboCard" value="Yes"> Yes</label>
+              <label class="radio"><input type="radio" name="comboCard" value="No"> No</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="form-section">
+          <h2>Adjudication &amp; mandamus</h2>
+
+          <div class="field-group">
+            <label class="field">
+              <span class="field-label">I-526 adjudication</span>
+              <select id="i526-status" name="i526Status">
+                <option value="">— Select status —</option>
+                <option value="Approved">Approved</option>
+                <option value="RFE">RFE</option>
+                <option value="NOID">NOID</option>
+                <option value="Denied">Denied</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">I-526 adjudication date</span>
+              <input type="date" id="i526-date" name="i526Date">
+            </label>
+          </div>
+
+          <fieldset class="field">
+            <legend class="field-label">WOM filing <span class="hint">(select all that apply)</span></legend>
+            <div class="checkbox-grid" id="wom-options">
+              <label class="checkbox"><input type="checkbox" name="wom" value="I-526"> I-526</label>
+              <label class="checkbox"><input type="checkbox" name="wom" value="I-485"> I-485</label>
+              <label class="checkbox"><input type="checkbox" name="wom" value="EAD"> EAD</label>
+              <label class="checkbox"><input type="checkbox" name="wom" value="AP"> AP</label>
+            </div>
+          </fieldset>
+
+          <label class="field">
+            <span class="field-label">WOM filing date</span>
+            <input type="date" id="wom-date" name="womDate">
+          </label>
+
+          <fieldset class="field">
+            <legend class="field-label">WOM counsel</legend>
+            <div class="radio-row">
+              <label class="radio"><input type="radio" name="womCounsel" value="Attorney"> Attorney</label>
+              <label class="radio"><input type="radio" name="womCounsel" value="Pro se"> Pro se</label>
+            </div>
+          </fieldset>
+
+          <label class="field">
+            <span class="field-label">I-485 adjudication date</span>
+            <input type="date" id="i485-date" name="i485Date">
+          </label>
+        </section>
+      </form>
+
+      <section class="preview-section" aria-labelledby="preview-heading">
+        <div class="preview-header">
+          <h2 id="preview-heading">Message preview</h2>
+          <button type="button" id="refresh-preview" class="btn btn-secondary hidden" hidden>
+            Refresh from form
+          </button>
+        </div>
+        <p class="preview-hint">You can edit this text directly. Changes here won't update the form fields above.</p>
+        <textarea
+          id="preview"
+          class="preview"
+          rows="14"
+          placeholder="Your status update will appear here as you fill in the form…"
+          aria-label="Status update message preview"
+        ></textarea>
+
+        <div class="actions">
+          <button type="button" id="copy-btn" class="btn btn-primary" disabled>
+            Copy to clipboard
+          </button>
+          <span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>All fields are optional. Fill in whatever applies to your case.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
