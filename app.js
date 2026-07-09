@@ -1346,7 +1346,7 @@
       ["Project category", getProjectCategory()],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
-      ["Attorney", getFieldValue("attorney")],
+      ["Immigration attorney", getFieldValue("attorney")],
       ["Used agent", getUsedAgentLine()],
       ["Service center", getRadioValue("applicationLocation")],
       ["Biometric notice", formatPendingDateValue("biometric-notice", "biometric-notice-pending")],
