@@ -27,7 +27,7 @@ Then visit `http://localhost:8080`.
 - All fields optional — copy is enabled when at least one field has content
 - **Tailwind CSS + DaisyUI** components via CDN (no build step)
 - **Dark/light theme toggle** (default dark), preference saved in `localStorage`
-- **Flatpickr** date fields with calendar icon on the left
+- **Cally** calendar date fields (DaisyUI) with calendar icon on the left — type or pick
 - Chip multi-select for SOF; equal-width pills for WOM filing
 - Segmented option picker for I-526 adjudication status
 - Side-by-side live preview on desktop
@@ -36,23 +36,23 @@ Then visit `http://localhost:8080`.
 
 - [Tailwind CSS](https://tailwindcss.com/) (browser CDN)
 - [DaisyUI](https://daisyui.com/) (CDN)
-- [Flatpickr](https://flatpickr.js.org/) (CDN)
+- [Cally](https://wicky.nillia.ms/cally/) (CDN web component, styled via DaisyUI `cally` class)
 - Vanilla JavaScript — no build step, GitHub Pages ready
 
 ## Fields
 
 | Field | Type |
 |-------|------|
-| Priority date | Date (Flatpickr) |
+| Priority date | Date (Cally calendar) |
 | Regional Center | Text |
 | Project name | Text |
 | SOF composition | Multi-select chips |
 | Attorney | Text |
-| Biometric notice | Date (Flatpickr) |
-| EAD approval date | Date (Flatpickr) |
-| AP approval date | Date (Flatpickr) |
+| Biometric notice | Date (Cally calendar) |
+| EAD approval date | Date (Cally calendar) |
+| AP approval date | Date (Cally calendar) |
 | Combo card | Yes / No |
 | I-526 adjudication | Option picker (Approved, RFE, NOID, Denied) + date |
 | WOM filing | Multi-select pills (I-526, I-485, EAD, AP) + date |
 | WOM counsel | Attorney / Pro se |
-| I-485 adjudication date | Date (Flatpickr) |
+| I-485 adjudication date | Date (Cally calendar) |

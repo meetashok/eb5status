@@ -2,14 +2,14 @@
   "use strict";
 
   const THEME_KEY = "eb5-theme";
-  const DATE_WRAP_IDS = [
-    "priority-date-wrap",
-    "biometric-notice-wrap",
-    "ead-approval-wrap",
-    "ap-approval-wrap",
-    "i526-date-wrap",
-    "wom-date-wrap",
-    "i485-date-wrap",
+  const DATE_FIELD_IDS = [
+    "priority-date",
+    "biometric-notice",
+    "ead-approval",
+    "ap-approval",
+    "i526-date",
+    "wom-date",
+    "i485-date",
   ];
 
   const form = document.getElementById("status-form");
@@ -33,7 +33,7 @@
   );
 
   let comboCardValue = "";
-  const flatpickrInstances = [];
+  let previewManuallyEdited = false;
 
   function formatDate(isoDate) {
     if (!isoDate) return "";
@@ -44,6 +44,21 @@
       day: "numeric",
       year: "numeric",
     });
+  }
+
+  function parseIsoDate(value) {
+    const trimmed = String(value).trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return "";
+    const [year, month, day] = trimmed.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return "";
+    }
+    return trimmed;
   }
 
   function getFieldValue(id) {
@@ -63,60 +78,6 @@
     return selected ? selected.value : "";
   }
 
-  function getThemeColors() {
-    const probe = document.createElement("div");
-    probe.className = "bg-base-100 text-base-content border-base-300";
-    probe.style.cssText = "position:absolute;left:-9999px;";
-    document.body.appendChild(probe);
-    const styles = getComputedStyle(probe);
-    const colors = {
-      background: styles.backgroundColor,
-      color: styles.color,
-      border: styles.borderColor,
-    };
-    document.body.removeChild(probe);
-    return colors;
-  }
-
-  function applyFlatpickrTheme(calendarRoot) {
-    if (!calendarRoot) return;
-    const colors = getThemeColors();
-
-    calendarRoot.style.background = colors.background;
-    calendarRoot.style.color = colors.color;
-    calendarRoot.style.borderColor = colors.border;
-
-    const textSelectors = [
-      ".flatpickr-day",
-      ".flatpickr-weekday",
-      ".flatpickr-current-month",
-      ".flatpickr-monthDropdown-months",
-      ".numInput",
-    ];
-
-    textSelectors.forEach((selector) => {
-      calendarRoot.querySelectorAll(selector).forEach((el) => {
-        el.style.color = colors.color;
-        if (el.tagName === "SELECT") {
-          el.style.backgroundColor = colors.background;
-        }
-      });
-    });
-
-    calendarRoot.querySelectorAll(".numInputWrapper span").forEach((el) => {
-      el.style.borderTopColor = colors.color;
-      el.style.borderBottomColor = colors.color;
-    });
-
-    calendarRoot.querySelectorAll(".flatpickr-prev-month svg, .flatpickr-next-month svg").forEach((svg) => {
-      svg.style.fill = colors.color;
-    });
-  }
-
-  function syncFlatpickrTheme() {
-    document.querySelectorAll(".flatpickr-calendar").forEach(applyFlatpickrTheme);
-  }
-
   function initTheme() {
     const saved = localStorage.getItem(THEME_KEY) || "dark";
     document.documentElement.setAttribute("data-theme", saved);
@@ -126,28 +87,50 @@
       const next = themeToggle.checked ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       localStorage.setItem(THEME_KEY, next);
-      syncFlatpickrTheme();
     });
   }
 
-  function initDatePickers() {
-    DATE_WRAP_IDS.forEach((wrapId) => {
-      const instance = flatpickr(`#${wrapId}`, {
-        wrap: true,
-        dateFormat: "Y-m-d",
-        disableMobile: true,
-        position: "auto left",
-        clickOpens: true,
-        allowInput: true,
-        onReady: (_dates, _str, fp) => {
-          applyFlatpickrTheme(fp.calendarContainer);
-        },
-        onOpen: (_dates, _str, fp) => {
-          applyFlatpickrTheme(fp.calendarContainer);
-        },
-        onChange: updatePreviewFromFormIfAllowed,
+  function syncCalendarFromInput(input, calendar) {
+    const parsed = parseIsoDate(input.value);
+    if (parsed) {
+      calendar.value = parsed;
+      return;
+    }
+    if (!input.value.trim()) {
+      calendar.value = "";
+    }
+  }
+
+  function initCallyDatePickers() {
+    DATE_FIELD_IDS.forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
+      if (!input || !calendar) return;
+
+      const popover = calendar.closest("[popover]");
+
+      calendar.addEventListener("change", () => {
+        if (calendar.value) {
+          input.value = calendar.value;
+          updatePreviewFromFormIfAllowed();
+        }
+        if (popover && typeof popover.hidePopover === "function") {
+          popover.hidePopover();
+        }
       });
-      flatpickrInstances.push(instance);
+
+      input.addEventListener("input", () => {
+        syncCalendarFromInput(input, calendar);
+        updatePreviewFromFormIfAllowed();
+      });
+
+      input.addEventListener("blur", () => {
+        const parsed = parseIsoDate(input.value);
+        if (parsed) {
+          input.value = parsed;
+          calendar.value = parsed;
+        }
+      });
     });
   }
 
@@ -382,7 +365,7 @@
   });
 
   initTheme();
-  initDatePickers();
+  initCallyDatePickers();
   initComboCardToggle();
   initChoiceButtons();
   initSofConditionalDetails();

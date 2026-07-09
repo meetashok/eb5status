@@ -7,25 +7,8 @@
   <title>EB-5 Status Update Draft</title>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <style>
-    /* Flatpickr ships light-theme CSS; inherit colors from JS-themed calendar root */
-    .flatpickr-calendar .flatpickr-current-month,
-    .flatpickr-calendar .flatpickr-weekday,
-    .flatpickr-calendar .flatpickr-day,
-    .flatpickr-calendar .numInput,
-    .flatpickr-calendar .flatpickr-monthDropdown-months {
-      color: inherit;
-    }
-    .flatpickr-calendar .flatpickr-monthDropdown-months {
-      background: inherit;
-    }
-    .flatpickr-calendar .flatpickr-prev-month svg,
-    .flatpickr-calendar .flatpickr-next-month svg {
-      fill: currentColor;
-    }
-  </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script type="module" src="https://unpkg.com/cally"></script>
 </head>
 <body class="min-h-screen bg-base-200">
   <div class="max-w-6xl mx-auto px-4 py-8">
@@ -50,11 +33,18 @@
 
             <div class="form-control w-full">
               <label class="label py-1" for="priority-date"><span class="label-text font-medium">Priority date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="priority-date-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--priority-date-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="priority-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="priority-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="priority-date" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="priority-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--priority-date-anchor">
+                <calendar-date class="cally" data-input-id="priority-date">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
               <label class="label py-0"><span class="label-text-alt text-base-content/60">Date USCIS received your I-526 / I-526E</span></label>
             </div>
@@ -82,31 +72,52 @@
 
             <div class="form-control w-full">
               <label class="label py-1" for="biometric-notice"><span class="label-text font-medium">Biometric notice date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="biometric-notice-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--biometric-notice-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="biometric-notice-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="biometric-notice" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="biometric-notice" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="biometric-notice-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--biometric-notice-anchor">
+                <calendar-date class="cally" data-input-id="biometric-notice">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
 
             <div class="form-control w-full">
               <label class="label py-1" for="ead-approval"><span class="label-text font-medium">EAD approval date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="ead-approval-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--ead-approval-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="ead-approval-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ead-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="ead-approval" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="ead-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ead-approval-anchor">
+                <calendar-date class="cally" data-input-id="ead-approval">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
 
             <div class="form-control w-full">
               <label class="label py-1" for="ap-approval"><span class="label-text font-medium">AP approval date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="ap-approval-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--ap-approval-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="ap-approval-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ap-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="ap-approval" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="ap-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--ap-approval-anchor">
+                <calendar-date class="cally" data-input-id="ap-approval">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
 
@@ -148,11 +159,18 @@
 
             <div class="form-control w-full">
               <label class="label py-1" for="i526-date"><span class="label-text font-medium">I-526 adjudication date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="i526-date-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--i526-date-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="i526-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i526-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="i526-date" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="i526-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i526-date-anchor">
+                <calendar-date class="cally" data-input-id="i526-date">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
 
@@ -183,11 +201,18 @@
 
             <div class="form-control w-full">
               <label class="label py-1" for="wom-date"><span class="label-text font-medium">WOM filing date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="wom-date-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--wom-date-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="wom-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="wom-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="wom-date" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
+                <calendar-date class="cally" data-input-id="wom-date">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
 
@@ -207,11 +232,18 @@
 
             <div class="form-control w-full">
               <label class="label py-1" for="i485-date"><span class="label-text font-medium">I-485 adjudication date</span></label>
-              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="i485-date-wrap">
-                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+              <div class="join w-full min-h-11" style="anchor-name:--i485-date-anchor">
+                <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11" popovertarget="i485-date-popover" aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i485-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
+                <input type="text" id="i485-date" class="join-item input input-bordered grow min-h-11 w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+              </div>
+              <div popover id="i485-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i485-date-anchor">
+                <calendar-date class="cally" data-input-id="i485-date">
+                  <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
               </div>
             </div>
           </div>
@@ -339,7 +371,6 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="app.js"></script>
 </body>
 </html>
