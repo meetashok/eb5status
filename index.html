@@ -17,18 +17,18 @@
   <style>
     [data-theme="dark"] {
       color-scheme: dark;
-      --color-base-100: #131922;
-      --color-base-200: #0B0F14;
-      --color-base-300: #1A2332;
-      --color-base-content: #E8ECF1;
-      --color-primary: #3B9B8F;
-      --color-primary-content: #FFFFFF;
+      --color-base-100: #161D28;
+      --color-base-200: #0E131A;
+      --color-base-300: #243041;
+      --color-base-content: #F2F5F8;
+      --color-primary: #4DB8AA;
+      --color-primary-content: #06201C;
       --color-secondary: #F0A55E;
       --color-secondary-content: #1B2430;
       --color-success: #25D366;
       --color-error: #F87171;
-      --color-info: #3B9B8F;
-      --color-neutral: #8899AA;
+      --color-info: #4DB8AA;
+      --color-neutral: #A8B6C4;
     }
     [data-theme="light"] {
       color-scheme: light;
@@ -122,17 +122,24 @@
       color: #25d366;
     }
     .field-row-label {
-      color: color-mix(in oklch, var(--color-base-content) 75%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 88%, transparent);
+    }
+    [data-theme="dark"] .field-row-label {
+      color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
+    }
+    [data-theme="dark"] input::placeholder,
+    [data-theme="dark"] textarea::placeholder {
+      color: color-mix(in oklch, var(--color-base-content) 48%, transparent);
     }
     .choice-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-      background: transparent;
-      border: 1px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
-      color: var(--color-base-content);
-      opacity: 0.7;
+      background: color-mix(in oklch, var(--color-base-content) 4%, transparent);
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 22%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
+      opacity: 1;
     }
     .choice-btn.tooltip {
       display: inline-flex;
@@ -140,13 +147,22 @@
       justify-content: center;
     }
     .choice-btn:has(input:checked) {
-      background: color-mix(in oklch, var(--color-primary) 20%, transparent);
+      background: color-mix(in oklch, var(--color-primary) 22%, transparent);
       border-color: var(--color-primary);
       color: var(--color-primary);
       opacity: 1;
       font-weight: 600;
       box-shadow: 0 0 0 1px var(--color-primary),
                   0 2px 8px color-mix(in oklch, var(--color-primary) 15%, transparent);
+    }
+    [data-theme="dark"] .choice-btn {
+      background: color-mix(in oklch, var(--color-base-content) 7%, transparent);
+      border-color: color-mix(in oklch, var(--color-base-content) 28%, transparent);
+      color: #F2F5F8;
+    }
+    [data-theme="dark"] .choice-btn:has(input:checked) {
+      background: color-mix(in oklch, var(--color-primary) 24%, transparent);
+      color: #7FE0D3;
     }
     .choice-btn:active {
       transform: scale(0.98);
@@ -195,33 +211,27 @@
     #status-form .section-card .card-body {
       overflow: visible;
     }
-    .progress-bar-row {
+    .section-progress {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      justify-content: center;
+      gap: 0.55rem;
       margin-bottom: 1rem;
+      min-height: 1.25rem;
     }
-    .progress-bar-wrap {
-      height: 3px;
-      background: var(--color-base-300);
+    .section-progress-dot {
+      width: 0.625rem;
+      height: 0.625rem;
       border-radius: 999px;
-      overflow: hidden;
-      flex: 1;
-      min-width: 0;
+      border: 1.5px solid color-mix(in oklch, var(--color-base-content) 28%, transparent);
+      background: transparent;
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
-      border-radius: 999px;
-      transition: width 0.4s ease;
-      width: 0%;
-    }
-    .progress-count {
-      flex-shrink: 0;
-      font-size: 0.75rem;
-      line-height: 1;
-      color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
-      font-variant-numeric: tabular-nums;
+    .section-progress-dot.is-filled {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      transform: scale(1.15);
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 22%, transparent);
     }
     .help-tip {
       display: inline-flex;
@@ -588,7 +598,6 @@
   <div class="max-w-6xl mx-auto px-4 py-6">
     <header class="page-header-band text-center mb-6 relative">
       <div class="absolute right-0 top-0 flex items-center gap-2">
-        <button type="button" id="clear-form-btn" class="clear-form-link hidden sm:inline">Clear form</button>
         <label class="swap swap-rotate btn btn-ghost btn-circle text-base-content border border-base-content/20 hover:border-base-content/40" aria-label="Toggle light or dark theme">
           <input type="checkbox" id="theme-toggle" class="theme-controller" value="light">
           <svg class="swap-off h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -607,11 +616,18 @@
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <div class="progress-bar-row" aria-hidden="true">
-          <div class="progress-bar-wrap">
-            <div class="progress-bar-fill" id="progress-fill"></div>
-          </div>
-          <span class="progress-count" id="progress-count">0/15</span>
+        <div
+          id="section-progress"
+          class="section-progress tooltip tooltip-bottom z-50"
+          data-tip="Key Update, Case Basics, Biometrics, Adjudication, SOF"
+          role="img"
+          aria-label="Form section progress"
+        >
+          <span class="section-progress-dot" data-section="key-update" aria-hidden="true"></span>
+          <span class="section-progress-dot" data-section="case-basics" aria-hidden="true"></span>
+          <span class="section-progress-dot" data-section="biometrics" aria-hidden="true"></span>
+          <span class="section-progress-dot" data-section="adjudication" aria-hidden="true"></span>
+          <span class="section-progress-dot" data-section="sof" aria-hidden="true"></span>
         </div>
 
         <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-1">
@@ -719,12 +735,12 @@
                 <div class="field-row-control">
                   <div class="date-with-pending date-with-pending--stacked">
                     <div class="date-state-toggles">
-                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                        <input type="checkbox" class="checkbox checkbox-sm" id="i956f-pending">
+                      <label class="label cursor-pointer gap-2 date-state-toggle py-0">
+                        <input type="checkbox" class="toggle toggle-sm toggle-primary" id="i956f-pending">
                         <span class="label-text text-sm whitespace-nowrap">Pending</span>
                       </label>
-                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                        <input type="checkbox" class="checkbox checkbox-sm" id="i956f-approved-before-pd">
+                      <label class="label cursor-pointer gap-2 date-state-toggle py-0">
+                        <input type="checkbox" class="toggle toggle-sm toggle-primary" id="i956f-approved-before-pd">
                         <span class="label-text text-sm whitespace-nowrap">Approved before PD</span>
                       </label>
                     </div>
@@ -1411,15 +1427,16 @@
               <h2 id="preview-heading" class="section-title">Live Preview</h2>
               <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                WhatsApp paste preview
+                Live share preview
               </p>
             </div>
-            <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden shrink-0" hidden>Refresh from form</button>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" id="clear-form-btn" class="btn btn-ghost btn-sm border border-base-content/20">Clear form</button>
+              <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden" hidden>Refresh from form</button>
+            </div>
           </div>
         </div>
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
-          <p class="text-sm text-base-content/60 -mt-2 mb-1">Edit freely. Changes here won't update the form.</p>
-
           <div class="stats stats-vertical sm:stats-horizontal shadow w-full stats">
             <div class="stat py-3 px-4">
               <div class="stat-title text-xs">Key update</div>
@@ -1430,7 +1447,7 @@
               <div id="stat-days-pd" class="stat-value text-sm font-semibold">—</div>
             </div>
             <div class="stat py-3 px-4">
-              <div class="stat-title text-xs">Fields filled</div>
+              <div class="stat-title text-xs">Sections filled</div>
               <div id="stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
             </div>
           </div>
@@ -1445,9 +1462,11 @@
             ></textarea>
           </div>
 
+          <p class="text-sm text-base-content/60 -mt-1 mb-0">Edit freely. Changes here won't update the form.</p>
+
           <div class="flex items-center gap-3 flex-wrap mt-auto">
             <button type="button" id="copy-btn" class="btn flex-1 min-h-11" disabled>
-              Copy to clipboard
+              Copy to share
             </button>
             <button type="button" id="share-btn" class="btn btn-ghost border border-base-content/20 min-h-11 gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
@@ -1458,35 +1477,37 @@
       </section>
     </main>
 
-    <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-3">
-      <div class="space-y-1 text-sm text-base-content/60">
-        <p class="font-medium text-base-content/70">Community Resources</p>
-        <ul class="space-y-0.5 list-none">
-          <li>
-            EB-5 FAQs:
-            <a class="underline hover:text-base-content/80" href="https://bit.ly/EB5faqs" target="_blank" rel="noopener noreferrer">bit.ly/EB5faqs</a>
-          </li>
-          <li>
-            I-829 FAQs:
-            <a class="underline hover:text-base-content/80" href="https://bit.ly/829info" target="_blank" rel="noopener noreferrer">bit.ly/829info</a>
-          </li>
-        </ul>
-      </div>
-      <div class="space-y-1.5">
-        <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
-        <p>
-          <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
-        </p>
-        <p>
-          Open source on
-          <a class="underline hover:text-base-content/70" href="https://github.com/meetashok/eb5status" target="_blank" rel="noopener noreferrer">GitHub</a>.
-          Contributions and pull requests welcome.
-        </p>
-        <p>
-          Have feedback?
-          <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
-          or ping me on WhatsApp if you have my number.
-        </p>
+    <footer class="page-footer-notes mt-8 max-w-4xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-left lg:text-left">
+        <div class="space-y-1 text-sm text-base-content/60">
+          <p class="font-medium text-base-content/70">Community Resources</p>
+          <ul class="space-y-0.5 list-none">
+            <li>
+              EB-5 FAQs:
+              <a class="underline hover:text-base-content/80" href="https://bit.ly/EB5faqs" target="_blank" rel="noopener noreferrer">bit.ly/EB5faqs</a>
+            </li>
+            <li>
+              I-829 FAQs:
+              <a class="underline hover:text-base-content/80" href="https://bit.ly/829info" target="_blank" rel="noopener noreferrer">bit.ly/829info</a>
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-1.5 text-sm text-base-content/60 lg:text-right">
+          <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
+          <p>
+            <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
+          </p>
+          <p>
+            Open source on
+            <a class="underline hover:text-base-content/70" href="https://github.com/meetashok/eb5status" target="_blank" rel="noopener noreferrer">GitHub</a>.
+            Contributions and pull requests welcome.
+          </p>
+          <p>
+            Have feedback?
+            <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
+            or ping me on WhatsApp if you have my number.
+          </p>
+        </div>
       </div>
     </footer>
   </div>
@@ -1514,7 +1535,7 @@
           <div id="mobile-stat-days-pd" class="stat-value text-sm font-semibold">—</div>
         </div>
         <div class="stat py-3 px-4">
-          <div class="stat-title text-xs">Fields filled</div>
+          <div class="stat-title text-xs">Sections filled</div>
           <div id="mobile-stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
         </div>
       </div>
@@ -1527,8 +1548,9 @@
           aria-label="Mobile status update preview"
         ></textarea>
       </div>
+      <p class="text-sm text-base-content/60">Edit freely. Changes here won't update the form.</p>
       <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11" disabled>
-        Copy to clipboard
+        Copy to share
       </button>
       <button type="button" id="mobile-share-btn" class="btn btn-ghost border border-base-content/20 w-full min-h-11 gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
@@ -1566,5 +1588,7 @@
   </dialog>
 
   <script src="app.js"></script>
+  <script data-goatcounter="https://eb5status.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
