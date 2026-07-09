@@ -20,7 +20,6 @@
   const celebrationToast = document.getElementById("celebration-toast");
   const celebrationToastText = document.getElementById("celebration-toast-text");
   const copyToast = document.getElementById("copy-toast");
-  const emptyStateAlert = document.getElementById("empty-state-alert");
   const statKeyUpdate = document.getElementById("stat-key-update");
   const statDaysPd = document.getElementById("stat-days-pd");
   const statFieldsFilled = document.getElementById("stat-fields-filled");
@@ -272,11 +271,6 @@
     if (statFieldsFilled) {
       statFieldsFilled.textContent = String(countFilledFields());
     }
-  }
-
-  function updateEmptyStateAlert() {
-    if (!emptyStateAlert) return;
-    emptyStateAlert.classList.toggle("hidden", Boolean(getRadioValue("keyUpdate")));
   }
 
   function showCelebrationToast(message) {
@@ -978,7 +972,6 @@
     }
     updatePreviewPanelVisibility();
     updatePreviewStats();
-    updateEmptyStateAlert();
     updateCopyButton();
   }
 
@@ -988,7 +981,6 @@
     updateRefreshButton();
     updatePreviewPanelVisibility();
     updatePreviewStats();
-    updateEmptyStateAlert();
     updateCopyButton();
   }
 
@@ -1040,6 +1032,5 @@
   initAutocompleteFields();
   updatePreviewPanelVisibility();
   updatePreviewStats();
-  updateEmptyStateAlert();
   updateCopyButton();
 })();
