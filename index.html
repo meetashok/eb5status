@@ -72,7 +72,12 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="priority-date">Priority Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="priority-date">Priority Date</label>
+                  <span class="tooltip tooltip-right z-10 max-w-xs" data-tip="Date USCIS received your I-526 / I-526E">
+                    <button type="button" class="inline-flex items-center justify-center w-4 h-4 rounded-full border border-base-content/30 text-[10px] font-bold text-base-content/50 hover:text-base-content/80 hover:border-base-content/50 leading-none cursor-help" aria-label="What is priority date?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--priority-date-anchor">
                     <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="priority-date-popover" aria-label="Open calendar">
@@ -87,7 +92,6 @@
                       <calendar-month></calendar-month>
                     </calendar-date>
                   </div>
-                  <p class="text-xs text-base-content/60 mt-1">Date USCIS received your I-526 / I-526E</p>
                 </div>
               </div>
             </div>
@@ -503,7 +507,7 @@
       </section>
     </main>
 
-    <footer class="text-center mt-8 text-base-content/60 text-sm">
+    <footer class="text-center mt-6 text-base-content/60 text-sm">
       <p>All fields are optional. Fill in whatever applies to your case.</p>
     </footer>
   </div>
