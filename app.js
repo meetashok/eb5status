@@ -207,7 +207,19 @@
     }
   }
 
+  const CALENDAR_MIN_DATE = "2020-01-01";
+
+  function getCalendarMaxDate() {
+    return `${new Date().getFullYear()}-12-31`;
+  }
+
+  function applyCalendarBounds(calendar) {
+    calendar.setAttribute("min", CALENDAR_MIN_DATE);
+    calendar.setAttribute("max", getCalendarMaxDate());
+  }
+
   function enhanceCalendarNavigation(calendar) {
+    applyCalendarBounds(calendar);
     if (calendar.querySelector("calendar-select-month")) return;
 
     const monthSelect = document.createElement("calendar-select-month");
@@ -216,7 +228,6 @@
 
     const yearSelect = document.createElement("calendar-select-year");
     yearSelect.setAttribute("slot", "heading");
-    yearSelect.setAttribute("max-years", "40");
 
     const monthEl = calendar.querySelector("calendar-month");
     if (!monthEl) return;
