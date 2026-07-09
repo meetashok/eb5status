@@ -1098,7 +1098,7 @@
 
     const footerLines = ["Generated via bit.ly/eb5status"];
     if (isDataRandomizationEnabled()) {
-      footerLines.push("Dates randomized for privacy.");
+      footerLines.push("User chose to randomize dates for privacy.");
     }
 
     return [
