@@ -1054,11 +1054,21 @@
     const beforePdToggle = document.getElementById("i956f-approved-before-pd");
     if (!pendingToggle || !beforePdToggle) return;
 
+    const syncChoiceStyles = () => {
+      [pendingToggle, beforePdToggle].forEach((input) => {
+        const label = input.closest("label.choice-btn");
+        if (!label) return;
+        if (input.checked) setSelectedButtonStyle(label);
+        else setUnselectedButtonStyle(label);
+      });
+    };
+
     const handleToggle = (activeToggle) => {
       if (activeToggle.checked) {
         if (activeToggle === pendingToggle) beforePdToggle.checked = false;
         if (activeToggle === beforePdToggle) pendingToggle.checked = false;
       }
+      syncChoiceStyles();
       syncI956fDateState();
       updatePreviewFromFormIfAllowed();
       scheduleFormSave();
@@ -1066,6 +1076,7 @@
 
     pendingToggle.addEventListener("change", () => handleToggle(pendingToggle));
     beforePdToggle.addEventListener("change", () => handleToggle(beforePdToggle));
+    syncChoiceStyles();
     syncI956fDateState();
   }
 
@@ -1278,6 +1289,8 @@
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
     if (copyBtn) copyBtn.disabled = !hasContent;
     if (mobileCopyBtn) mobileCopyBtn.disabled = !hasContent;
+    if (shareBtn) shareBtn.disabled = !hasContent;
+    if (mobileShareBtn) mobileShareBtn.disabled = !hasContent;
     if (previewFab) previewFab.classList.toggle("hidden", !hasContent || isDesktop);
   }
 
@@ -1286,13 +1299,17 @@
   const SHARE_TITLE = "EB5 Status Update Builder";
   const SHARE_TEXT = "Check out this tool for sharing your EB-5 case status";
   let shareBtnResetTimer = null;
+  const shareBtn = document.getElementById("share-btn");
+  const mobileShareBtn = document.getElementById("mobile-share-btn");
+  const shareToolBtn = document.getElementById("share-tool-btn");
 
-  function showShareCopied(button) {
+  function showShareCopied(button, label = "Link copied!") {
     if (!button) return;
-    const original = button.innerHTML;
+    const original = button.dataset.originalHtml || button.innerHTML;
+    button.dataset.originalHtml = original;
     button.classList.add("is-copied");
     button.innerHTML =
-      '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Link copied!';
+      `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ${label}`;
 
     if (shareBtnResetTimer) clearTimeout(shareBtnResetTimer);
     shareBtnResetTimer = setTimeout(() => {
@@ -1301,6 +1318,52 @@
     }, 2000);
   }
 
+  async function copyTextToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      return true;
+    }
+  }
+
+  /** Share the generated status message (desktop preview + mobile sheet). */
+  async function shareStatusMessage(button) {
+    const fromMobile = button && button.id === "mobile-share-btn";
+    const raw = fromMobile
+      ? mobilePreview?.value || preview?.value || ""
+      : preview?.value || mobilePreview?.value || "";
+    const text = raw.trim();
+    if (!text) return;
+
+    const canNativeShare =
+      typeof navigator.share === "function" &&
+      (!navigator.canShare || navigator.canShare({ text }));
+
+    if (canNativeShare) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        /* fall through to clipboard */
+      }
+    }
+
+    await copyTextToClipboard(text);
+    showShareCopied(button, "Copied!");
+  }
+
+  /** Share a link to the tool itself (footer "Share this tool"). */
   async function shareAppLink(button) {
     const canNativeShare =
       typeof navigator.share === "function" &&
@@ -1321,21 +1384,8 @@
       }
     }
 
-    try {
-      await navigator.clipboard.writeText(SHARE_URL_SHORT);
-      showShareCopied(button);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = SHARE_URL_SHORT;
-      ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.left = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showShareCopied(button);
-    }
+    await copyTextToClipboard(SHARE_URL_SHORT);
+    showShareCopied(button, "Link copied!");
   }
 
   function initShareButtons() {
@@ -1344,9 +1394,32 @@
       if (!btn) return;
       btn.addEventListener("click", (event) => {
         event.preventDefault();
-        shareAppLink(btn);
+        shareStatusMessage(btn);
       });
     });
+
+    if (shareToolBtn) {
+      shareToolBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        shareAppLink(shareToolBtn);
+      });
+    }
+  }
+
+  function autoResizeDesktopPreview() {
+    if (!preview) return;
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (!isDesktop) {
+      preview.style.height = "";
+      return;
+    }
+
+    preview.style.height = "auto";
+    const minPx = 200;
+    const maxPx = Math.round(window.innerHeight * 0.8);
+    const next = Math.min(Math.max(preview.scrollHeight, minPx), maxPx);
+    preview.style.height = `${next}px`;
+    preview.style.overflowY = preview.scrollHeight > maxPx ? "auto" : "hidden";
   }
 
   function updateRefreshButton() {
@@ -1473,6 +1546,7 @@
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateCopyButton();
+    autoResizeDesktopPreview();
     if (!isRestoringForm) scheduleFormSave();
   }
 
@@ -1485,6 +1559,7 @@
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateCopyButton();
+    autoResizeDesktopPreview();
   }
 
   function collectFormState() {
@@ -1566,6 +1641,14 @@
     });
 
     syncI956fDateState();
+    // Re-apply I-956F choice-btn styles after restore (checkboxes without name).
+    ["i956f-pending", "i956f-approved-before-pd"].forEach((id) => {
+      const input = document.getElementById(id);
+      const label = input?.closest("label.choice-btn");
+      if (!input || !label) return;
+      if (input.checked) setSelectedButtonStyle(label);
+      else setUnselectedButtonStyle(label);
+    });
 
     DATE_FIELD_IDS.forEach((inputId) => {
       const input = document.getElementById(inputId);
@@ -1637,6 +1720,10 @@
     if (i956fPending) i956fPending.checked = false;
     if (i956fBeforePd) i956fBeforePd.checked = false;
     syncI956fDateState();
+    [i956fPending, i956fBeforePd].forEach((input) => {
+      const label = input?.closest("label.choice-btn");
+      if (label) setUnselectedButtonStyle(label);
+    });
 
     DATE_FIELD_IDS.forEach((inputId) => {
       const input = document.getElementById(inputId);
@@ -1814,6 +1901,7 @@
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateCopyButton();
+    autoResizeDesktopPreview();
   });
 
   refreshBtn.addEventListener("click", syncPreviewFromForm);
@@ -1839,9 +1927,13 @@
   initClearForm();
   initMobilePreview();
   initShareButtons();
-  window.addEventListener("resize", updatePreviewPanelVisibility);
+  window.addEventListener("resize", () => {
+    updatePreviewPanelVisibility();
+    autoResizeDesktopPreview();
+  });
   loadFormState();
   updatePreviewPanelVisibility();
   updatePreviewStats();
   updateCopyButton();
+  autoResizeDesktopPreview();
 })();

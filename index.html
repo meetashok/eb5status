@@ -216,8 +216,24 @@
       align-items: center;
       justify-content: center;
       gap: 0.55rem;
-      margin-bottom: 1rem;
       min-height: 1.25rem;
+    }
+    html, body {
+      overflow-x: clip;
+      max-width: 100%;
+    }
+    .page-shell {
+      width: 100%;
+      max-width: 72rem;
+      margin-inline: auto;
+      padding-inline: 1rem;
+      box-sizing: border-box;
+    }
+    #status-form,
+    main {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
     .section-progress-dot {
       width: 0.625rem;
@@ -257,20 +273,27 @@
     }
     .date-with-pending--stacked {
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       gap: 0.5rem;
     }
     .date-with-pending--stacked .date-state-toggles {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: flex-start;
       gap: 0.75rem;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      align-self: stretch;
     }
     .date-with-pending--stacked .date-input-wrap {
       width: 100%;
+      align-self: stretch;
     }
     #share-btn.is-copied,
-    #mobile-share-btn.is-copied {
+    #mobile-share-btn.is-copied,
+    #share-tool-btn.is-copied {
       color: var(--color-success);
     }
     .stats {
@@ -595,7 +618,7 @@
   </style>
 </head>
 <body class="min-h-screen bg-base-200 font-sans">
-  <div class="max-w-6xl mx-auto px-4 py-6">
+  <div class="page-shell py-6">
     <header class="page-header-band text-center mb-6 relative">
       <div class="absolute right-0 top-0 flex items-center gap-2">
         <label class="swap swap-rotate btn btn-ghost btn-circle text-base-content border border-base-content/20 hover:border-base-content/40" aria-label="Toggle light or dark theme">
@@ -612,24 +635,23 @@
         <p class="text-base sm:text-lg text-base-content/85 leading-relaxed">Fill in your milestones, preview the message live, and paste to WhatsApp to share with the investor community.</p>
         <p class="text-sm text-base-content/50 leading-relaxed">All fields are optional. The live preview updates as you fill in whatever applies.</p>
       </div>
+      <div
+        id="section-progress"
+        class="section-progress tooltip tooltip-bottom z-50 mt-4"
+        data-tip="Key Update, Case Basics, Biometrics, Adjudication, SOF"
+        role="img"
+        aria-label="Form section progress"
+      >
+        <span class="section-progress-dot" data-section="key-update" aria-hidden="true"></span>
+        <span class="section-progress-dot" data-section="case-basics" aria-hidden="true"></span>
+        <span class="section-progress-dot" data-section="biometrics" aria-hidden="true"></span>
+        <span class="section-progress-dot" data-section="adjudication" aria-hidden="true"></span>
+        <span class="section-progress-dot" data-section="sof" aria-hidden="true"></span>
+      </div>
     </header>
 
-    <main class="flex flex-col lg:flex-row gap-4">
-      <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <div
-          id="section-progress"
-          class="section-progress tooltip tooltip-bottom z-50"
-          data-tip="Key Update, Case Basics, Biometrics, Adjudication, SOF"
-          role="img"
-          aria-label="Form section progress"
-        >
-          <span class="section-progress-dot" data-section="key-update" aria-hidden="true"></span>
-          <span class="section-progress-dot" data-section="case-basics" aria-hidden="true"></span>
-          <span class="section-progress-dot" data-section="biometrics" aria-hidden="true"></span>
-          <span class="section-progress-dot" data-section="adjudication" aria-hidden="true"></span>
-          <span class="section-progress-dot" data-section="sof" aria-hidden="true"></span>
-        </div>
-
+    <main class="flex flex-col lg:flex-row gap-4 w-full">
+      <form id="status-form" class="w-full flex-1 min-w-0 space-y-3" autocomplete="off">
         <section class="section-card card card-border bg-base-100 shadow-md card-animate card-animate-1">
           <div class="section-header section-header--neutral">
             <h2 class="section-title">Date Privacy</h2>
@@ -734,14 +756,14 @@
                 </div>
                 <div class="field-row-control">
                   <div class="date-with-pending date-with-pending--stacked">
-                    <div class="date-state-toggles">
-                      <label class="label cursor-pointer gap-2 date-state-toggle py-0">
-                        <input type="checkbox" class="toggle toggle-sm toggle-primary" id="i956f-pending">
-                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    <div class="date-state-toggles" role="group" aria-label="I-956F approval state">
+                      <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-10">
+                        <input class="sr-only" type="checkbox" id="i956f-pending">
+                        Pending
                       </label>
-                      <label class="label cursor-pointer gap-2 date-state-toggle py-0">
-                        <input type="checkbox" class="toggle toggle-sm toggle-primary" id="i956f-approved-before-pd">
-                        <span class="label-text text-sm whitespace-nowrap">Approved before PD</span>
+                      <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-10">
+                        <input class="sr-only" type="checkbox" id="i956f-approved-before-pd">
+                        Approved before PD
                       </label>
                     </div>
                     <div class="date-input-wrap" id="i956f-approval-wrap">
@@ -819,7 +841,7 @@
                 <label class="field-row-label" for="project-name">Project Name</label>
                 <div class="field-row-control">
                   <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                    <input type="text" id="project-name" name="projectName" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Luxury Tower (opens any day now…)" autocomplete="off">
+                    <input type="text" id="project-name" name="projectName" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Luxury Tower (opens any day now...)" autocomplete="off">
                   </div>
                 </div>
               </div>
@@ -1420,7 +1442,7 @@
         </section>
       </form>
 
-      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full card-animate card-animate-7" aria-labelledby="preview-heading">
+      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full card-animate card-animate-7" aria-labelledby="preview-heading">
         <div class="section-header section-header--success">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
@@ -1455,7 +1477,7 @@
           <div class="whatsapp-bubble-wrap flex flex-col flex-1 min-h-56 lg:min-h-0 focus-within:ring-2 focus-within:ring-[#25d366]/40 transition-shadow">
             <textarea
               id="preview"
-              class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-56 lg:min-h-0"
+              class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-56 lg:min-h-[12.5rem] lg:overflow-hidden"
               rows="14"
               placeholder="Your status update will appear here..."
               aria-label="Status update message preview"
@@ -1468,17 +1490,17 @@
             <button type="button" id="copy-btn" class="btn flex-1 min-h-11" disabled>
               Copy to share
             </button>
-            <button type="button" id="share-btn" class="btn btn-ghost border border-base-content/20 min-h-11 gap-2">
+            <button type="button" id="share-btn" class="btn btn-ghost border border-base-content/20 min-h-11 gap-2" disabled>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-              Share
+              Share status
             </button>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="page-footer-notes mt-8 max-w-4xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-left lg:text-left">
+    <footer class="page-footer-notes mt-8 w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr_1.6fr] gap-6 text-left">
         <div class="space-y-1 text-sm text-base-content/60">
           <p class="font-medium text-base-content/70">Community Resources</p>
           <ul class="space-y-0.5 list-none">
@@ -1492,7 +1514,14 @@
             </li>
           </ul>
         </div>
-        <div class="space-y-1.5 text-sm text-base-content/60 lg:text-right">
+        <div class="space-y-1 text-sm text-base-content/60">
+          <p class="font-medium text-base-content/70">Share</p>
+          <button type="button" id="share-tool-btn" class="clear-form-link text-left underline hover:text-base-content/80">
+            Share this tool
+          </button>
+          <p class="text-xs text-base-content/45">bit.ly/eb5status</p>
+        </div>
+        <div class="space-y-1.5 text-sm text-base-content/60 text-left">
           <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
           <p>
             <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
@@ -1544,7 +1573,7 @@
           id="mobile-preview"
           class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-48"
           rows="12"
-          placeholder="Your status update will appear here…"
+          placeholder="Your status update will appear here..."
           aria-label="Mobile status update preview"
         ></textarea>
       </div>
@@ -1552,9 +1581,9 @@
       <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11" disabled>
         Copy to share
       </button>
-      <button type="button" id="mobile-share-btn" class="btn btn-ghost border border-base-content/20 w-full min-h-11 gap-2">
+      <button type="button" id="mobile-share-btn" class="btn btn-ghost border border-base-content/20 w-full min-h-11 gap-2" disabled>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-        Share
+        Share status
       </button>
     </div>
   </div>
