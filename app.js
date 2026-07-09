@@ -4,7 +4,14 @@
   const THEME_KEY = "eb5-theme";
   const FORM_STATE_KEY = "eb5-form-state";
   const SAVE_DEBOUNCE_MS = 500;
-  const PROGRESS_MAX_FIELDS = 15;
+
+  const SECTION_PROGRESS = [
+    { id: "key-update", label: "Key Update" },
+    { id: "case-basics", label: "Case Basics" },
+    { id: "biometrics", label: "Biometrics" },
+    { id: "adjudication", label: "Adjudication" },
+    { id: "sof", label: "SOF" },
+  ];
 
   const DATE_FIELD_IDS = [
     "priority-date",
@@ -46,8 +53,8 @@
   const statKeyUpdate = document.getElementById("stat-key-update");
   const statDaysPd = document.getElementById("stat-days-pd");
   const statFieldsFilled = document.getElementById("stat-fields-filled");
-  const progressFill = document.getElementById("progress-fill");
   const fabFieldCount = document.getElementById("fab-field-count");
+  const sectionProgress = document.getElementById("section-progress");
   const previewFab = document.getElementById("preview-fab");
   const previewSheet = document.getElementById("preview-sheet");
   const comboCardToggle = document.getElementById("combo-card");
@@ -83,7 +90,7 @@
 
   const CELEBRATION_EMOJI = "🎉";
   const BTN_COLOR_NAMES = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
-  const COPY_BTN_DEFAULT_HTML = copyBtn ? copyBtn.innerHTML : "Copy to clipboard";
+  const COPY_BTN_DEFAULT_HTML = copyBtn ? copyBtn.innerHTML : "Copy to share";
 
   let comboCardValue = "";
   let previewManuallyEdited = false;
@@ -321,37 +328,88 @@
       if (button === copyBtn) {
         button.innerHTML = COPY_BTN_DEFAULT_HTML;
       } else {
-        button.textContent = "Copy to clipboard";
+        button.textContent = "Copy to share";
       }
     }, 2000);
   }
 
-  function countFilledFields() {
-    let count = 0;
+  function isFieldFilled(id) {
+    const el = document.getElementById(id);
+    if (!el || el.disabled) return false;
+    if (el.type === "checkbox" || el.type === "radio") return el.checked;
+    return String(el.value || "").trim().length > 0;
+  }
 
-    form.querySelectorAll('input[type="text"]:not([disabled])').forEach((input) => {
-      if (input.value.trim()) count += 1;
-    });
+  function isPendingOrDateFilled(inputId, pendingId) {
+    return isPending(pendingId) || isFieldFilled(inputId);
+  }
 
-    form.querySelectorAll(".pending-date-toggle:checked").forEach(() => {
-      count += 1;
-    });
+  function getSectionFillState() {
+    const keyUpdateFilled = Boolean(getRadioValue("keyUpdate"));
 
-    const countedRadioGroups = new Set();
-    form.querySelectorAll('input[type="radio"]:checked').forEach((input) => {
-      if (countedRadioGroups.has(input.name)) return;
-      countedRadioGroups.add(input.name);
-      count += 1;
-    });
+    let caseBasicsCount = 0;
+    if (isFieldFilled("priority-date")) caseBasicsCount += 1;
+    if (getCheckedValues("projectCategory").length > 0) caseBasicsCount += 1;
+    if (isFieldFilled("regional-center")) caseBasicsCount += 1;
+    if (getRadioValue("applicationLocation")) caseBasicsCount += 1;
+    if (isI956fPending() || isI956fApprovedBeforePd() || isFieldFilled("i956f-approval")) {
+      caseBasicsCount += 1;
+    }
+    if (isFieldFilled("project-name")) caseBasicsCount += 1;
+    if (isFieldFilled("attorney")) caseBasicsCount += 1;
+    const caseBasicsFilled = caseBasicsCount >= 3;
 
-    form.querySelectorAll('input[type="checkbox"]:checked').forEach((input) => {
-      if (input.classList.contains("pending-date-toggle")) return;
-      count += 1;
-    });
+    let biometricsCount = 0;
+    if (isPendingOrDateFilled("biometric-notice", "biometric-notice-pending")) biometricsCount += 1;
+    if (isPendingOrDateFilled("ead-approval", "ead-approval-pending")) biometricsCount += 1;
+    if (isPendingOrDateFilled("ap-approval", "ap-approval-pending")) biometricsCount += 1;
+    if (getComboCardValue()) biometricsCount += 1;
+    const biometricsFilled = biometricsCount >= 3;
 
-    if (getComboCardValue()) count += 1;
+    let adjudicationCount = 0;
+    if (isPendingOrDateFilled("i526-date", "i526-date-pending")) adjudicationCount += 1;
+    if (getRadioValue("i526Status")) adjudicationCount += 1;
+    if (isWomNotFiled() || isFieldFilled("wom-date")) adjudicationCount += 1;
+    if (getRadioValue("womStatus")) adjudicationCount += 1;
+    if (isPendingOrDateFilled("i485-date", "i485-date-pending")) adjudicationCount += 1;
+    const adjudicationFilled = adjudicationCount >= 2;
 
-    return count;
+    const sofFilled = getCheckedValues("sof").length > 0;
+
+    return {
+      "key-update": keyUpdateFilled,
+      "case-basics": caseBasicsFilled,
+      biometrics: biometricsFilled,
+      adjudication: adjudicationFilled,
+      sof: sofFilled,
+    };
+  }
+
+  function countFilledSections() {
+    const state = getSectionFillState();
+    return SECTION_PROGRESS.reduce((count, section) => count + (state[section.id] ? 1 : 0), 0);
+  }
+
+  function updateSectionProgress() {
+    const state = getSectionFillState();
+    const tipParts = SECTION_PROGRESS.map((section) =>
+      state[section.id] ? `${section.label} ✓` : section.label
+    );
+    const tip = tipParts.join(", ");
+
+    if (sectionProgress) {
+      sectionProgress.setAttribute("data-tip", tip);
+      sectionProgress.setAttribute(
+        "aria-label",
+        `Form section progress: ${tipParts.join("; ")}`
+      );
+      sectionProgress.querySelectorAll(".section-progress-dot").forEach((dot) => {
+        const sectionId = dot.dataset.section;
+        dot.classList.toggle("is-filled", Boolean(state[sectionId]));
+      });
+    }
+
+    return countFilledSections();
   }
 
   function getFromPdStatValue(keyUpdate) {
@@ -369,7 +427,7 @@
 
   function updatePreviewStats() {
     const keyUpdate = getRadioValue("keyUpdate");
-    const filledCount = countFilledFields();
+    const filledSections = updateSectionProgress();
     const fromPdValue = getFromPdStatValue(keyUpdate);
 
     if (statKeyUpdate) {
@@ -381,27 +439,17 @@
     }
 
     if (statFieldsFilled) {
-      statFieldsFilled.textContent = String(filledCount);
-    }
-
-    if (progressFill) {
-      const pct = Math.min(100, (filledCount / PROGRESS_MAX_FIELDS) * 100);
-      progressFill.style.width = `${pct}%`;
-    }
-
-    const progressCount = document.getElementById("progress-count");
-    if (progressCount) {
-      progressCount.textContent = `${filledCount}/${PROGRESS_MAX_FIELDS}`;
+      statFieldsFilled.textContent = String(filledSections);
     }
 
     if (fabFieldCount) {
-      fabFieldCount.textContent = String(filledCount);
+      fabFieldCount.textContent = String(filledSections);
     }
 
     const mobileStatFields = document.getElementById("mobile-stat-fields-filled");
     const mobileStatKey = document.getElementById("mobile-stat-key-update");
     const mobileStatDays = document.getElementById("mobile-stat-days-pd");
-    if (mobileStatFields) mobileStatFields.textContent = String(filledCount);
+    if (mobileStatFields) mobileStatFields.textContent = String(filledSections);
     if (mobileStatKey) {
       mobileStatKey.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
     }
