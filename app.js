@@ -474,7 +474,7 @@
       ["Project", getFieldValue("project-name")],
       ["SOF composition", getSofComposition()],
       ["Attorney", getFieldValue("attorney")],
-      ["Application location", getRadioValue("applicationLocation")],
+      ["Service center", getRadioValue("applicationLocation")],
       ["Biometric notice", formatDate(getFieldValue("biometric-notice"))],
       ["EAD approved", formatApprovalValue("ead-approval", "ead-approval-pending")],
       ["AP approved", formatApprovalValue("ap-approval", "ap-approval-pending")],
