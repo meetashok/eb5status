@@ -151,8 +151,19 @@
   function getPreviewIsoDate(isoDate, fieldId) {
     if (!isDataRandomizationEnabled()) return isoDate;
     const latest = getLatestFormDateIso();
-    if (isoDate === latest && isWithinLastWeek(isoDate)) return isoDate;
-    return addDaysToIsoDate(isoDate, getRandomizationOffset(isoDate, fieldId));
+    if (isoDate === latest && isWithinLastWeek(isoDate)) {
+      return clampIsoDateToToday(isoDate);
+    }
+
+    const offset = getRandomizationOffset(isoDate, fieldId);
+    let candidate = addDaysToIsoDate(isoDate, offset);
+    const today = getTodayIso();
+
+    if (candidate > today) {
+      candidate = addDaysToIsoDate(isoDate, -Math.abs(offset));
+    }
+
+    return clampIsoDateToToday(candidate);
   }
 
   function formatDateWithPdOffset(isoDate, fieldId) {
@@ -1085,12 +1096,17 @@
 
     if (!getRadioValue("keyUpdate") || bulletLines.length === 0) return "";
 
+    const footerLines = ["Generated via bit.ly/eb5status"];
+    if (isDataRandomizationEnabled()) {
+      footerLines.push("Dates randomized for privacy.");
+    }
+
     return [
       buildTitleLine(),
       "",
       ...bulletLines.map((line) => `• ${line}`),
       "",
-      "Generated via bit.ly/eb5status",
+      ...footerLines,
     ].join("\n");
   }
 
