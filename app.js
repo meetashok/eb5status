@@ -33,8 +33,26 @@
   );
 
   const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Infra", "Direct"]);
+  const CELEBRATION_EMOJI = "🎉";
   let comboCardValue = "";
   let previewManuallyEdited = false;
+
+  function isPending(pendingId) {
+    const el = document.getElementById(pendingId);
+    return Boolean(el && el.checked);
+  }
+
+  function formatApprovalValue(inputId, pendingId) {
+    if (isPending(pendingId)) return "Pending";
+    const formatted = formatDate(getFieldValue(inputId));
+    if (!formatted) return "";
+    return `${formatted} ${CELEBRATION_EMOJI}`;
+  }
+
+  function withApprovedEmoji(status, text) {
+    if (status === "Approved") return `${text} ${CELEBRATION_EMOJI}`;
+    return text;
+  }
 
   function formatDate(isoDate) {
     if (!isoDate) return "";
@@ -113,6 +131,7 @@
       calendar.addEventListener("change", () => {
         if (calendar.value) {
           input.value = calendar.value;
+          updateConditionalSections();
           updatePreviewFromFormIfAllowed();
         }
         if (popover && typeof popover.hidePopover === "function") {
@@ -122,6 +141,7 @@
 
       input.addEventListener("input", () => {
         syncCalendarFromInput(input, calendar);
+        updateConditionalSections();
         updatePreviewFromFormIfAllowed();
       });
 
@@ -193,6 +213,8 @@
     form.querySelectorAll('label.choice-btn input[type="checkbox"]').forEach(syncChoiceButton);
     syncRadioGroup("i526Status");
     syncRadioGroup("womCounsel");
+    syncRadioGroup("womStatus");
+    syncRadioGroup("applicationLocation");
   }
 
   function initChoiceButtons() {
@@ -257,6 +279,124 @@
     });
   }
 
+  function getWomCounselLine() {
+    const counsel = getRadioValue("womCounsel");
+    if (!counsel) return "";
+    if (counsel === "Attorney") {
+      const name = getFieldValue("wom-attorney-name");
+      return name ? `Attorney (${name})` : "Attorney";
+    }
+    return counsel;
+  }
+
+  function hasI526DateContext() {
+    return isPending("i526-date-pending") || Boolean(getFieldValue("i526-date"));
+  }
+
+  function hasWomDateContext() {
+    return Boolean(getFieldValue("wom-date"));
+  }
+
+  function ensureDefaultI526Approved() {
+    if (!form.querySelector('input[name="i526Status"]:checked')) {
+      const approved = form.querySelector('input[name="i526Status"][value="Approved"]');
+      if (approved) {
+        approved.checked = true;
+        syncRadioGroup("i526Status");
+      }
+    }
+  }
+
+  function clearWomDetails() {
+    form.querySelectorAll('input[name="wom"]').forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+    form.querySelectorAll('input[name="womCounsel"]').forEach((radio) => {
+      radio.checked = false;
+      radio.dataset.wasChecked = "false";
+    });
+    form.querySelectorAll('input[name="womStatus"]').forEach((radio) => {
+      radio.checked = false;
+      radio.dataset.wasChecked = "false";
+    });
+    const attorneyInput = document.getElementById("wom-attorney-name");
+    const courtInput = document.getElementById("wom-court");
+    if (attorneyInput) attorneyInput.value = "";
+    if (courtInput) courtInput.value = "";
+    syncAllChoiceButtons();
+  }
+
+  function updateI526StatusVisibility() {
+    const wrap = document.getElementById("i526-status-wrap");
+    if (!wrap) return;
+    const show = hasI526DateContext();
+    wrap.classList.toggle("hidden", !show);
+    if (show) ensureDefaultI526Approved();
+  }
+
+  function updateWomDetailsVisibility() {
+    const wrap = document.getElementById("wom-details-wrap");
+    if (!wrap) return;
+    const show = hasWomDateContext();
+    wrap.classList.toggle("hidden", !show);
+    if (!show) clearWomDetails();
+  }
+
+  function updateWomAttorneyVisibility() {
+    const wrap = document.getElementById("wom-attorney-name-wrap");
+    if (!wrap) return;
+    const show = getRadioValue("womCounsel") === "Attorney";
+    wrap.classList.toggle("hidden", !show);
+    if (!show) {
+      const input = document.getElementById("wom-attorney-name");
+      if (input) input.value = "";
+    }
+  }
+
+  function updateConditionalSections() {
+    updateI526StatusVisibility();
+    updateWomDetailsVisibility();
+    updateWomAttorneyVisibility();
+  }
+
+  function setPendingState(toggle) {
+    const dateId = toggle.dataset.dateId;
+    const wrapId = toggle.dataset.wrapId;
+    const input = document.getElementById(dateId);
+    const wrap = document.getElementById(wrapId);
+    if (!input || !wrap) return;
+
+    const pending = toggle.checked;
+    if (pending) {
+      input.value = "";
+      input.disabled = true;
+      wrap.classList.add("is-disabled");
+      wrap.querySelector("button[popovertarget]")?.setAttribute("disabled", "");
+    } else {
+      input.disabled = false;
+      wrap.classList.remove("is-disabled");
+      wrap.querySelector("button[popovertarget]")?.removeAttribute("disabled");
+    }
+    updateConditionalSections();
+    updatePreviewFromFormIfAllowed();
+  }
+
+  function initPendingDateToggles() {
+    form.querySelectorAll(".pending-date-toggle").forEach((toggle) => {
+      toggle.addEventListener("change", () => setPendingState(toggle));
+    });
+  }
+
+  function initConditionalSections() {
+    form.querySelectorAll('input[name="womCounsel"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        updateWomAttorneyVisibility();
+        updatePreviewFromFormIfAllowed();
+      });
+    });
+    updateConditionalSections();
+  }
+
   function getSofComposition() {
     return getCheckedValues("sof")
       .map((value) => {
@@ -302,11 +442,15 @@
     refreshBtn.classList.toggle("hidden", !show);
   }
 
-  function buildI526Line(status, date) {
-    if (!status && !date) return null;
+  function buildI526Line(status, date, pending) {
     const formattedDate = formatDate(date);
-    if (status && formattedDate) return `I-526: ${status} (${formattedDate})`;
-    if (status) return `I-526: ${status}`;
+    if (pending && !formattedDate) {
+      if (status) return withApprovedEmoji(status, `I-526: ${status} (Pending)`);
+      return "I-526: Pending";
+    }
+    if (!status && !formattedDate) return null;
+    if (status && formattedDate) return withApprovedEmoji(status, `I-526: ${status} (${formattedDate})`);
+    if (status) return withApprovedEmoji(status, `I-526: ${status}`);
     return `I-526 adjudication date: ${formattedDate}`;
   }
 
@@ -330,14 +474,26 @@
       ["Project", getFieldValue("project-name")],
       ["SOF composition", getSofComposition()],
       ["Attorney", getFieldValue("attorney")],
+      ["Application location", getRadioValue("applicationLocation")],
       ["Biometric notice", formatDate(getFieldValue("biometric-notice"))],
-      ["EAD approved", formatDate(getFieldValue("ead-approval"))],
-      ["AP approved", formatDate(getFieldValue("ap-approval"))],
+      ["EAD approved", formatApprovalValue("ead-approval", "ead-approval-pending")],
+      ["AP approved", formatApprovalValue("ap-approval", "ap-approval-pending")],
       ["Combo card", getComboCardValue()],
-      [null, buildI526Line(getRadioValue("i526Status"), getFieldValue("i526-date"))],
-      [null, buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date"))],
-      ["WOM counsel", getRadioValue("womCounsel")],
-      ["I-485 approved", formatDate(getFieldValue("i485-date"))],
+      [
+        null,
+        hasI526DateContext()
+          ? buildI526Line(
+              getRadioValue("i526Status"),
+              getFieldValue("i526-date"),
+              isPending("i526-date-pending")
+            )
+          : null,
+      ],
+      [null, hasWomDateContext() ? buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date")) : null],
+      ["WOM counsel", hasWomDateContext() ? getWomCounselLine() : ""],
+      ["WOM status", hasWomDateContext() ? getRadioValue("womStatus") : ""],
+      ["WOM court", hasWomDateContext() ? getFieldValue("wom-court") : ""],
+      ["I-485 approved", formatApprovalValue("i485-date", "i485-date-pending")],
     ];
 
     for (const [label, value] of entries) {
@@ -373,6 +529,7 @@
   form.addEventListener("input", updatePreviewFromFormIfAllowed);
   form.addEventListener("change", () => {
     syncAllChoiceButtons();
+    updateConditionalSections();
     updatePreviewFromFormIfAllowed();
   });
 
@@ -407,8 +564,12 @@
   initComboCardToggle();
   initChoiceButtons();
   initProjectCategory();
+  initPendingDateToggles();
+  initConditionalSections();
   initSofConditionalDetails();
   initOptionalRadioDeselect("i526Status");
   initOptionalRadioDeselect("womCounsel");
+  initOptionalRadioDeselect("womStatus");
+  initOptionalRadioDeselect("applicationLocation");
   updateCopyButton();
 })();
