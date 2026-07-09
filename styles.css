@@ -38,6 +38,16 @@ body {
   padding: 1rem 1rem 2rem;
 }
 
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form {
+  min-width: 0;
+}
+
 .header {
   text-align: center;
   padding: 1.5rem 0 1rem;
@@ -177,6 +187,7 @@ select {
   border-radius: var(--radius);
   padding: 1.25rem;
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .preview-header {
@@ -298,6 +309,48 @@ select {
 
   .btn-primary {
     flex: 0 1 auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .app {
+    max-width: 1180px;
+    padding: 2rem 2rem 3rem;
+  }
+
+  .workspace {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .form {
+    flex: 1.15;
+  }
+
+  .preview-section {
+    flex: 0.85;
+    position: sticky;
+    top: 1.5rem;
+    align-self: flex-start;
+    max-height: calc(100vh - 3rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview {
+    flex: 1;
+    min-height: 320px;
+    resize: none;
+  }
+
+  .actions {
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+
+  .btn-primary {
+    width: 100%;
   }
 }
 
