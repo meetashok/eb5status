@@ -123,8 +123,9 @@
     comboCardValue = value;
     comboCardToggle.querySelectorAll("[data-value]").forEach((option) => {
       const isSelected = option.dataset.value === value;
-      option.classList.toggle("btn-active", isSelected);
       option.classList.toggle("btn-primary", isSelected);
+      option.classList.toggle("btn-ghost", !isSelected);
+      option.classList.toggle("bg-base-200/40", !isSelected);
       option.setAttribute("aria-pressed", String(isSelected));
     });
   }
@@ -144,7 +145,8 @@
     const label = input.closest("label.choice-btn");
     if (!label) return;
     label.classList.toggle("btn-primary", input.checked);
-    label.classList.toggle("btn-outline", !input.checked);
+    label.classList.toggle("btn-ghost", !input.checked);
+    label.classList.toggle("bg-base-200/40", !input.checked);
   }
 
   function syncRadioGroup(groupName) {
