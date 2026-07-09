@@ -1,207 +1,295 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Draft structured EB-5 status updates for WhatsApp groups">
   <title>EB-5 Status Update Draft</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-  <div class="app">
-    <header class="header">
-      <div class="header-badge">EB-5 Community Tool</div>
-      <h1>Status Update Draft</h1>
-      <p class="subtitle">Fill in your milestones, preview the message live, and paste it into WhatsApp.</p>
+<body class="min-h-screen bg-base-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <header class="text-center mb-8 relative">
+      <div class="absolute right-0 top-0">
+        <label class="swap swap-rotate btn btn-ghost btn-circle" aria-label="Toggle light or dark theme">
+          <input type="checkbox" id="theme-toggle" class="theme-controller" value="light">
+          <svg class="swap-off h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg class="swap-on h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </label>
+      </div>
+      <div class="badge badge-primary badge-outline mb-3">EB-5 Community Tool</div>
+      <h1 class="text-3xl font-bold tracking-tight">Status Update Draft</h1>
+      <p class="text-base-content/70 mt-2 max-w-xl mx-auto">Fill in your milestones, preview the message live, and paste it into WhatsApp.</p>
     </header>
 
-    <main class="workspace">
-      <form id="status-form" class="form" autocomplete="off">
-        <section class="form-section">
-          <h2>Case basics</h2>
+    <main class="flex flex-col lg:flex-row gap-4">
+      <form id="status-form" class="flex-1 min-w-0 space-y-4" autocomplete="off">
+        <section class="card card-border bg-base-100 shadow-sm">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Case basics</h2>
 
-          <label class="field" for="priority-date">
-            <span class="field-label">Priority date</span>
-            <input type="date" id="priority-date" name="priorityDate" class="input input-date">
-            <span class="field-hint">Date USCIS received your I-526 / I-526E</span>
-          </label>
-
-          <label class="field" for="regional-center">
-            <span class="field-label">Regional Center</span>
-            <input type="text" id="regional-center" name="regionalCenter" class="input" placeholder="e.g. XYZ Regional Center">
-          </label>
-
-          <label class="field" for="project-name">
-            <span class="field-label">Project name</span>
-            <input type="text" id="project-name" name="projectName" class="input" placeholder="e.g. Downtown Tower EB-5">
-          </label>
-
-          <fieldset class="choice-field">
-            <legend class="field-label">SOF composition <span class="hint">(tap all that apply)</span></legend>
-            <div class="chip-grid">
-              <input class="chip-input" type="checkbox" name="sof" id="sof-employment" value="Employment / salary">
-              <label class="chip" for="sof-employment">Employment / salary</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-business" value="Business income">
-              <label class="chip" for="sof-business">Business income</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-realestate" value="Real estate sale">
-              <label class="chip" for="sof-realestate">Real estate sale</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-stocks" value="Stocks / securities sale">
-              <label class="chip" for="sof-stocks">Stocks / securities sale</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-savings" value="Savings / accumulated funds">
-              <label class="chip" for="sof-savings">Savings / accumulated funds</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-inheritance" value="Inheritance">
-              <label class="chip" for="sof-inheritance">Inheritance</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-gift" value="Gift">
-              <label class="chip" for="sof-gift">Gift</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-loan" value="Loan">
-              <label class="chip" for="sof-loan">Loan</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-retirement" value="Retirement funds">
-              <label class="chip" for="sof-retirement">Retirement funds</label>
-
-              <input class="chip-input" type="checkbox" name="sof" id="sof-other" value="Other">
-              <label class="chip" for="sof-other">Other</label>
+            <div class="form-control w-full">
+              <label class="label py-1" for="priority-date"><span class="label-text font-medium">Priority date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="priority-date-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="priority-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+              <label class="label py-0"><span class="label-text-alt text-base-content/60">Date USCIS received your I-526 / I-526E</span></label>
             </div>
-          </fieldset>
 
-          <label class="field" for="attorney">
-            <span class="field-label">Attorney</span>
-            <input type="text" id="attorney" name="attorney" class="input" placeholder="e.g. Smith &amp; Associates">
-          </label>
+            <label class="form-control w-full">
+              <div class="label py-1"><span class="label-text font-medium">Regional Center</span></div>
+              <input type="text" id="regional-center" name="regionalCenter" class="input input-bordered w-full min-h-11" placeholder="e.g. XYZ Regional Center">
+            </label>
+
+            <label class="form-control w-full">
+              <div class="label py-1"><span class="label-text font-medium">Project name</span></div>
+              <input type="text" id="project-name" name="projectName" class="input input-bordered w-full min-h-11" placeholder="e.g. Downtown Tower EB-5">
+            </label>
+
+            <fieldset>
+              <legend class="label-text font-medium mb-2 block">SOF composition <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
+              <div class="flex flex-wrap gap-2">
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-employment" value="Employment / salary">
+                  Employment / salary
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-business" value="Business income">
+                  Business income
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-realestate" value="Real estate sale">
+                  Real estate sale
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-stocks" value="Stocks / securities sale">
+                  Stocks / securities sale
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-savings" value="Savings / accumulated funds">
+                  Savings / accumulated funds
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-inheritance" value="Inheritance">
+                  Inheritance
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-gift" value="Gift">
+                  Gift
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-loan" value="Loan">
+                  Loan
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-retirement" value="Retirement funds">
+                  Retirement funds
+                </label>
+
+                <label class="btn btn-sm btn-outline has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="sof" id="sof-other" value="Other">
+                  Other
+                </label>
+              </div>
+            </fieldset>
+
+            <label class="form-control w-full">
+              <div class="label py-1"><span class="label-text font-medium">Attorney</span></div>
+              <input type="text" id="attorney" name="attorney" class="input input-bordered w-full min-h-11" placeholder="e.g. Smith &amp; Associates">
+            </label>
+          </div>
         </section>
 
-        <section class="form-section">
-          <h2>Biometrics &amp; travel documents</h2>
+        <section class="card card-border bg-base-100 shadow-sm">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Biometrics &amp; travel documents</h2>
 
-          <label class="field" for="biometric-notice">
-            <span class="field-label">Biometric notice date</span>
-            <input type="date" id="biometric-notice" name="biometricNotice" class="input input-date">
-          </label>
+            <div class="form-control w-full">
+              <label class="label py-1" for="biometric-notice"><span class="label-text font-medium">Biometric notice date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="biometric-notice-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="biometric-notice" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
 
-          <label class="field" for="ead-approval">
-            <span class="field-label">EAD approval date</span>
-            <input type="date" id="ead-approval" name="eadApproval" class="input input-date">
-          </label>
+            <div class="form-control w-full">
+              <label class="label py-1" for="ead-approval"><span class="label-text font-medium">EAD approval date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="ead-approval-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="ead-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
 
-          <label class="field" for="ap-approval">
-            <span class="field-label">AP approval date</span>
-            <input type="date" id="ap-approval" name="apApproval" class="input input-date">
-          </label>
+            <div class="form-control w-full">
+              <label class="label py-1" for="ap-approval"><span class="label-text font-medium">AP approval date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="ap-approval-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="ap-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
 
-          <div class="field-block">
-            <span class="field-label" id="combo-card-label">Combo card</span>
-            <div class="pill-toggle" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
-              <span class="pill-toggle__slider" aria-hidden="true"></span>
-              <button type="button" class="pill-toggle__option" data-value="No" aria-pressed="false">No</button>
-              <button type="button" class="pill-toggle__option" data-value="Yes" aria-pressed="false">Yes</button>
+            <div class="form-control w-full">
+              <span class="label-text font-medium mb-2 block" id="combo-card-label">Combo card</span>
+              <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
+                <button type="button" class="join-item btn btn-outline min-h-11 min-w-24" data-value="No" aria-pressed="false">No</button>
+                <button type="button" class="join-item btn btn-outline min-h-11 min-w-24" data-value="Yes" aria-pressed="false">Yes</button>
+              </div>
             </div>
           </div>
         </section>
 
-        <section class="form-section">
-          <h2>Adjudication &amp; mandamus</h2>
+        <section class="card card-border bg-base-100 shadow-sm">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-primary text-sm uppercase tracking-wider">Adjudication &amp; mandamus</h2>
 
-          <div class="field-group">
-            <label class="field" for="i526-status">
-              <span class="field-label">I-526 adjudication</span>
-              <select id="i526-status" name="i526Status" class="input input-select">
-                <option value="">Select status</option>
-                <option value="Approved">Approved</option>
-                <option value="RFE">RFE</option>
-                <option value="NOID">NOID</option>
-                <option value="Denied">Denied</option>
-              </select>
-            </label>
+            <div class="form-control w-full">
+              <span class="label-text font-medium mb-2 block">I-526 adjudication</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 adjudication" id="i526-status-group">
+                <label class="btn btn-outline min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="radio" name="i526Status" value="Approved">
+                  Approved
+                </label>
+                <label class="btn btn-outline min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="radio" name="i526Status" value="RFE">
+                  RFE
+                </label>
+                <label class="btn btn-outline min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="radio" name="i526Status" value="NOID">
+                  NOID
+                </label>
+                <label class="btn btn-outline min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="radio" name="i526Status" value="Denied">
+                  Denied
+                </label>
+              </div>
+            </div>
 
-            <label class="field" for="i526-date">
-              <span class="field-label">I-526 adjudication date</span>
-              <input type="date" id="i526-date" name="i526Date" class="input input-date">
-            </label>
+            <div class="form-control w-full">
+              <label class="label py-1" for="i526-date"><span class="label-text font-medium">I-526 adjudication date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="i526-date-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="i526-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
+
+            <fieldset>
+              <legend class="label-text font-medium mb-2 block">WOM filing <span class="font-normal text-base-content/60">(tap all that apply)</span></legend>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                <label class="btn btn-outline btn-sm w-full min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="wom" id="wom-526" value="I-526">
+                  I-526
+                </label>
+
+                <label class="btn btn-outline btn-sm w-full min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="wom" id="wom-485" value="I-485">
+                  I-485
+                </label>
+
+                <label class="btn btn-outline btn-sm w-full min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="wom" id="wom-ead" value="EAD">
+                  EAD
+                </label>
+
+                <label class="btn btn-outline btn-sm w-full min-h-11 justify-center has-[:checked]:btn-primary">
+                  <input class="sr-only" type="checkbox" name="wom" id="wom-ap" value="AP">
+                  AP
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="form-control w-full">
+              <label class="label py-1" for="wom-date"><span class="label-text font-medium">WOM filing date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="wom-date-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="wom-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
+
+            <fieldset class="form-control w-full">
+              <legend class="label-text font-medium mb-2 block" id="wom-counsel-label">WOM counsel</legend>
+              <div class="join w-full max-w-xs" role="radiogroup" aria-labelledby="wom-counsel-label">
+                <label class="join-item btn btn-outline min-h-11 flex-1 has-[:checked]:btn-primary justify-center">
+                  <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
+                  Attorney
+                </label>
+                <label class="join-item btn btn-outline min-h-11 flex-1 has-[:checked]:btn-primary justify-center">
+                  <input class="sr-only" type="radio" name="womCounsel" id="wom-counsel-prose" value="Pro se">
+                  Pro se
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="form-control w-full">
+              <label class="label py-1" for="i485-date"><span class="label-text font-medium">I-485 adjudication date</span></label>
+              <div class="flatpickr input input-bordered flex items-center gap-2 w-full min-h-11" id="i485-date-wrap">
+                <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </button>
+                <input type="text" id="i485-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+              </div>
+            </div>
           </div>
-
-          <fieldset class="choice-field">
-            <legend class="field-label">WOM filing <span class="hint">(tap all that apply)</span></legend>
-            <div class="chip-grid chip-grid--compact">
-              <input class="chip-input" type="checkbox" name="wom" id="wom-526" value="I-526">
-              <label class="chip" for="wom-526">I-526</label>
-
-              <input class="chip-input" type="checkbox" name="wom" id="wom-485" value="I-485">
-              <label class="chip" for="wom-485">I-485</label>
-
-              <input class="chip-input" type="checkbox" name="wom" id="wom-ead" value="EAD">
-              <label class="chip" for="wom-ead">EAD</label>
-
-              <input class="chip-input" type="checkbox" name="wom" id="wom-ap" value="AP">
-              <label class="chip" for="wom-ap">AP</label>
-            </div>
-          </fieldset>
-
-          <label class="field" for="wom-date">
-            <span class="field-label">WOM filing date</span>
-            <input type="date" id="wom-date" name="womDate" class="input input-date">
-          </label>
-
-          <fieldset class="field-block">
-            <legend class="field-label" id="wom-counsel-label">WOM counsel</legend>
-            <div class="segmented" role="radiogroup" aria-labelledby="wom-counsel-label">
-              <input class="segmented-input" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
-              <label class="segmented-option" for="wom-counsel-attorney">Attorney</label>
-
-              <input class="segmented-input" type="radio" name="womCounsel" id="wom-counsel-prose" value="Pro se">
-              <label class="segmented-option" for="wom-counsel-prose">Pro se</label>
-            </div>
-          </fieldset>
-
-          <label class="field" for="i485-date">
-            <span class="field-label">I-485 adjudication date</span>
-            <input type="date" id="i485-date" name="i485Date" class="input input-date">
-          </label>
         </section>
       </form>
 
-      <section class="preview-section" aria-labelledby="preview-heading">
-        <div class="preview-header">
-          <div>
-            <h2 id="preview-heading">Live preview</h2>
-            <p class="preview-hint">Edit freely — changes here won't update the form.</p>
+      <section class="card card-border bg-base-100 shadow-sm lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full" aria-labelledby="preview-heading">
+        <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h2 id="preview-heading" class="card-title text-base">Live preview</h2>
+              <p class="text-sm text-base-content/60 mt-1">Edit freely — changes here won't update the form.</p>
+            </div>
+            <button type="button" id="refresh-preview" class="btn btn-ghost btn-sm hidden" hidden>Refresh from form</button>
           </div>
-          <button type="button" id="refresh-preview" class="btn btn-secondary hidden" hidden>
-            Refresh from form
-          </button>
-        </div>
 
-        <textarea
-          id="preview"
-          class="preview input"
-          rows="14"
-          placeholder="Your status update will appear here as you fill in the form…"
-          aria-label="Status update message preview"
-        ></textarea>
+          <textarea
+            id="preview"
+            class="textarea textarea-bordered w-full flex-1 min-h-56 lg:min-h-0"
+            rows="14"
+            placeholder="Your status update will appear here as you fill in the form…"
+            aria-label="Status update message preview"
+          ></textarea>
 
-        <div class="actions">
-          <button type="button" id="copy-btn" class="btn btn-primary" disabled>
-            Copy to clipboard
-          </button>
-          <span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>
+          <div class="flex items-center gap-3 flex-wrap mt-auto">
+            <button type="button" id="copy-btn" class="btn btn-primary flex-1 min-h-11" disabled>
+              Copy to clipboard
+            </button>
+            <span id="copy-feedback" class="text-success font-semibold text-sm min-h-5" role="status" aria-live="polite"></span>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer class="footer">
+    <footer class="text-center mt-8 text-base-content/60 text-sm">
       <p>All fields are optional. Fill in whatever applies to your case.</p>
     </footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="app.js"></script>
 </body>
 </html>

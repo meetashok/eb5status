@@ -1,6 +1,6 @@
 # EB-5 Status Update Draft
 
-A simple, mobile-friendly web app for EB-5 investor community members to draft structured status updates and paste them into WhatsApp groups.
+A mobile-friendly web app for EB-5 investor community members to draft structured status updates and paste them into WhatsApp groups.
 
 ## Live demo
 
@@ -25,26 +25,34 @@ Then visit `http://localhost:8080`.
 - Direct editing of the preview text before copying
 - One-click copy to clipboard
 - All fields optional — copy is enabled when at least one field has content
-- Mobile responsive layout with side-by-side live preview on desktop
-- Native form controls for fast mobile date entry (OS date picker on phone)
-- Chip multi-select for SOF and WOM filing
-- Animated Yes/No pill toggle for combo card
-- Segmented control for WOM counsel
+- **Tailwind CSS + DaisyUI** components via CDN (no build step)
+- **Dark/light theme toggle** (default dark), preference saved in `localStorage`
+- **Flatpickr** date fields with calendar icon on the left
+- Chip multi-select for SOF; equal-width pills for WOM filing
+- Segmented option picker for I-526 adjudication status
+- Side-by-side live preview on desktop
+
+## Stack
+
+- [Tailwind CSS](https://tailwindcss.com/) (browser CDN)
+- [DaisyUI](https://daisyui.com/) (CDN)
+- [Flatpickr](https://flatpickr.js.org/) (CDN)
+- Vanilla JavaScript — no build step, GitHub Pages ready
 
 ## Fields
 
 | Field | Type |
 |-------|------|
-| Priority date | Date |
+| Priority date | Date (Flatpickr) |
 | Regional Center | Text |
 | Project name | Text |
-| SOF composition | Multi-select |
+| SOF composition | Multi-select chips |
 | Attorney | Text |
-| Biometric notice | Date |
-| EAD approval date | Date |
-| AP approval date | Date |
+| Biometric notice | Date (Flatpickr) |
+| EAD approval date | Date (Flatpickr) |
+| AP approval date | Date (Flatpickr) |
 | Combo card | Yes / No |
-| I-526 adjudication | Status (Approved, RFE, NOID, Denied) + date |
-| WOM filing | Multi-select (I-526, I-485, EAD, AP) + date |
+| I-526 adjudication | Option picker (Approved, RFE, NOID, Denied) + date |
+| WOM filing | Multi-select pills (I-526, I-485, EAD, AP) + date |
 | WOM counsel | Attorney / Pro se |
-| I-485 adjudication date | Date |
+| I-485 adjudication date | Date (Flatpickr) |
