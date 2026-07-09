@@ -32,7 +32,13 @@
     SOF_DETAIL_FIELDS.map((field) => [field.value, field.inputId])
   );
 
-  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Infra", "Direct"]);
+  const KEY_UPDATE_TITLES = {
+    "eb5-filed": "New case filed",
+    "ead-ap-approval": "EAD/AP approval",
+    "wom-filed": "WOM filed",
+    "i526-approval": "I-526 approval",
+    "i485-approval": "I-485 approval",
+  };
   const CELEBRATION_EMOJI = "🎉";
   let comboCardValue = "";
   let previewManuallyEdited = false;
@@ -47,6 +53,63 @@
     if (!formatted) return "";
     const offset = daysFromPriorityDate(isoDate);
     return offset ? `${formatted} (${offset})` : formatted;
+  }
+
+  function daysAfterPriorityDate(isoDate) {
+    const priorityDate = parseIsoDate(getFieldValue("priority-date"));
+    const eventDate = parseIsoDate(isoDate);
+    if (!priorityDate || !eventDate) return "";
+
+    const toLocalDate = (iso) => {
+      const [year, month, day] = iso.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    };
+
+    const diffDays = Math.round(
+      (toLocalDate(eventDate).getTime() - toLocalDate(priorityDate).getTime()) /
+        (24 * 60 * 60 * 1000)
+    );
+    const sign = diffDays >= 0 ? "+" : "";
+    return `${sign}${diffDays} days after PD`;
+  }
+
+  function getKeyUpdateReferenceDate(keyUpdate) {
+    switch (keyUpdate) {
+      case "ead-ap-approval":
+        if (!isPending("ead-approval-pending")) {
+          const eadDate = parseIsoDate(getFieldValue("ead-approval"));
+          if (eadDate) return eadDate;
+        }
+        if (!isPending("ap-approval-pending")) {
+          return parseIsoDate(getFieldValue("ap-approval"));
+        }
+        return "";
+      case "wom-filed":
+        if (isWomNotFiled()) return "";
+        return parseIsoDate(getFieldValue("wom-date"));
+      case "i526-approval":
+        if (isPending("i526-date-pending")) return "";
+        return parseIsoDate(getFieldValue("i526-date"));
+      case "i485-approval":
+        if (isPending("i485-date-pending")) return "";
+        return parseIsoDate(getFieldValue("i485-date"));
+      default:
+        return "";
+    }
+  }
+
+  function buildTitleLine() {
+    const keyUpdate = getRadioValue("keyUpdate");
+    if (!keyUpdate) return "EB-5 Status Update";
+
+    const title = KEY_UPDATE_TITLES[keyUpdate];
+    if (!title) return "EB-5 Status Update";
+
+    const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
+    const daysAfter = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
+    return daysAfter
+      ? `EB-5 Status Update: ${title} (${daysAfter})`
+      : `EB-5 Status Update: ${title}`;
   }
 
   function daysFromPriorityDate(isoDate) {
@@ -239,6 +302,7 @@
     syncRadioGroup("womCounsel");
     syncRadioGroup("womStatus");
     syncRadioGroup("applicationLocation");
+    syncRadioGroup("keyUpdate");
   }
 
   function initChoiceButtons() {
@@ -577,15 +641,15 @@
       bulletLines.push(label ? `${label}: ${value}` : value);
     }
 
-    if (bulletLines.length === 0) return "";
+    if (bulletLines.length === 0 && !getRadioValue("keyUpdate")) return "";
 
-    return [
-      "EB-5 Status Update",
-      "",
-      ...bulletLines.map((line) => `• ${line}`),
-      "",
-      "Generated via bit.ly/eb5status",
-    ].join("\n");
+    const messageParts = [buildTitleLine()];
+    if (bulletLines.length > 0) {
+      messageParts.push("", ...bulletLines.map((line) => `• ${line}`));
+    }
+    messageParts.push("", "Generated via bit.ly/eb5status");
+
+    return messageParts.join("\n");
   }
 
   function updatePreviewFromFormIfAllowed() {
@@ -647,5 +711,6 @@
   initOptionalRadioDeselect("womCounsel");
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
+  initOptionalRadioDeselect("keyUpdate");
   updateCopyButton();
 })();

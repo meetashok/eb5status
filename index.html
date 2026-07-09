@@ -85,6 +85,42 @@
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
         <section class="card card-border bg-base-100 shadow-md">
           <div class="card-body gap-2 p-4 sm:p-5">
+            <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Key Update</h2>
+
+            <div class="form-control w-full">
+              <div class="field-row">
+                <span class="field-row-label" id="key-update-label">What's the update?</span>
+                <div class="field-row-control">
+                  <div class="flex flex-wrap gap-2" role="radiogroup" aria-labelledby="key-update-label">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="radio" name="keyUpdate" id="key-update-eb5-filed" value="eb5-filed">
+                      EB-5 filed
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="radio" name="keyUpdate" id="key-update-ead-ap" value="ead-ap-approval">
+                      EAD/AP approval
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="radio" name="keyUpdate" id="key-update-wom" value="wom-filed">
+                      WOM filed
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i526" value="i526-approval">
+                      I-526 approval
+                    </label>
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                      <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i485" value="i485-approval">
+                      I-485 approval
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-border bg-base-100 shadow-md">
+          <div class="card-body gap-2 p-4 sm:p-5">
             <h2 class="text-base font-bold text-secondary tracking-wide border-b border-secondary pb-2.5 mb-1">Case Basics</h2>
 
             <div class="form-control w-full">
