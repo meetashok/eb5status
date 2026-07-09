@@ -168,16 +168,18 @@
     const eventDate = parseIsoDate(isoDate);
     if (!priorityDate || !eventDate) return "";
 
-    const diffDays = Math.round(
-      (toLocalDateFromIso(eventDate).getTime() - toLocalDateFromIso(priorityDate).getTime()) /
-        (24 * 60 * 60 * 1000)
+    const diffDays = getElapsedDays(priorityDate, eventDate);
+    if (diffDays === null) return "";
+    return formatElapsed(diffDays, { withSign: true, withFromPd: true }).replace(
+      " from PD",
+      " after PD"
     );
-    const sign = diffDays >= 0 ? "+" : "";
-    return `${sign}${diffDays} days after PD`;
   }
 
   function getKeyUpdateReferenceDate(keyUpdate) {
     switch (keyUpdate) {
+      case "eb5-filed":
+        return getTodayIso();
       case "ead-ap-approval":
         if (!isPending("ead-approval-pending")) {
           const eadDate = parseIsoDate(getFieldValue("ead-approval"));
@@ -201,6 +203,40 @@
     }
   }
 
+  function getElapsedDays(fromIso, toIso) {
+    const from = parseIsoDate(fromIso);
+    const to = parseIsoDate(toIso);
+    if (!from || !to) return null;
+
+    return Math.round(
+      (toLocalDateFromIso(to).getTime() - toLocalDateFromIso(from).getTime()) /
+        (24 * 60 * 60 * 1000)
+    );
+  }
+
+  /**
+   * Tiered elapsed-time formatting from a day count.
+   * < 30 days → days; ≥ 30 days → months via Math.round(days / 30.44).
+   */
+  function formatElapsed(diffDays, options = {}) {
+    if (typeof diffDays !== "number" || Number.isNaN(diffDays)) return "";
+
+    const { withSign = false, withFromPd = false } = options;
+    const abs = Math.abs(diffDays);
+    const sign = diffDays < 0 ? "-" : withSign ? "+" : "";
+
+    let amount;
+    if (abs < 30) {
+      amount = `${abs} ${abs === 1 ? "day" : "days"}`;
+    } else {
+      const months = Math.round(abs / 30.44);
+      amount = `${months} ${months === 1 ? "month" : "months"}`;
+    }
+
+    const base = `${sign}${amount}`;
+    return withFromPd ? `${base} from PD` : base;
+  }
+
   function buildTitleLine() {
     const keyUpdate = getRadioValue("keyUpdate");
     if (!keyUpdate) return "EB5 Status Update";
@@ -213,9 +249,9 @@
     }
 
     const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
-    const daysAfter = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
-    return daysAfter
-      ? `EB5 Status Update: ${title} (${daysAfter})`
+    const elapsed = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
+    return elapsed
+      ? `EB5 Status Update: ${title} (${elapsed})`
       : `EB5 Status Update: ${title}`;
   }
 
@@ -224,12 +260,9 @@
     const eventDate = parseIsoDate(isoDate);
     if (!priorityDate || !eventDate) return "";
 
-    const diffDays = Math.round(
-      (toLocalDateFromIso(eventDate).getTime() - toLocalDateFromIso(priorityDate).getTime()) /
-        (24 * 60 * 60 * 1000)
-    );
-    const sign = diffDays >= 0 ? "+" : "";
-    return `${sign}${diffDays} days from PD`;
+    const diffDays = getElapsedDays(priorityDate, eventDate);
+    if (diffDays === null) return "";
+    return formatElapsed(diffDays, { withSign: true, withFromPd: true });
   }
 
   function formatPendingDateValue(inputId, pendingId) {
@@ -321,25 +354,30 @@
     return count;
   }
 
+  function getFromPdStatValue(keyUpdate) {
+    if (isMonthsOnlyPrivacy()) return "—";
+    if (!keyUpdate) return "—";
+
+    const priorityDate = parseIsoDate(getFieldValue("priority-date"));
+    const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
+    if (!priorityDate || !referenceDate) return "—";
+
+    const diffDays = getElapsedDays(priorityDate, referenceDate);
+    if (diffDays === null) return "—";
+    return formatElapsed(diffDays);
+  }
+
   function updatePreviewStats() {
     const keyUpdate = getRadioValue("keyUpdate");
     const filledCount = countFilledFields();
+    const fromPdValue = getFromPdStatValue(keyUpdate);
 
     if (statKeyUpdate) {
       statKeyUpdate.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
     }
 
     if (statDaysPd) {
-      if (isMonthsOnlyPrivacy()) {
-        statDaysPd.textContent = "—";
-      } else {
-        const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
-        const days =
-          referenceDate && parseIsoDate(getFieldValue("priority-date"))
-            ? daysFromPriorityDate(referenceDate)
-            : "";
-        statDaysPd.textContent = days || "—";
-      }
+      statDaysPd.textContent = fromPdValue;
     }
 
     if (statFieldsFilled) {
@@ -349,6 +387,11 @@
     if (progressFill) {
       const pct = Math.min(100, (filledCount / PROGRESS_MAX_FIELDS) * 100);
       progressFill.style.width = `${pct}%`;
+    }
+
+    const progressCount = document.getElementById("progress-count");
+    if (progressCount) {
+      progressCount.textContent = `${filledCount}/${PROGRESS_MAX_FIELDS}`;
     }
 
     if (fabFieldCount) {
@@ -363,16 +406,7 @@
       mobileStatKey.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
     }
     if (mobileStatDays) {
-      if (isMonthsOnlyPrivacy()) {
-        mobileStatDays.textContent = "—";
-      } else {
-        const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
-        const days =
-          referenceDate && parseIsoDate(getFieldValue("priority-date"))
-            ? daysFromPriorityDate(referenceDate)
-            : "";
-        mobileStatDays.textContent = days || "—";
-      }
+      mobileStatDays.textContent = fromPdValue;
     }
   }
 
@@ -889,9 +923,10 @@
         getFieldValue("wom-resolution-date"),
         "wom-resolution-date"
       );
-      return resDate ? `${status} (${resDate})` : status;
+      const prefix = status === "Dismissed" ? "WOM dismissed" : "WOM resolution";
+      return resDate ? `${prefix}: ${resDate}` : `${prefix}`;
     }
-    return status;
+    return `WOM status: ${status}`;
   }
 
   function getI956fLine() {
@@ -1018,10 +1053,15 @@
 
   function updateWomResolutionVisibility() {
     const wrap = document.getElementById("wom-resolution-wrap");
+    const label = document.getElementById("wom-resolution-date-label");
     if (!wrap) return;
     const status = getRadioValue("womStatus");
     const show = hasWomDateContext() && (status === "Resolved" || status === "Dismissed");
     wrap.classList.toggle("hidden", !show);
+    if (label) {
+      label.textContent =
+        status === "Dismissed" ? "WOM Dismissal Date" : "WOM Resolution Date";
+    }
     if (!show) {
       const input = document.getElementById("wom-resolution-date");
       if (input) input.value = "";
@@ -1193,6 +1233,74 @@
     if (previewFab) previewFab.classList.toggle("hidden", !hasContent || isDesktop);
   }
 
+  const SHARE_URL = "https://bit.ly/eb5status";
+  const SHARE_URL_SHORT = "bit.ly/eb5status";
+  const SHARE_TITLE = "EB5 Status Update Builder";
+  const SHARE_TEXT = "Check out this tool for sharing your EB-5 case status";
+  let shareBtnResetTimer = null;
+
+  function showShareCopied(button) {
+    if (!button) return;
+    const original = button.innerHTML;
+    button.classList.add("is-copied");
+    button.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Link copied!';
+
+    if (shareBtnResetTimer) clearTimeout(shareBtnResetTimer);
+    shareBtnResetTimer = setTimeout(() => {
+      button.classList.remove("is-copied");
+      button.innerHTML = original;
+    }, 2000);
+  }
+
+  async function shareAppLink(button) {
+    const canNativeShare =
+      typeof navigator.share === "function" &&
+      (!navigator.canShare ||
+        navigator.canShare({ title: SHARE_TITLE, text: SHARE_TEXT, url: SHARE_URL }));
+
+    if (canNativeShare && (window.matchMedia("(max-width: 1023px)").matches || "ontouchstart" in window)) {
+      try {
+        await navigator.share({
+          title: SHARE_TITLE,
+          text: SHARE_TEXT,
+          url: SHARE_URL,
+        });
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        /* fall through to clipboard */
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(SHARE_URL_SHORT);
+      showShareCopied(button);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = SHARE_URL_SHORT;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showShareCopied(button);
+    }
+  }
+
+  function initShareButtons() {
+    ["share-btn", "mobile-share-btn"].forEach((id) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        shareAppLink(btn);
+      });
+    });
+  }
+
   function updateRefreshButton() {
     const show = previewManuallyEdited;
     refreshBtn.hidden = !show;
@@ -1263,7 +1371,7 @@
       ["WOM filed for", hasWomDateContext() ? getWomFiledForValue() : ""],
       ["WOM counsel", hasWomDateContext() ? getWomCounselLine() : ""],
       ["WOM court", hasWomDateContext() ? getFieldValue("wom-court") : ""],
-      ["WOM status", hasWomDateContext() ? getWomStatusLine() : ""],
+      [null, hasWomDateContext() ? getWomStatusLine() : ""],
       ["I-485 approved", formatApprovalValue("i485-date", "i485-date-pending")],
       ["SOF composition", getSofComposition()],
     ];
@@ -1289,11 +1397,6 @@
     ].join("\n");
   }
 
-  function shouldShowPreviewPanel() {
-    if (previewManuallyEdited && preview.value.trim()) return true;
-    return Boolean(generateMessage());
-  }
-
   function syncMobilePreview() {
     if (!mobilePreview) return;
     if (!mobilePreviewManuallyEdited) {
@@ -1303,25 +1406,14 @@
 
   function updatePreviewPanelVisibility() {
     if (!previewPanel) return;
-    const shouldShow = shouldShowPreviewPanel();
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 
-    if (!isDesktop) {
+    // Desktop: always show the preview panel (no layout shift on first input).
+    // Mobile: keep the panel hidden; preview is accessed via the FAB / bottom sheet.
+    if (isDesktop) {
+      previewPanel.classList.remove("hidden");
+    } else {
       previewPanel.classList.add("hidden");
-      return;
-    }
-
-    const wasHidden = previewPanel.classList.contains("hidden");
-    previewPanel.classList.toggle("hidden", !shouldShow);
-    if (shouldShow && wasHidden) {
-      previewPanel.classList.add("preview-panel-enter");
-      previewPanel.addEventListener(
-        "animationend",
-        () => {
-          previewPanel.classList.remove("preview-panel-enter");
-        },
-        { once: true }
-      );
     }
   }
 
@@ -1517,15 +1609,35 @@
   }
 
   function initClearForm() {
+    const modal = document.getElementById("clear-form-modal");
+    const confirmBtn = document.getElementById("clear-form-confirm");
     const handlers = [clearFormBtn, document.getElementById("clear-form-btn-footer")].filter(Boolean);
+
+    const openModal = () => {
+      if (modal && typeof modal.showModal === "function") {
+        modal.showModal();
+      } else if (modal) {
+        modal.setAttribute("open", "");
+      }
+    };
+
     handlers.forEach((btn) => {
       btn.addEventListener("click", (event) => {
         event.preventDefault();
-        if (window.confirm("Clear all form fields and reset your saved draft?")) {
-          clearForm();
-        }
+        openModal();
       });
     });
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener("click", () => {
+        clearForm();
+        if (modal && typeof modal.close === "function") {
+          modal.close();
+        } else if (modal) {
+          modal.removeAttribute("open");
+        }
+      });
+    }
   }
 
   function openPreviewSheet() {
@@ -1678,6 +1790,7 @@
   initAutocompleteFields();
   initClearForm();
   initMobilePreview();
+  initShareButtons();
   window.addEventListener("resize", updatePreviewPanelVisibility);
   loadFormState();
   updatePreviewPanelVisibility();

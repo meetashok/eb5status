@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Build and copy structured EB5 status updates for WhatsApp groups">
   <title>EB5 Status Update Builder</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -141,12 +143,19 @@
     .choice-btn:active {
       transform: scale(0.98);
     }
+    .progress-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
     .progress-bar-wrap {
       height: 3px;
       background: var(--color-base-300);
       border-radius: 999px;
       overflow: hidden;
-      margin-bottom: 1rem;
+      flex: 1;
+      min-width: 0;
     }
     .progress-bar-fill {
       height: 100%;
@@ -154,6 +163,53 @@
       border-radius: 999px;
       transition: width 0.4s ease;
       width: 0%;
+    }
+    .progress-count {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+      font-variant-numeric: tabular-nums;
+    }
+    .help-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 0.875rem;
+      height: 0.875rem;
+      border-radius: 999px;
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 30%, transparent);
+      font-size: 0.625rem;
+      font-weight: 700;
+      line-height: 1;
+      color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+      cursor: help;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+    .help-tip:hover,
+    .help-tip:focus-visible {
+      color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
+      border-color: color-mix(in oklch, var(--color-base-content) 50%, transparent);
+      outline: none;
+    }
+    .date-with-pending--stacked {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+    .date-with-pending--stacked .date-state-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .date-with-pending--stacked .date-input-wrap {
+      width: 100%;
+    }
+    #share-btn.is-copied,
+    #mobile-share-btn.is-copied {
+      color: var(--color-success);
     }
     .stats {
       background: linear-gradient(135deg,
@@ -393,7 +449,7 @@
       display: none !important;
     }
     @media (min-width: 1024px) {
-      #preview-panel:not(.hidden) {
+      #preview-panel {
         display: flex !important;
       }
     }
@@ -499,8 +555,11 @@
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
-        <div class="progress-bar-wrap" aria-hidden="true">
-          <div class="progress-bar-fill" id="progress-fill"></div>
+        <div class="progress-bar-row" aria-hidden="true">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+          </div>
+          <span class="progress-count" id="progress-count">0/15</span>
         </div>
 
         <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
@@ -543,15 +602,15 @@
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-eb5-filed" value="eb5-filed">
                       EB5 filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="EAD: work permit. AP: travel authorization.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-ead-ap" value="ead-ap-approval">
                       EAD/AP approval
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="Writ of Mandamus — a federal lawsuit to compel USCIS to act on a long-pending petition.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-wom" value="wom-filed">
                       WOM filed
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-bottom z-20" data-tip="The immigrant investor petition. I-526E is the post-RIA version filed after March 2022.">
                       <input class="sr-only" type="radio" name="keyUpdate" id="key-update-i526" value="i526-approval">
                       I-526 approval
                     </label>
@@ -575,8 +634,8 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <label for="priority-date">Priority Date</label>
-                  <span class="tooltip tooltip-right z-10 max-w-xs" data-tip="Date USCIS received your I-526 / I-526E">
-                    <button type="button" class="inline-flex items-center justify-center w-4 h-4 rounded-full border border-base-content/30 text-[10px] font-bold text-base-content/50 hover:text-base-content/80 hover:border-base-content/50 leading-none cursor-help" aria-label="What is priority date?">?</button>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The date USCIS received your I-526/I-526E petition, or your visa bulletin priority date. This anchors your processing timeline.">
+                    <button type="button" class="help-tip" aria-label="What is Priority Date?">?</button>
                   </span>
                 </div>
                 <div class="field-row-control">
@@ -599,17 +658,24 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="i956f-approval">I-956F Approval Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="i956f-approval">I-956F Approval Date</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="USCIS approval of the regional center's project filing. Required before investors in that project can be adjudicated.">
+                    <button type="button" class="help-tip" aria-label="What is I-956F?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
-                  <div class="date-with-pending">
-                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm" id="i956f-pending">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
-                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm" id="i956f-approved-before-pd">
-                      <span class="label-text text-sm whitespace-nowrap">Approved before PD</span>
-                    </label>
+                  <div class="date-with-pending date-with-pending--stacked">
+                    <div class="date-state-toggles">
+                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                        <input type="checkbox" class="checkbox checkbox-sm" id="i956f-pending">
+                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                      </label>
+                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                        <input type="checkbox" class="checkbox checkbox-sm" id="i956f-approved-before-pd">
+                        <span class="label-text text-sm whitespace-nowrap">Approved before PD</span>
+                      </label>
+                    </div>
                     <div class="date-input-wrap" id="i956f-approval-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i956f-approval-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i956f-approval-popover" aria-label="Open calendar">
@@ -632,22 +698,27 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <span class="field-row-label" id="project-category-label">Project Category</span>
+                <div class="field-row-label flex items-center gap-1.5" id="project-category-label">
+                  <span>Project Category</span>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="TEA: Targeted Employment Area — a rural or high-unemployment area that qualifies for the lower $800K investment amount.">
+                    <button type="button" class="help-tip" aria-label="What is TEA?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2" role="group" aria-labelledby="project-category-label">
                     <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-rural" value="Rural">
                       Rural
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="High Unemployment Area — a geographic area with unemployment at 150%+ of the national average, qualifying as a TEA.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-hua" value="HUA">
                       HUA
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="Infrastructure project — a specific category of EB-5 project.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-infra" value="Infra">
                       Infra
                     </label>
-                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11">
+                    <label class="choice-btn btn btn-sm btn-soft btn-primary min-h-11 tooltip tooltip-top z-20" data-tip="Direct investment — an EB-5 investment made directly into a commercial enterprise, not through a regional center.">
                       <input class="sr-only" type="checkbox" name="projectCategory" id="cat-direct" value="Direct">
                       Direct
                     </label>
@@ -658,7 +729,12 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="regional-center">Regional Center</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="regional-center">Regional Center</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Regional Center — a USCIS-designated entity that sponsors EB-5 projects and pools investor capital.">
+                    <button type="button" class="help-tip" aria-label="What is a Regional Center?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="autocomplete-wrap" style="anchor-name:--regional-center-anchor">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
@@ -733,7 +809,12 @@
           <div class="card-body gap-2 p-4 sm:p-5">
             <div class="form-control w-full">
               <div class="field-row field-row--center">
-                <span class="field-row-label" id="application-location-label">Service Center</span>
+                <div class="field-row-label flex items-center gap-1.5" id="application-location-label">
+                  <span>Service Center</span>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The USCIS office processing your petition. WAC = California, LIN = Nebraska, SRC = Texas, MSC = Missouri.">
+                    <button type="button" class="help-tip" aria-label="What is a Service Center?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="join flex-wrap" role="radiogroup" aria-labelledby="application-location-label">
                     <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-16 justify-center">
@@ -788,7 +869,12 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="ead-approval">EAD Approval Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="ead-approval">EAD Approval Date</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Employment Authorization Document — a work permit issued while your green card application is pending.">
+                    <button type="button" class="help-tip" aria-label="What is EAD?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="date-with-pending">
                     <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
@@ -817,7 +903,12 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="ap-approval">AP Approval Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="ap-approval">AP Approval Date</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Advance Parole — travel authorization that lets you leave and re-enter the US while your adjustment of status is pending.">
+                    <button type="button" class="help-tip" aria-label="What is AP?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="date-with-pending">
                     <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
@@ -846,7 +937,12 @@
 
             <div id="combo-card-wrap" class="form-control w-full hidden conditional-reveal">
               <div class="field-row field-row--center">
-                <span class="field-row-label" id="combo-card-label">Combo Card</span>
+                <div class="field-row-label flex items-center gap-1.5" id="combo-card-label">
+                  <span>Combo Card</span>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="A single card that serves as both EAD (work permit) and AP (travel document).">
+                    <button type="button" class="help-tip" aria-label="What is a Combo Card?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="join" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
                     <button type="button" class="join-item btn btn-soft btn-primary min-h-11 min-w-24" data-value="No" data-btn-color="primary" aria-pressed="false">No</button>
@@ -865,7 +961,12 @@
           <div class="card-body gap-2 p-4 sm:p-5">
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="i526-date">I-526 Adjudication Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="i526-date">I-526 Adjudication Date</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="The immigrant investor petition. I-526E is the post-RIA (Reform and Integrity Act) version filed after March 2022.">
+                    <button type="button" class="help-tip" aria-label="What is I-526 / I-526E?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="date-with-pending">
                     <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
@@ -894,18 +995,20 @@
 
             <div id="i526-status-wrap" class="form-control w-full hidden conditional-reveal">
               <div class="field-row">
-                <span class="field-row-label">I-526 Adjudication</span>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <span>I-526 Adjudication</span>
+                </div>
                 <div class="field-row-control">
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full" role="radiogroup" aria-label="I-526 Adjudication" id="i526-status-group">
                     <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
                       <input class="sr-only" type="radio" name="i526Status" value="Approved" checked>
                       Approved
                     </label>
-                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-20" data-tip="Request for Evidence — USCIS asking for additional documentation before making a decision on your petition.">
                       <input class="sr-only" type="radio" name="i526Status" value="RFE">
                       RFE
                     </label>
-                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center">
+                    <label class="choice-btn btn btn-soft btn-primary min-h-11 justify-center tooltip tooltip-top z-20" data-tip="Notice of Intent to Deny — a warning that USCIS plans to deny your petition, giving you a chance to respond.">
                       <input class="sr-only" type="radio" name="i526Status" value="NOID">
                       NOID
                     </label>
@@ -931,7 +1034,12 @@
 
             <div class="form-control w-full">
               <div class="field-row">
-                <label class="field-row-label" for="wom-date">WOM Filing Date</label>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <label for="wom-date">WOM Filing Date</label>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Writ of Mandamus — a federal lawsuit to compel USCIS to act on a long-pending petition.">
+                    <button type="button" class="help-tip" aria-label="What is WOM?">?</button>
+                  </span>
+                </div>
                 <div class="field-row-control">
                   <div class="date-with-pending">
                     <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
@@ -1030,7 +1138,12 @@
 
               <div class="form-control w-full">
                 <div class="field-row field-row--center">
-                  <span class="field-row-label" id="wom-status-label">WOM Status</span>
+                  <span class="field-row-label flex items-center gap-1.5" id="wom-status-label">
+                    <span>WOM Status</span>
+                    <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="MTD: Motion to Dismiss — the government's response asking the court to throw out a WOM lawsuit.">
+                      <button type="button" class="help-tip" aria-label="What is MTD?">?</button>
+                    </span>
+                  </span>
                   <div class="field-row-control">
                     <div class="join flex-wrap" role="radiogroup" aria-labelledby="wom-status-label">
                       <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 justify-center">
@@ -1056,7 +1169,7 @@
 
               <div id="wom-resolution-wrap" class="form-control w-full hidden conditional-reveal">
                 <div class="field-row">
-                  <label class="field-row-label" for="wom-resolution-date">WOM Resolution Date</label>
+                  <label class="field-row-label" for="wom-resolution-date" id="wom-resolution-date-label">WOM Resolution Date</label>
                   <div class="field-row-control">
                     <div class="date-input-wrap" id="wom-resolution-date-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-resolution-date-anchor">
@@ -1116,7 +1229,13 @@
           <div class="card-body gap-2 p-4 sm:p-5">
             <div class="form-control w-full">
               <div class="field-row">
-                <div class="field-row-label">Source of Funds <span class="font-normal text-base-content/60">(tap all that apply)</span></div>
+                <div class="field-row-label flex items-center gap-1.5">
+                  <span>Source of Funds</span>
+                  <span class="tooltip tooltip-right z-20 max-w-xs" data-tip="Source of Funds — documentation proving where your investment capital came from (savings, property sale, gift, loan, etc.).">
+                    <button type="button" class="help-tip" aria-label="What is SOF?">?</button>
+                  </span>
+                  <span class="font-normal text-base-content/60">(tap all that apply)</span>
+                </div>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2">
                     <label class="choice-btn btn btn-sm btn-soft btn-primary">
@@ -1233,7 +1352,7 @@
         </section>
       </form>
 
-      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full hidden card-animate card-animate-7" aria-labelledby="preview-heading">
+      <section id="preview-panel" class="section-card card card-border bg-base-100 shadow-md overflow-hidden lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:flex lg:flex-col lg:flex-[0.85] min-w-0 w-full card-animate card-animate-7" aria-labelledby="preview-heading">
         <div class="section-header section-header--success">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
@@ -1255,7 +1374,7 @@
               <div id="stat-key-update" class="stat-value text-sm font-semibold">—</div>
             </div>
             <div class="stat py-3 px-4">
-              <div class="stat-title text-xs">Days from PD</div>
+              <div class="stat-title text-xs">From PD</div>
               <div id="stat-days-pd" class="stat-value text-sm font-semibold">—</div>
             </div>
             <div class="stat py-3 px-4">
@@ -1269,7 +1388,7 @@
               id="preview"
               class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-56 lg:min-h-0"
               rows="14"
-              placeholder="Your status update will appear here as you fill in the form…"
+              placeholder="Your status update will appear here..."
               aria-label="Status update message preview"
             ></textarea>
           </div>
@@ -1277,6 +1396,10 @@
           <div class="flex items-center gap-3 flex-wrap mt-auto">
             <button type="button" id="copy-btn" class="btn flex-1 min-h-11" disabled>
               Copy to clipboard
+            </button>
+            <button type="button" id="share-btn" class="btn btn-ghost border border-base-content/20 min-h-11 gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              Share
             </button>
           </div>
         </div>
@@ -1320,7 +1443,7 @@
           <div id="mobile-stat-key-update" class="stat-value text-sm font-semibold">—</div>
         </div>
         <div class="stat py-3 px-4">
-          <div class="stat-title text-xs">Days from PD</div>
+          <div class="stat-title text-xs">From PD</div>
           <div id="mobile-stat-days-pd" class="stat-value text-sm font-semibold">—</div>
         </div>
         <div class="stat py-3 px-4">
@@ -1340,6 +1463,10 @@
       <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11" disabled>
         Copy to clipboard
       </button>
+      <button type="button" id="mobile-share-btn" class="btn btn-ghost border border-base-content/20 w-full min-h-11 gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        Share
+      </button>
     </div>
   </div>
 
@@ -1354,6 +1481,22 @@
       <span>Restored your previous draft</span>
     </div>
   </div>
+
+  <dialog id="clear-form-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Clear form?</h3>
+      <p class="py-3 text-base-content/70">This will reset all fields and remove your saved draft from this browser.</p>
+      <div class="modal-action">
+        <form method="dialog" class="flex gap-2">
+          <button type="submit" class="btn btn-ghost">Cancel</button>
+          <button type="button" id="clear-form-confirm" class="btn btn-error text-white">Clear form</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button type="submit" aria-label="Close">close</button>
+    </form>
+  </dialog>
 
   <script src="app.js"></script>
 </body>
