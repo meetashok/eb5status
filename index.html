@@ -95,6 +95,12 @@
       line-height: 1.4;
       color: color-mix(in oklch, var(--color-base-content) 42%, transparent);
     }
+    #celebration-toast {
+      transition: opacity 0.3s ease;
+    }
+    #celebration-toast.is-visible {
+      opacity: 1;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-base-200">
@@ -110,7 +116,7 @@
         </label>
       </div>
       <div class="badge badge-primary badge-outline mb-3">EB5 Community Tool</div>
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">EB5 status update builder</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">EB5 Status Update Builder</h1>
       <p class="text-base-content/70 mt-2 max-w-xl mx-auto text-base leading-relaxed">Fill in your milestones, preview the message live, and paste it into WhatsApp. All fields are optional, the live preview is built based on provided data.</p>
     </header>
 
@@ -732,6 +738,12 @@
       <p>All fields are optional. Fill in whatever applies to your case.</p>
       <p>This is a static page. Nothing you enter is sent to a server or stored by the maintainer. Your information stays in your browser only.</p>
     </footer>
+  </div>
+
+  <div id="celebration-toast" class="toast toast-top toast-center z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
+    <div class="alert alert-success shadow-lg max-w-md">
+      <span id="celebration-toast-text"></span>
+    </div>
   </div>
 
   <script src="app.js"></script>

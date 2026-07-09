@@ -18,6 +18,8 @@
   const copyFeedback = document.getElementById("copy-feedback");
   const refreshBtn = document.getElementById("refresh-preview");
   const previewPanel = document.getElementById("preview-panel");
+  const celebrationToast = document.getElementById("celebration-toast");
+  const celebrationToastText = document.getElementById("celebration-toast-text");
   const comboCardToggle = document.getElementById("combo-card");
   const themeToggle = document.getElementById("theme-toggle");
 
@@ -40,9 +42,19 @@
     "i526-approval": "I-526 approval",
     "i485-approval": "I-485 approval",
   };
+
+  const KEY_UPDATE_CELEBRATIONS = {
+    "eb5-filed": "Congratulations on filing your EB5 case! 🎉",
+    "ead-ap-approval": "Congratulations on your EAD/AP approval! 🎉",
+    "wom-filed": "Got it. Tracking your WOM filing update.",
+    "i526-approval": "Congratulations on your I-526 approval! 🎉",
+    "i485-approval": "Congratulations on your I-485 approval! 🎉",
+  };
   const CELEBRATION_EMOJI = "🎉";
   let comboCardValue = "";
   let previewManuallyEdited = false;
+  let celebrationToastTimer = null;
+  let lastCelebratedKeyUpdate = "";
 
   function isPending(pendingId) {
     const el = document.getElementById(pendingId);
@@ -183,6 +195,43 @@
   function getRadioValue(name) {
     const selected = form.querySelector(`input[name="${name}"]:checked`);
     return selected ? selected.value : "";
+  }
+
+  function showCelebrationToast(message) {
+    if (!celebrationToast || !celebrationToastText || !message) return;
+
+    celebrationToastText.textContent = message;
+    celebrationToast.classList.add("is-visible");
+    celebrationToast.setAttribute("aria-hidden", "false");
+
+    if (celebrationToastTimer) clearTimeout(celebrationToastTimer);
+    celebrationToastTimer = setTimeout(() => {
+      celebrationToast.classList.remove("is-visible");
+      celebrationToast.setAttribute("aria-hidden", "true");
+    }, 3500);
+  }
+
+  function handleKeyUpdateCelebration() {
+    const keyUpdate = getRadioValue("keyUpdate");
+    if (!keyUpdate) {
+      lastCelebratedKeyUpdate = "";
+      return;
+    }
+    if (keyUpdate === lastCelebratedKeyUpdate) return;
+
+    const message = KEY_UPDATE_CELEBRATIONS[keyUpdate];
+    if (!message) return;
+
+    lastCelebratedKeyUpdate = keyUpdate;
+    showCelebrationToast(message);
+  }
+
+  function initKeyUpdateCelebration() {
+    form.querySelectorAll('input[name="keyUpdate"]').forEach((radio) => {
+      radio.addEventListener("click", () => {
+        setTimeout(handleKeyUpdateCelebration, 0);
+      });
+    });
   }
 
   function initTheme() {
@@ -757,6 +806,7 @@
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
   initOptionalRadioDeselect("keyUpdate");
+  initKeyUpdateCelebration();
   updatePreviewPanelVisibility();
   updateCopyButton();
 })();
