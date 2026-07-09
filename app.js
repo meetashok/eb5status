@@ -310,7 +310,7 @@
     });
   }
 
-  function filterSuggestions(suggestions, query, limit = 8) {
+  function filterSuggestions(suggestions, query, limit = 12) {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return suggestions.slice(0, limit);
 
@@ -401,12 +401,24 @@
 
       options.forEach((el, idx) => {
         el.classList.toggle("is-active", idx === activeIndex);
+        if (idx === activeIndex) {
+          el.scrollIntoView({ block: "nearest" });
+        }
       });
     });
 
-    list.addEventListener("mousedown", () => {
+    list.addEventListener("mousedown", (event) => {
+      event.preventDefault();
       if (hideTimer) clearTimeout(hideTimer);
     });
+
+    list.addEventListener(
+      "wheel",
+      (event) => {
+        event.stopPropagation();
+      },
+      { passive: true }
+    );
   }
 
   async function initAutocompleteFields() {

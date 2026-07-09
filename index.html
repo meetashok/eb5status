@@ -134,6 +134,7 @@
     .field-row-control {
       flex: 1;
       min-width: 0;
+      overflow: visible;
     }
     .date-with-pending {
       display: flex;
@@ -183,18 +184,30 @@
       line-height: 1.4;
       color: color-mix(in oklch, var(--color-base-content) 42%, transparent);
     }
+    .form-control:has(.autocomplete-wrap) {
+      overflow: visible;
+    }
+    .card-body {
+      overflow: visible;
+    }
     .autocomplete-wrap {
       position: relative;
       width: 100%;
+      overflow: visible;
+    }
+    .autocomplete-wrap:focus-within {
+      z-index: 40;
     }
     .autocomplete-list {
       position: absolute;
       top: calc(100% + 0.25rem);
       left: 0;
       right: 0;
-      z-index: 30;
-      max-height: 12rem;
+      z-index: 50;
+      max-height: 16rem;
       overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       margin: 0;
       padding: 0.25rem 0;
       list-style: none;
