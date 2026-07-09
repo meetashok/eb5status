@@ -2,37 +2,63 @@
   "use strict";
 
   const THEME_KEY = "eb5-theme";
+  const FORM_STATE_KEY = "eb5-form-state";
+  const SAVE_DEBOUNCE_MS = 500;
+  const PROGRESS_MAX_FIELDS = 15;
+
   const DATE_FIELD_IDS = [
     "priority-date",
+    "i956f-approval",
     "biometric-notice",
     "ead-approval",
     "ap-approval",
     "i526-date",
+    "rfe-date",
+    "rfe-response-date",
     "wom-date",
+    "wom-resolution-date",
     "i485-date",
   ];
 
   const DATE_FIELD_META = [
     { id: "priority-date" },
+    { id: "i956f-approval", pendingId: "i956f-approval-pending" },
     { id: "biometric-notice", pendingId: "biometric-notice-pending" },
     { id: "ead-approval", pendingId: "ead-approval-pending" },
     { id: "ap-approval", pendingId: "ap-approval-pending" },
     { id: "i526-date", pendingId: "i526-date-pending" },
+    { id: "rfe-date", pendingId: "rfe-date-pending" },
+    { id: "rfe-response-date", pendingId: "rfe-response-date-pending" },
     { id: "wom-date", notFiledId: "wom-date-not-filed" },
+    { id: "wom-resolution-date" },
     { id: "i485-date", pendingId: "i485-date-pending" },
   ];
 
+  const CATEGORY_INCOMPATIBLE = {
+    Rural: ["Direct"],
+    Direct: ["Rural", "Infra"],
+    Infra: ["Direct"],
+    HUA: [],
+  };
+
   const form = document.getElementById("status-form");
   const preview = document.getElementById("preview");
+  const mobilePreview = document.getElementById("mobile-preview");
   const copyBtn = document.getElementById("copy-btn");
+  const mobileCopyBtn = document.getElementById("mobile-copy-btn");
   const refreshBtn = document.getElementById("refresh-preview");
   const previewPanel = document.getElementById("preview-panel");
   const celebrationToast = document.getElementById("celebration-toast");
   const celebrationToastText = document.getElementById("celebration-toast-text");
-  const copyToast = document.getElementById("copy-toast");
+  const restoreToast = document.getElementById("restore-toast");
+  const clearFormBtn = document.getElementById("clear-form-btn");
   const statKeyUpdate = document.getElementById("stat-key-update");
   const statDaysPd = document.getElementById("stat-days-pd");
   const statFieldsFilled = document.getElementById("stat-fields-filled");
+  const progressFill = document.getElementById("progress-fill");
+  const fabFieldCount = document.getElementById("fab-field-count");
+  const previewFab = document.getElementById("preview-fab");
+  const previewSheet = document.getElementById("preview-sheet");
   const comboCardToggle = document.getElementById("combo-card");
   const themeToggle = document.getElementById("theme-toggle");
 
@@ -63,23 +89,28 @@
     "i526-approval": "Congratulations on your I-526 approval! 🎉",
     "i485-approval": "Congratulations on your I-485 approval! 🎉",
   };
+
   const CELEBRATION_EMOJI = "🎉";
-  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Infra", "Direct"]);
   const BTN_COLOR_NAMES = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
+  const COPY_BTN_DEFAULT_HTML = copyBtn ? copyBtn.innerHTML : "Copy to clipboard";
 
   let comboCardValue = "";
   let previewManuallyEdited = false;
   let celebrationToastTimer = null;
-  let copyToastTimer = null;
+  let restoreToastTimer = null;
+  let copyBtnResetTimer = null;
+  let saveFormTimer = null;
   let lastCelebratedKeyUpdate = "";
+  let isRestoringForm = false;
+  let mobilePreviewManuallyEdited = false;
 
   function isPending(pendingId) {
     const el = document.getElementById(pendingId);
     return Boolean(el && el.checked);
   }
 
-  function isDataRandomizationEnabled() {
-    return getRadioValue("dataRandomization") === "Yes";
+  function isMonthsOnlyPrivacy() {
+    return getRadioValue("datePrivacy") === "Months only";
   }
 
   function toLocalDateFromIso(iso) {
@@ -94,21 +125,10 @@
     return `${year}-${month}-${day}`;
   }
 
-  function addDaysToIsoDate(isoDate, days) {
-    const date = toLocalDateFromIso(isoDate);
-    date.setDate(date.getDate() + days);
-    return isoFromLocalDate(date);
-  }
-
   function getTodayIso() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return isoFromLocalDate(today);
-  }
-
-  function clampIsoDateToToday(isoDate) {
-    const today = getTodayIso();
-    return isoDate > today ? today : isoDate;
   }
 
   function isWithinLastWeek(isoDate) {
@@ -119,43 +139,35 @@
     return diffDays >= 0 && diffDays <= 7;
   }
 
-  function getRandomizationOffset(isoDate, fieldId) {
-    let hash = 0;
-    const seed = `${isoDate}:${fieldId}`;
-    for (let i = 0; i < seed.length; i++) {
-      hash = (hash * 31 + seed.charCodeAt(i)) | 0;
-    }
-    hash = Math.abs(hash);
-    const sign = hash % 2 === 0 ? 1 : -1;
-    const days = 10 + (hash % 11);
-    return sign * days;
-  }
+  function formatDate(isoDate) {
+    const parsed = parseIsoDate(isoDate);
+    if (!parsed) return "";
 
-  function getPreviewIsoDate(isoDate, fieldId) {
-    if (!isDataRandomizationEnabled()) return isoDate;
-    if (isWithinLastWeek(isoDate)) {
-      return clampIsoDateToToday(isoDate);
+    if (isMonthsOnlyPrivacy() && !isWithinLastWeek(parsed)) {
+      const [year, month] = parsed.split("-").map(Number);
+      const date = new Date(year, month - 1, 1);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
     }
 
-    const offset = getRandomizationOffset(isoDate, fieldId);
-    let candidate = addDaysToIsoDate(isoDate, offset);
-    const today = getTodayIso();
-
-    if (candidate > today) {
-      candidate = addDaysToIsoDate(isoDate, -Math.abs(offset));
-    }
-
-    return clampIsoDateToToday(candidate);
+    const [year, month, day] = parsed.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 
   function formatDateWithPdOffset(isoDate, fieldId) {
     const actual = parseIsoDate(isoDate);
     if (!actual) return "";
-    const displayIso = fieldId ? getPreviewIsoDate(actual, fieldId) : actual;
-    const formatted = formatDate(displayIso);
+    const formatted = formatDate(actual);
     if (!formatted) return "";
-    if (isDataRandomizationEnabled()) return formatted;
     if (fieldId === "priority-date") return formatted;
+    if (isMonthsOnlyPrivacy()) return formatted;
     const offset = daysFromPriorityDate(actual);
     return offset ? `${formatted} (${offset})` : formatted;
   }
@@ -165,13 +177,8 @@
     const eventDate = parseIsoDate(isoDate);
     if (!priorityDate || !eventDate) return "";
 
-    const toLocalDate = (iso) => {
-      const [year, month, day] = iso.split("-").map(Number);
-      return new Date(year, month - 1, day);
-    };
-
     const diffDays = Math.round(
-      (toLocalDate(eventDate).getTime() - toLocalDate(priorityDate).getTime()) /
+      (toLocalDateFromIso(eventDate).getTime() - toLocalDateFromIso(priorityDate).getTime()) /
         (24 * 60 * 60 * 1000)
     );
     const sign = diffDays >= 0 ? "+" : "";
@@ -210,10 +217,11 @@
     const title = KEY_UPDATE_TITLES[keyUpdate];
     if (!title) return "EB5 Status Update";
 
-    const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
-    if (isDataRandomizationEnabled()) {
+    if (isMonthsOnlyPrivacy()) {
       return `EB5 Status Update: ${title}`;
     }
+
+    const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
     const daysAfter = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
     return daysAfter
       ? `EB5 Status Update: ${title} (${daysAfter})`
@@ -225,13 +233,8 @@
     const eventDate = parseIsoDate(isoDate);
     if (!priorityDate || !eventDate) return "";
 
-    const toLocalDate = (iso) => {
-      const [year, month, day] = iso.split("-").map(Number);
-      return new Date(year, month - 1, day);
-    };
-
     const diffDays = Math.round(
-      (toLocalDate(eventDate).getTime() - toLocalDate(priorityDate).getTime()) /
+      (toLocalDateFromIso(eventDate).getTime() - toLocalDateFromIso(priorityDate).getTime()) /
         (24 * 60 * 60 * 1000)
     );
     const sign = diffDays >= 0 ? "+" : "";
@@ -247,17 +250,6 @@
     const formatted = formatPendingDateValue(inputId, pendingId);
     if (!formatted || formatted === "Pending") return formatted;
     return `${formatted} ${CELEBRATION_EMOJI}`;
-  }
-
-  function formatDate(isoDate) {
-    if (!isoDate) return "";
-    const [year, month, day] = isoDate.split("-").map(Number);
-    const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
   }
 
   function parseIsoDate(value) {
@@ -292,24 +284,22 @@
     return selected ? selected.value : "";
   }
 
-  function showCopyToast() {
-    if (!copyToast) return;
+  function showCopySuccess(button) {
+    if (!button) return;
 
-    copyToast.classList.add("is-visible");
-    copyToast.setAttribute("aria-hidden", "false");
+    button.classList.add("is-copied");
+    button.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
 
-    if (copyToastTimer) clearTimeout(copyToastTimer);
-    copyToastTimer = setTimeout(() => {
-      copyToast.classList.remove("is-visible");
-      copyToast.setAttribute("aria-hidden", "true");
-    }, 2500);
-
-    copyBtn.classList.add("btn-success");
-    copyBtn.classList.remove("btn-primary");
-    setTimeout(() => {
-      copyBtn.classList.remove("btn-success");
-      copyBtn.classList.add("btn-primary");
-    }, 1000);
+    if (copyBtnResetTimer) clearTimeout(copyBtnResetTimer);
+    copyBtnResetTimer = setTimeout(() => {
+      button.classList.remove("is-copied");
+      if (button === copyBtn) {
+        button.innerHTML = COPY_BTN_DEFAULT_HTML;
+      } else {
+        button.textContent = "Copy to clipboard";
+      }
+    }, 2000);
   }
 
   function countFilledFields() {
@@ -342,13 +332,14 @@
 
   function updatePreviewStats() {
     const keyUpdate = getRadioValue("keyUpdate");
+    const filledCount = countFilledFields();
 
     if (statKeyUpdate) {
       statKeyUpdate.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
     }
 
     if (statDaysPd) {
-      if (isDataRandomizationEnabled()) {
+      if (isMonthsOnlyPrivacy()) {
         statDaysPd.textContent = "—";
       } else {
         const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
@@ -361,7 +352,36 @@
     }
 
     if (statFieldsFilled) {
-      statFieldsFilled.textContent = String(countFilledFields());
+      statFieldsFilled.textContent = String(filledCount);
+    }
+
+    if (progressFill) {
+      const pct = Math.min(100, (filledCount / PROGRESS_MAX_FIELDS) * 100);
+      progressFill.style.width = `${pct}%`;
+    }
+
+    if (fabFieldCount) {
+      fabFieldCount.textContent = String(filledCount);
+    }
+
+    const mobileStatFields = document.getElementById("mobile-stat-fields-filled");
+    const mobileStatKey = document.getElementById("mobile-stat-key-update");
+    const mobileStatDays = document.getElementById("mobile-stat-days-pd");
+    if (mobileStatFields) mobileStatFields.textContent = String(filledCount);
+    if (mobileStatKey) {
+      mobileStatKey.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
+    }
+    if (mobileStatDays) {
+      if (isMonthsOnlyPrivacy()) {
+        mobileStatDays.textContent = "—";
+      } else {
+        const referenceDate = keyUpdate ? getKeyUpdateReferenceDate(keyUpdate) : "";
+        const days =
+          referenceDate && parseIsoDate(getFieldValue("priority-date"))
+            ? daysFromPriorityDate(referenceDate)
+            : "";
+        mobileStatDays.textContent = days || "—";
+      }
     }
   }
 
@@ -377,6 +397,19 @@
       celebrationToast.classList.remove("is-visible");
       celebrationToast.setAttribute("aria-hidden", "true");
     }, 3500);
+  }
+
+  function showRestoreToast() {
+    if (!restoreToast) return;
+
+    restoreToast.classList.add("is-visible");
+    restoreToast.setAttribute("aria-hidden", "false");
+
+    if (restoreToastTimer) clearTimeout(restoreToastTimer);
+    restoreToastTimer = setTimeout(() => {
+      restoreToast.classList.remove("is-visible");
+      restoreToast.setAttribute("aria-hidden", "true");
+    }, 3000);
   }
 
   function handleKeyUpdateCelebration() {
@@ -408,31 +441,45 @@
     return suggestions.filter((item) => item.toLowerCase().includes(normalized));
   }
 
+  function supportsPopoverApi() {
+    return typeof HTMLElement.prototype.showPopover === "function";
+  }
+
+  function supportsAnchorPositioning() {
+    return typeof CSS !== "undefined" && CSS.supports("anchor-name", "--test");
+  }
+
   function initAutocomplete(inputId, listId, suggestions) {
     const input = document.getElementById(inputId);
     const list = document.getElementById(listId);
-    if (!input || !list || !suggestions.length) return;
+    const wrap = input?.closest(".autocomplete-wrap");
+    if (!input || !list || !wrap || !suggestions.length) return;
+
+    const usePopover = supportsPopoverApi();
+    if (usePopover) {
+      list.setAttribute("popover", "auto");
+    }
 
     let activeIndex = -1;
-    let hideTimer = null;
-    let isOpen = false;
 
-    function positionDropdown() {
+    function positionDropdownFallback() {
       const rect = input.getBoundingClientRect();
-      if (!list.isConnected || list.parentElement !== document.body) {
-        document.body.appendChild(list);
-      }
+      list.style.position = "fixed";
       list.style.left = `${rect.left}px`;
       list.style.top = `${rect.bottom + 4}px`;
       list.style.width = `${rect.width}px`;
     }
 
     function onViewportChange() {
-      if (isOpen) positionDropdown();
+      if (!list.classList.contains("hidden") && !supportsAnchorPositioning()) {
+        positionDropdownFallback();
+      }
     }
 
     function hideSuggestions() {
-      isOpen = false;
+      if (usePopover && list.matches(":popover-open") && typeof list.hidePopover === "function") {
+        list.hidePopover();
+      }
       list.classList.add("hidden");
       list.innerHTML = "";
       activeIndex = -1;
@@ -444,6 +491,7 @@
       input.value = value;
       hideSuggestions();
       updatePreviewFromFormIfAllowed();
+      scheduleFormSave();
     }
 
     function renderSuggestions(items) {
@@ -473,11 +521,15 @@
         list.appendChild(option);
       });
 
-      isOpen = true;
       list.classList.remove("hidden");
-      positionDropdown();
-      window.addEventListener("scroll", onViewportChange, true);
-      window.addEventListener("resize", onViewportChange);
+      if (!supportsAnchorPositioning()) {
+        positionDropdownFallback();
+        window.addEventListener("scroll", onViewportChange, true);
+        window.addEventListener("resize", onViewportChange);
+      }
+      if (usePopover && typeof list.showPopover === "function") {
+        list.showPopover();
+      }
     }
 
     function updateSuggestions() {
@@ -487,7 +539,7 @@
     input.addEventListener("input", updateSuggestions);
     input.addEventListener("focus", updateSuggestions);
     input.addEventListener("blur", () => {
-      hideTimer = setTimeout(hideSuggestions, 150);
+      setTimeout(hideSuggestions, 150);
     });
     input.addEventListener("keydown", (event) => {
       const options = Array.from(list.querySelectorAll(".autocomplete-option"));
@@ -520,7 +572,12 @@
 
     list.addEventListener("mousedown", (event) => {
       event.preventDefault();
-      if (hideTimer) clearTimeout(hideTimer);
+    });
+
+    list.addEventListener("toggle", () => {
+      if (!list.matches(":popover-open")) {
+        list.classList.add("hidden");
+      }
     });
   }
 
@@ -613,6 +670,7 @@
           input.value = calendar.value;
           updateConditionalSections();
           updatePreviewFromFormIfAllowed();
+          scheduleFormSave();
         }
         if (popover && typeof popover.hidePopover === "function") {
           popover.hidePopover();
@@ -623,6 +681,7 @@
         syncCalendarFromInput(input, calendar);
         updateConditionalSections();
         updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
       });
 
       input.addEventListener("blur", () => {
@@ -682,16 +741,17 @@
       const nextValue = option.dataset.value;
       setComboCardValue(comboCardValue === nextValue ? "" : nextValue);
       updatePreviewFromFormIfAllowed();
+      scheduleFormSave();
     });
   }
 
   function syncChoiceButton(input) {
     const label = input.closest("label.choice-btn");
-    if (!label) return;
+    if (label) return;
     if (input.checked) {
-      setSelectedButtonStyle(label);
+      setSelectedButtonStyle(input.closest("label") || input);
     } else {
-      setUnselectedButtonStyle(label);
+      setUnselectedButtonStyle(input.closest("label") || input);
     }
   }
 
@@ -702,14 +762,16 @@
   }
 
   function syncAllChoiceButtons() {
-    form.querySelectorAll('label.choice-btn input[type="checkbox"]').forEach(syncChoiceButton);
+    form.querySelectorAll("label.choice-btn input").forEach((input) => {
+      syncChoiceButton(input);
+    });
     syncRadioGroup("i526Status");
     syncRadioGroup("womCounsel");
     syncRadioGroup("womStatus");
     syncRadioGroup("applicationLocation");
     syncRadioGroup("keyUpdate");
     syncRadioGroup("usedAgent");
-    syncRadioGroup("dataRandomization");
+    syncRadioGroup("datePrivacy");
   }
 
   function initChoiceButtons() {
@@ -733,6 +795,7 @@
           radio.dataset.wasChecked = "false";
           syncRadioGroup(groupName);
           updatePreviewFromFormIfAllowed();
+          scheduleFormSave();
           return;
         }
 
@@ -755,21 +818,20 @@
         if (!checkbox.checked) {
           syncChoiceButton(checkbox);
           updatePreviewFromFormIfAllowed();
+          scheduleFormSave();
           return;
         }
 
-        if (EXCLUSIVE_PROJECT_CATEGORIES.has(checkbox.value)) {
-          form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
-            if (other !== checkbox) other.checked = false;
-          });
-        } else {
-          form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
-            if (EXCLUSIVE_PROJECT_CATEGORIES.has(other.value)) other.checked = false;
-          });
-        }
+        const incompatible = CATEGORY_INCOMPATIBLE[checkbox.value] || [];
+        form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
+          if (other !== checkbox && incompatible.includes(other.value)) {
+            other.checked = false;
+          }
+        });
 
         form.querySelectorAll('input[name="projectCategory"]').forEach(syncChoiceButton);
         updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
       });
     });
   }
@@ -793,6 +855,10 @@
     return Boolean(parseIsoDate(getFieldValue("i526-date")));
   }
 
+  function hasRfeContext() {
+    return hasI526StatusContext() && getRadioValue("i526Status") === "RFE";
+  }
+
   function isWomNotFiled() {
     return isPending("wom-date-not-filed");
   }
@@ -814,6 +880,26 @@
 
   function getWomFiledForValue() {
     return getCheckedValues("wom").join(", ");
+  }
+
+  function getWomStatusLine() {
+    const status = getRadioValue("womStatus");
+    if (!status || !hasWomDateContext()) return "";
+    if (status === "Resolved" || status === "Dismissed") {
+      const resDate = formatDateWithPdOffset(
+        getFieldValue("wom-resolution-date"),
+        "wom-resolution-date"
+      );
+      return resDate ? `${status} (${resDate})` : status;
+    }
+    return status;
+  }
+
+  function getI956fLine() {
+    if (isPending("i956f-approval-pending")) return "I-956F: Pending";
+    const formatted = formatDateWithPdOffset(getFieldValue("i956f-approval"), "i956f-approval");
+    if (!formatted) return "";
+    return `I-956F approved: ${formatted} ${CELEBRATION_EMOJI}`;
   }
 
   function ensureDefaultI526Approved() {
@@ -840,9 +926,30 @@
     });
     const attorneyInput = document.getElementById("wom-attorney-name");
     const courtInput = document.getElementById("wom-court");
+    const resolutionInput = document.getElementById("wom-resolution-date");
     if (attorneyInput) attorneyInput.value = "";
     if (courtInput) courtInput.value = "";
+    if (resolutionInput) resolutionInput.value = "";
     syncAllChoiceButtons();
+    updateWomResolutionVisibility();
+  }
+
+  function clearRfeDetails() {
+    const rfeDate = document.getElementById("rfe-date");
+    const rfeReason = document.getElementById("rfe-reason");
+    const rfeResponse = document.getElementById("rfe-response-date");
+    const rfeDatePending = document.getElementById("rfe-date-pending");
+    const rfeResponsePending = document.getElementById("rfe-response-date-pending");
+    if (rfeDate) rfeDate.value = "";
+    if (rfeReason) rfeReason.value = "";
+    if (rfeResponse) rfeResponse.value = "";
+    if (rfeDatePending) rfeDatePending.checked = false;
+    if (rfeResponsePending) rfeResponsePending.checked = false;
+    form.querySelectorAll(".pending-date-toggle").forEach((toggle) => {
+      if (toggle.id === "rfe-date-pending" || toggle.id === "rfe-response-date-pending") {
+        setPendingState(toggle);
+      }
+    });
   }
 
   function updateI526StatusVisibility() {
@@ -851,6 +958,15 @@
     const show = hasI526StatusContext();
     wrap.classList.toggle("hidden", !show);
     if (show) ensureDefaultI526Approved();
+    updateRfeDetailsVisibility();
+  }
+
+  function updateRfeDetailsVisibility() {
+    const wrap = document.getElementById("rfe-details-wrap");
+    if (!wrap) return;
+    const show = hasRfeContext();
+    wrap.classList.toggle("hidden", !show);
+    if (!show) clearRfeDetails();
   }
 
   function updateWomDetailsVisibility() {
@@ -859,6 +975,19 @@
     const show = hasWomDateContext();
     wrap.classList.toggle("hidden", !show);
     if (!show) clearWomDetails();
+    else updateWomResolutionVisibility();
+  }
+
+  function updateWomResolutionVisibility() {
+    const wrap = document.getElementById("wom-resolution-wrap");
+    if (!wrap) return;
+    const status = getRadioValue("womStatus");
+    const show = hasWomDateContext() && (status === "Resolved" || status === "Dismissed");
+    wrap.classList.toggle("hidden", !show);
+    if (!show) {
+      const input = document.getElementById("wom-resolution-date");
+      if (input) input.value = "";
+    }
   }
 
   function getUsedAgentLine() {
@@ -917,6 +1046,7 @@
     updateI526StatusVisibility();
     updateWomDetailsVisibility();
     updateWomAttorneyVisibility();
+    updateWomResolutionVisibility();
     updateAgentNameVisibility();
     updateComboCardVisibility();
   }
@@ -941,6 +1071,7 @@
     }
     updateConditionalSections();
     updatePreviewFromFormIfAllowed();
+    scheduleFormSave();
   }
 
   function initPendingDateToggles() {
@@ -954,12 +1085,28 @@
       radio.addEventListener("change", () => {
         updateWomAttorneyVisibility();
         updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
+      });
+    });
+    form.querySelectorAll('input[name="womStatus"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        updateWomResolutionVisibility();
+        updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
+      });
+    });
+    form.querySelectorAll('input[name="i526Status"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        updateRfeDetailsVisibility();
+        updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
       });
     });
     form.querySelectorAll('input[name="usedAgent"]').forEach((radio) => {
       radio.addEventListener("change", () => {
         updateAgentNameVisibility();
         updatePreviewFromFormIfAllowed();
+        scheduleFormSave();
       });
     });
     updateConditionalSections();
@@ -1001,7 +1148,10 @@
   }
 
   function updateCopyButton() {
-    copyBtn.disabled = !hasPreviewContent();
+    const hasContent = hasPreviewContent();
+    if (copyBtn) copyBtn.disabled = !hasContent;
+    if (mobileCopyBtn) mobileCopyBtn.disabled = !hasContent;
+    if (previewFab) previewFab.classList.toggle("hidden", !hasContent);
   }
 
   function updateRefreshButton() {
@@ -1041,8 +1191,11 @@
   function generateMessage() {
     const bulletLines = [];
 
+    const i956fLine = getI956fLine();
+
     const entries = [
       ["Priority date", formatDateWithPdOffset(getFieldValue("priority-date"), "priority-date")],
+      [null, i956fLine],
       ["Project category", getProjectCategory()],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
@@ -1063,11 +1216,17 @@
             )
           : null,
       ],
+      ["RFE received", hasRfeContext() ? formatPendingDateValue("rfe-date", "rfe-date-pending") : ""],
+      ["RFE reason", hasRfeContext() ? getFieldValue("rfe-reason") : ""],
+      [
+        "RFE response submitted",
+        hasRfeContext() ? formatPendingDateValue("rfe-response-date", "rfe-response-date-pending") : "",
+      ],
       ["WOM filed on", hasWomPreviewContext() ? getWomFiledOnValue() : ""],
       ["WOM filed for", hasWomDateContext() ? getWomFiledForValue() : ""],
       ["WOM counsel", hasWomDateContext() ? getWomCounselLine() : ""],
       ["WOM court", hasWomDateContext() ? getFieldValue("wom-court") : ""],
-      ["WOM status", hasWomDateContext() ? getRadioValue("womStatus") : ""],
+      ["WOM status", hasWomDateContext() ? getWomStatusLine() : ""],
       ["I-485 approved", formatApprovalValue("i485-date", "i485-date-pending")],
       ["SOF composition", getSofComposition()],
     ];
@@ -1080,8 +1239,8 @@
     if (!getRadioValue("keyUpdate") || bulletLines.length === 0) return "";
 
     const footerLines = ["Generated via bit.ly/eb5status"];
-    if (isDataRandomizationEnabled()) {
-      footerLines.push("Dates randomized by a few days for privacy.");
+    if (isMonthsOnlyPrivacy()) {
+      footerLines.push("Dates shown as month/year for privacy.");
     }
 
     return [
@@ -1098,9 +1257,23 @@
     return Boolean(generateMessage());
   }
 
+  function syncMobilePreview() {
+    if (!mobilePreview) return;
+    if (!mobilePreviewManuallyEdited) {
+      mobilePreview.value = preview.value;
+    }
+  }
+
   function updatePreviewPanelVisibility() {
     if (!previewPanel) return;
     const shouldShow = shouldShowPreviewPanel();
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+
+    if (!isDesktop) {
+      previewPanel.classList.add("hidden");
+      return;
+    }
+
     const wasHidden = previewPanel.classList.contains("hidden");
     previewPanel.classList.toggle("hidden", !shouldShow);
     if (shouldShow && wasHidden) {
@@ -1119,29 +1292,274 @@
     if (!previewManuallyEdited) {
       preview.value = generateMessage();
     }
+    syncMobilePreview();
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateCopyButton();
+    if (!isRestoringForm) scheduleFormSave();
   }
 
   function syncPreviewFromForm() {
     preview.value = generateMessage();
     previewManuallyEdited = false;
+    mobilePreviewManuallyEdited = false;
+    syncMobilePreview();
     updateRefreshButton();
     updatePreviewPanelVisibility();
     updatePreviewStats();
     updateCopyButton();
   }
 
-  form.addEventListener("input", updatePreviewFromFormIfAllowed);
+  function collectFormState() {
+    const state = {
+      version: 2,
+      comboCardValue,
+      fields: {},
+      radios: {},
+      checkboxes: {},
+    };
+
+    form.querySelectorAll("input, textarea, select").forEach((el) => {
+      if (!el.name && !el.id) return;
+      const key = el.name || el.id;
+
+      if (el.type === "radio") {
+        if (el.checked) state.radios[el.name] = el.value;
+        return;
+      }
+
+      if (el.type === "checkbox") {
+        if (el.name) {
+          if (!state.checkboxes[el.name]) state.checkboxes[el.name] = [];
+          if (el.checked) state.checkboxes[el.name].push(el.value);
+        } else if (el.id) {
+          state.fields[el.id] = el.checked;
+        }
+        return;
+      }
+
+      if (el.id) {
+        state.fields[el.id] = el.value;
+      }
+    });
+
+    return state;
+  }
+
+  function restoreFormState(state) {
+    if (!state || typeof state !== "object") return false;
+
+    isRestoringForm = true;
+
+    form.querySelectorAll('input[type="text"], textarea').forEach((el) => {
+      if (el.id && state.fields && el.id in state.fields) {
+        el.value = state.fields[el.id];
+      }
+    });
+
+    form.querySelectorAll('input[type="checkbox"]').forEach((el) => {
+      if (el.name && state.checkboxes && state.checkboxes[el.name]) {
+        el.checked = state.checkboxes[el.name].includes(el.value);
+      } else if (el.id && state.fields && el.id in state.fields) {
+        el.checked = Boolean(state.fields[el.id]);
+      }
+    });
+
+    form.querySelectorAll('input[type="radio"]').forEach((el) => {
+      el.checked = false;
+      el.dataset.wasChecked = "false";
+    });
+
+    if (state.radios) {
+      Object.entries(state.radios).forEach(([name, value]) => {
+        const radio = form.querySelector(`input[name="${name}"][value="${CSS.escape(value)}"]`);
+        if (radio) {
+          radio.checked = true;
+          radio.dataset.wasChecked = "true";
+        }
+      });
+    }
+
+    if (state.comboCardValue !== undefined) {
+      setComboCardValue(state.comboCardValue || "");
+    }
+
+    form.querySelectorAll(".pending-date-toggle").forEach((toggle) => {
+      setPendingState(toggle);
+    });
+
+    DATE_FIELD_IDS.forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
+      if (input && calendar) syncCalendarFromInput(input, calendar);
+    });
+
+    syncAllChoiceButtons();
+    updateConditionalSections();
+    previewManuallyEdited = false;
+    mobilePreviewManuallyEdited = false;
+    lastCelebratedKeyUpdate = getRadioValue("keyUpdate");
+    updatePreviewFromFormIfAllowed();
+    isRestoringForm = false;
+
+    return true;
+  }
+
+  function scheduleFormSave() {
+    if (isRestoringForm) return;
+    if (saveFormTimer) clearTimeout(saveFormTimer);
+    saveFormTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(FORM_STATE_KEY, JSON.stringify(collectFormState()));
+      } catch {
+        /* ignore quota errors */
+      }
+    }, SAVE_DEBOUNCE_MS);
+  }
+
+  function loadFormState() {
+    try {
+      const raw = localStorage.getItem(FORM_STATE_KEY);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (restoreFormState(state)) {
+        showRestoreToast();
+      }
+    } catch {
+      /* ignore corrupt state */
+    }
+  }
+
+  function clearForm() {
+    form.reset();
+    comboCardValue = "";
+    setComboCardValue("");
+    previewManuallyEdited = false;
+    mobilePreviewManuallyEdited = false;
+    lastCelebratedKeyUpdate = "";
+
+    form.querySelectorAll('input[type="radio"]').forEach((radio) => {
+      radio.dataset.wasChecked = "false";
+    });
+
+    const exactDates = form.querySelector('input[name="datePrivacy"][value="Exact dates"]');
+    if (exactDates) {
+      exactDates.checked = true;
+      exactDates.dataset.wasChecked = "true";
+    }
+
+    form.querySelectorAll(".pending-date-toggle").forEach((toggle) => {
+      toggle.checked = false;
+      setPendingState(toggle);
+    });
+
+    DATE_FIELD_IDS.forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
+      if (input) input.value = "";
+      if (calendar) calendar.value = "";
+    });
+
+    try {
+      localStorage.removeItem(FORM_STATE_KEY);
+    } catch {
+      /* ignore */
+    }
+
+    syncAllChoiceButtons();
+    updateConditionalSections();
+    updatePreviewFromFormIfAllowed();
+  }
+
+  function initClearForm() {
+    const handlers = [clearFormBtn, document.getElementById("clear-form-btn-footer")].filter(Boolean);
+    handlers.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (window.confirm("Clear all form fields and reset your saved draft?")) {
+          clearForm();
+        }
+      });
+    });
+  }
+
+  function initMobilePreview() {
+    if (!previewFab || !previewSheet) return;
+
+    previewFab.addEventListener("click", () => {
+      syncMobilePreview();
+      if (typeof previewSheet.showPopover === "function") {
+        previewSheet.showPopover();
+      }
+    });
+
+    const closeBtn = document.getElementById("preview-sheet-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        if (typeof previewSheet.hidePopover === "function") {
+          previewSheet.hidePopover();
+        }
+      });
+    }
+
+    if (mobilePreview) {
+      mobilePreview.addEventListener("input", () => {
+        mobilePreviewManuallyEdited = true;
+        preview.value = mobilePreview.value;
+        previewManuallyEdited = true;
+        updateRefreshButton();
+        updateCopyButton();
+      });
+    }
+
+    if (mobileCopyBtn) {
+      mobileCopyBtn.addEventListener("click", async () => {
+        const text = (mobilePreview?.value || preview.value).trim();
+        if (!text) return;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          showCopySuccess(mobileCopyBtn);
+        } catch {
+          mobilePreview?.select();
+          document.execCommand("copy");
+          showCopySuccess(mobileCopyBtn);
+        }
+      });
+    }
+  }
+
+  async function copyPreviewText() {
+    const text = preview.value.trim();
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      showCopySuccess(copyBtn);
+    } catch {
+      preview.select();
+      document.execCommand("copy");
+      showCopySuccess(copyBtn);
+    }
+  }
+
+  form.addEventListener("input", () => {
+    updatePreviewFromFormIfAllowed();
+    scheduleFormSave();
+  });
+
   form.addEventListener("change", () => {
     syncAllChoiceButtons();
     updateConditionalSections();
     updatePreviewFromFormIfAllowed();
+    scheduleFormSave();
   });
 
   preview.addEventListener("input", () => {
     previewManuallyEdited = true;
+    if (!mobilePreviewManuallyEdited && mobilePreview) {
+      mobilePreview.value = preview.value;
+    }
     updateRefreshButton();
     updatePreviewPanelVisibility();
     updatePreviewStats();
@@ -1149,20 +1567,7 @@
   });
 
   refreshBtn.addEventListener("click", syncPreviewFromForm);
-
-  copyBtn.addEventListener("click", async () => {
-    const text = preview.value.trim();
-    if (!text) return;
-
-    try {
-      await navigator.clipboard.writeText(text);
-      showCopyToast();
-    } catch {
-      preview.select();
-      document.execCommand("copy");
-      showCopyToast();
-    }
-  });
+  copyBtn.addEventListener("click", copyPreviewText);
 
   initTheme();
   initCallyDatePickers();
@@ -1177,10 +1582,13 @@
   initOptionalRadioDeselect("womStatus");
   initOptionalRadioDeselect("applicationLocation");
   initOptionalRadioDeselect("usedAgent");
-  initOptionalRadioDeselect("dataRandomization");
   initOptionalRadioDeselect("keyUpdate");
   initKeyUpdateCelebration();
   initAutocompleteFields();
+  initClearForm();
+  initMobilePreview();
+  window.addEventListener("resize", updatePreviewPanelVisibility);
+  loadFormState();
   updatePreviewPanelVisibility();
   updatePreviewStats();
   updateCopyButton();

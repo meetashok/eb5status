@@ -13,6 +13,36 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module" src="https://unpkg.com/cally"></script>
   <style>
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --color-base-100: #131922;
+      --color-base-200: #0B0F14;
+      --color-base-300: #1A2332;
+      --color-base-content: #E8ECF1;
+      --color-primary: #3B9B8F;
+      --color-primary-content: #FFFFFF;
+      --color-secondary: #F0A55E;
+      --color-secondary-content: #1B2430;
+      --color-success: #25D366;
+      --color-error: #F87171;
+      --color-info: #3B9B8F;
+      --color-neutral: #8899AA;
+    }
+    [data-theme="light"] {
+      color-scheme: light;
+      --color-base-100: #FFFFFF;
+      --color-base-200: #F6F8FA;
+      --color-base-300: #D8DEE4;
+      --color-base-content: #1B2430;
+      --color-primary: #2D7A70;
+      --color-primary-content: #FFFFFF;
+      --color-secondary: #D4852E;
+      --color-secondary-content: #1B2430;
+      --color-success: #25D366;
+      --color-error: #F87171;
+      --color-info: #2D7A70;
+      --color-neutral: #5C6B7A;
+    }
     body {
       font-family: "Plus Jakarta Sans", system-ui, sans-serif;
     }
@@ -23,15 +53,20 @@
       content: "";
       position: absolute;
       inset: -1.5rem -1rem 0;
-      background: linear-gradient(to bottom, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent);
+      background: radial-gradient(
+        ellipse 80% 50% at 50% 0%,
+        color-mix(in oklch, var(--color-primary) 15%, transparent) 0%,
+        color-mix(in oklch, var(--color-secondary) 8%, transparent) 40%,
+        transparent 80%
+      );
       border-radius: 1rem;
       pointer-events: none;
       z-index: -1;
     }
     .section-title {
       font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      font-weight: 700;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
     }
     .section-header {
@@ -44,13 +79,34 @@
     .section-card {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
+      transition: all 0.2s ease;
+    }
+    @media (min-width: 1024px) {
+      .section-card:hover {
+        transform: translateY(-1px);
+      }
+    }
+    [data-theme="dark"] .section-card {
+      background: color-mix(in oklch, var(--color-base-100) 85%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 8%, transparent);
+    }
+    [data-theme="light"] .section-card {
+      background: var(--color-base-100);
+      border: 1px solid var(--color-base-300);
     }
     .section-header--info {
-      background: color-mix(in oklch, var(--color-info) 14%, transparent);
-      border-left-color: var(--color-info);
+      background: linear-gradient(
+        to right,
+        color-mix(in oklch, var(--color-primary) 14%, transparent),
+        color-mix(in oklch, var(--color-primary) 4%, transparent)
+      );
+      border-left-width: 4px;
+      border-left-style: solid;
+      border-image: linear-gradient(to bottom, var(--color-primary), var(--color-secondary)) 1;
     }
     .section-header--info .section-title {
-      color: var(--color-info);
+      color: var(--color-primary);
     }
     .section-header--neutral {
       background: color-mix(in oklch, var(--color-neutral) 14%, transparent);
@@ -64,13 +120,76 @@
       color: #25d366;
     }
     .field-row-label {
-      color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 75%, transparent);
     }
     .choice-btn {
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      background: transparent;
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
+      color: var(--color-base-content);
+      opacity: 0.7;
+    }
+    .choice-btn:has(input:checked) {
+      background: color-mix(in oklch, var(--color-primary) 20%, transparent);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      opacity: 1;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px var(--color-primary),
+                  0 2px 8px color-mix(in oklch, var(--color-primary) 15%, transparent);
     }
     .choice-btn:active {
       transform: scale(0.98);
+    }
+    .progress-bar-wrap {
+      height: 3px;
+      background: var(--color-base-300);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .stats {
+      background: linear-gradient(135deg,
+        color-mix(in oklch, var(--color-base-200) 100%, transparent),
+        color-mix(in oklch, var(--color-primary) 5%, var(--color-base-200))
+      );
+    }
+    #copy-btn,
+    #mobile-copy-btn {
+      background: linear-gradient(135deg, #3B9B8F 0%, #2D7A70 100%);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.025em;
+      padding: 0.875rem 2rem;
+      border: none;
+      box-shadow: 0 4px 16px color-mix(in oklch, #3B9B8F 30%, transparent);
+      transition: all 0.2s ease;
+    }
+    #copy-btn:hover:not(:disabled),
+    #mobile-copy-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4DB8AA 0%, #3B9B8F 100%);
+      box-shadow: 0 6px 24px color-mix(in oklch, #3B9B8F 40%, transparent);
+      transform: translateY(-1px);
+    }
+    #copy-btn:disabled,
+    #mobile-copy-btn:disabled {
+      background: var(--color-base-300);
+      box-shadow: none;
+      opacity: 0.5;
+      transform: none;
+    }
+    #copy-btn.is-copied,
+    #mobile-copy-btn.is-copied {
+      background: linear-gradient(135deg, #25D366 0%, #1DAA52 100%);
+      box-shadow: 0 4px 16px color-mix(in oklch, #25D366 30%, transparent);
     }
     @keyframes fadeSlideUp {
       from {
@@ -106,22 +225,36 @@
       background: color-mix(in oklch, #dcf8c6 18%, var(--color-base-100));
       box-shadow: 0 4px 16px color-mix(in oklch, var(--color-base-content) 8%, transparent);
     }
+    [data-theme="dark"] .whatsapp-bubble-wrap {
+      background: linear-gradient(
+        145deg,
+        color-mix(in oklch, #25d366 12%, var(--color-base-100)),
+        color-mix(in oklch, #25d366 6%, var(--color-base-100))
+      );
+      border: 1px solid color-mix(in oklch, #25d366 15%, transparent);
+    }
     [data-theme="light"] .whatsapp-bubble-wrap {
       background: color-mix(in oklch, #dcf8c6 55%, var(--color-base-100));
+      border: 1px solid color-mix(in oklch, #25d366 15%, transparent);
     }
     .whatsapp-bubble-wrap textarea {
       font-size: 0.875rem;
-      line-height: 1.6;
+      line-height: 1.7;
     }
     #celebration-toast,
-    #copy-toast {
+    #restore-toast {
       transition: opacity 0.3s ease, transform 0.3s ease;
       transform: scale(0.95);
     }
     #celebration-toast.is-visible,
-    #copy-toast.is-visible {
+    #restore-toast.is-visible {
       opacity: 1;
-      transform: scale(1);
+      animation: toastBounce 0.4s ease both;
+    }
+    @keyframes toastBounce {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -230,19 +363,86 @@
     }
     .autocomplete-list {
       position: fixed;
+      inset: unset;
+      top: anchor(bottom);
+      left: anchor(left);
+      width: anchor-size(width);
+      margin-top: 4px;
       z-index: 100;
       max-height: min(16rem, calc(100vh - 6rem));
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-y;
-      margin: 0;
+      margin-bottom: 0;
       padding: 0.25rem 0;
       list-style: none;
       border: 1px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
       border-radius: 0.5rem;
       background: var(--color-base-100);
       box-shadow: 0 8px 24px color-mix(in oklch, var(--color-base-content) 12%, transparent);
+    }
+    @supports not (anchor-name: --test) {
+      .autocomplete-list {
+        top: auto;
+        left: auto;
+        width: auto;
+      }
+    }
+    #preview-panel {
+      display: none !important;
+    }
+    @media (min-width: 1024px) {
+      #preview-panel:not(.hidden) {
+        display: flex !important;
+      }
+    }
+    #preview-fab {
+      display: flex;
+      background: linear-gradient(135deg, #3B9B8F 0%, #2D7A70 100%);
+      color: #FFFFFF;
+      font-weight: 600;
+      box-shadow: 0 4px 20px color-mix(in oklch, #3B9B8F 35%, transparent);
+      border: none;
+      transition: all 0.2s ease;
+    }
+    #preview-fab:hover {
+      background: linear-gradient(135deg, #4DB8AA 0%, #3B9B8F 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px color-mix(in oklch, #3B9B8F 45%, transparent);
+    }
+    @media (min-width: 1024px) {
+      #preview-fab {
+        display: none !important;
+      }
+    }
+    #preview-sheet {
+      position: fixed;
+      inset: auto 0 0 0;
+      width: 100%;
+      max-width: 100%;
+      max-height: 85vh;
+      margin: 0;
+      border: none;
+      border-radius: 1rem 1rem 0 0;
+      padding: 0;
+      background: var(--color-base-100);
+      box-shadow: 0 -8px 32px color-mix(in oklch, var(--color-base-content) 15%, transparent);
+    }
+    #preview-sheet::backdrop {
+      background: color-mix(in oklch, var(--color-base-content) 30%, transparent);
+    }
+    .clear-form-link {
+      font-size: 0.75rem;
+      color: color-mix(in oklch, var(--color-base-content) 50%, transparent);
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .clear-form-link:hover {
+      color: var(--color-base-content);
     }
     .autocomplete-list.hidden {
       display: none;
@@ -261,7 +461,8 @@
 <body class="min-h-screen bg-base-200 font-sans">
   <div class="max-w-6xl mx-auto px-4 py-6">
     <header class="page-header-band text-center mb-6 relative">
-      <div class="absolute right-0 top-0">
+      <div class="absolute right-0 top-0 flex items-center gap-2">
+        <button type="button" id="clear-form-btn" class="clear-form-link hidden sm:inline">Clear form</button>
         <label class="swap swap-rotate btn btn-ghost btn-circle text-base-content border border-base-content/20 hover:border-base-content/40" aria-label="Toggle light or dark theme">
           <input type="checkbox" id="theme-toggle" class="theme-controller" value="light">
           <svg class="swap-off h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -280,36 +481,33 @@
 
     <main class="flex flex-col lg:flex-row gap-4">
       <form id="status-form" class="flex-1 min-w-0 space-y-3" autocomplete="off">
+        <div class="progress-bar-wrap" aria-hidden="true">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+
         <section class="section-card card card-border bg-base-100 shadow-md overflow-hidden card-animate card-animate-1">
           <div class="section-header section-header--neutral">
-            <h2 class="section-title">Data Randomization</h2>
+            <h2 class="section-title">Date Privacy</h2>
           </div>
           <div class="card-body gap-3 p-4 sm:p-5">
-            <div class="alert alert-soft alert-warning text-xs leading-relaxed">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <div>
-                <p>Optional privacy feature. Enter your real dates in the form; the live preview shifts each date by 10–20 days earlier or later (never within ±10 days of the real date).</p>
-                <p class="mt-1.5">Any date within the last week stays exact.</p>
-              </div>
-            </div>
-
             <div class="form-control w-full">
               <div class="field-row field-row--center">
-                <span class="field-row-label" id="data-randomization-label">Randomize dates in preview</span>
+                <span class="field-row-label" id="date-privacy-label">Date privacy</span>
                 <div class="field-row-control">
-                  <div class="join" role="radiogroup" aria-labelledby="data-randomization-label">
-                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
-                      <input class="sr-only" type="radio" name="dataRandomization" id="data-randomization-yes" value="Yes">
-                      Yes
+                  <div class="join flex-wrap" role="radiogroup" aria-labelledby="date-privacy-label">
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="datePrivacy" id="date-privacy-exact" value="Exact dates" checked>
+                      Exact dates
                     </label>
-                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-20 justify-center">
-                      <input class="sr-only" type="radio" name="dataRandomization" id="data-randomization-no" value="No" checked>
-                      No
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 justify-center">
+                      <input class="sr-only" type="radio" name="datePrivacy" id="date-privacy-months" value="Months only">
+                      Months only
                     </label>
                   </div>
                 </div>
               </div>
             </div>
+            <p class="text-xs text-base-content/50 leading-relaxed">Months only hides day-of-month for dates older than 7 days. Recent dates stay exact.</p>
           </div>
         </section>
 
@@ -383,6 +581,35 @@
 
             <div class="form-control w-full">
               <div class="field-row">
+                <label class="field-row-label" for="i956f-approval">I-956F Approval Date</label>
+                <div class="field-row-control">
+                  <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i956f-approval-pending" data-date-id="i956f-approval" data-wrap-id="i956f-approval-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
+                    <div class="date-input-wrap" id="i956f-approval-wrap">
+                      <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i956f-approval-anchor">
+                        <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i956f-approval-popover" aria-label="Open calendar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </button>
+                        <input type="text" id="i956f-approval" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                      </div>
+                      <div popover id="i956f-approval-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--i956f-approval-anchor">
+                        <calendar-date class="cally" data-input-id="i956f-approval">
+                          <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                          <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                          <calendar-month></calendar-month>
+                        </calendar-date>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control w-full">
+              <div class="field-row">
                 <span class="field-row-label" id="project-category-label">Project Category</span>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2" role="group" aria-labelledby="project-category-label">
@@ -411,11 +638,11 @@
               <div class="field-row">
                 <label class="field-row-label" for="regional-center">Regional Center</label>
                 <div class="field-row-control">
-                  <div class="autocomplete-wrap">
+                  <div class="autocomplete-wrap" style="anchor-name:--regional-center-anchor">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="regional-center" name="regionalCenter" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Trust Us Rural Regional Center" autocomplete="off">
                     </div>
-                    <ul id="regional-center-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Regional center suggestions"></ul>
+                    <ul id="regional-center-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Regional center suggestions" style="position-anchor:--regional-center-anchor"></ul>
                   </div>
                 </div>
               </div>
@@ -436,11 +663,11 @@
               <div class="field-row">
                 <label class="field-row-label" for="attorney">Attorney</label>
                 <div class="field-row-control">
-                  <div class="autocomplete-wrap">
+                  <div class="autocomplete-wrap" style="anchor-name:--attorney-anchor">
                     <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                       <input type="text" id="attorney" name="attorney" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Billable Hours Unlimited LLP" autocomplete="off">
                     </div>
-                    <ul id="attorney-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Attorney suggestions"></ul>
+                    <ul id="attorney-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="Attorney suggestions" style="position-anchor:--attorney-anchor"></ul>
                   </div>
                 </div>
               </div>
@@ -498,6 +725,10 @@
                     <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-16 justify-center">
                       <input class="sr-only" type="radio" name="applicationLocation" id="app-loc-src" value="SRC">
                       SRC
+                    </label>
+                    <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 min-w-16 justify-center">
+                      <input class="sr-only" type="radio" name="applicationLocation" id="app-loc-msc" value="MSC">
+                      MSC
                     </label>
                   </div>
                 </div>
@@ -665,6 +896,77 @@
               </div>
             </div>
 
+            <div id="rfe-details-wrap" class="space-y-2 hidden conditional-reveal">
+              <div class="form-control w-full">
+                <div class="field-row">
+                  <label class="field-row-label" for="rfe-date">RFE Date</label>
+                  <div class="field-row-control">
+                    <div class="date-with-pending">
+                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                        <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="rfe-date-pending" data-date-id="rfe-date" data-wrap-id="rfe-date-wrap">
+                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                      </label>
+                      <div class="date-input-wrap" id="rfe-date-wrap">
+                        <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--rfe-date-anchor">
+                          <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="rfe-date-popover" aria-label="Open calendar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                          </button>
+                          <input type="text" id="rfe-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                        </div>
+                        <div popover id="rfe-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--rfe-date-anchor">
+                          <calendar-date class="cally" data-input-id="rfe-date">
+                            <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                            <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                            <calendar-month></calendar-month>
+                          </calendar-date>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-control w-full">
+                <div class="field-row">
+                  <label class="field-row-label" for="rfe-reason">RFE Reason</label>
+                  <div class="field-row-control">
+                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                      <input type="text" id="rfe-reason" name="rfeReason" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Source of funds documentation" autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-control w-full">
+                <div class="field-row">
+                  <label class="field-row-label" for="rfe-response-date">RFE Response Date</label>
+                  <div class="field-row-control">
+                    <div class="date-with-pending">
+                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                        <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="rfe-response-date-pending" data-date-id="rfe-response-date" data-wrap-id="rfe-response-date-wrap">
+                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                      </label>
+                      <div class="date-input-wrap" id="rfe-response-date-wrap">
+                        <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--rfe-response-date-anchor">
+                          <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="rfe-response-date-popover" aria-label="Open calendar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                          </button>
+                          <input type="text" id="rfe-response-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                        </div>
+                        <div popover id="rfe-response-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--rfe-response-date-anchor">
+                          <calendar-date class="cally" data-input-id="rfe-response-date">
+                            <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                            <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                            <calendar-month></calendar-month>
+                          </calendar-date>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="form-control w-full">
               <div class="field-row">
                 <label class="field-row-label" for="wom-date">WOM Filing Date</label>
@@ -743,11 +1045,11 @@
                 <div class="field-row">
                   <label class="field-row-label" for="wom-attorney-name">WOM Attorney Name</label>
                   <div class="field-row-control">
-                    <div class="autocomplete-wrap">
+                    <div class="autocomplete-wrap" style="anchor-name:--wom-attorney-anchor">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
                         <input type="text" id="wom-attorney-name" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="Attorney or firm name" autocomplete="off">
                       </div>
-                      <ul id="wom-attorney-name-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="WOM attorney suggestions"></ul>
+                      <ul id="wom-attorney-name-suggestions" class="autocomplete-list hidden" role="listbox" aria-label="WOM attorney suggestions" style="position-anchor:--wom-attorney-anchor"></ul>
                     </div>
                   </div>
                 </div>
@@ -777,6 +1079,37 @@
                         <input class="sr-only" type="radio" name="womStatus" id="wom-status-mtd" value="MTD">
                         MTD
                       </label>
+                      <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 justify-center">
+                        <input class="sr-only" type="radio" name="womStatus" id="wom-status-resolved" value="Resolved">
+                        Resolved
+                      </label>
+                      <label class="choice-btn join-item btn btn-soft btn-primary min-h-11 justify-center">
+                        <input class="sr-only" type="radio" name="womStatus" id="wom-status-dismissed" value="Dismissed">
+                        Dismissed
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="wom-resolution-wrap" class="form-control w-full hidden conditional-reveal">
+                <div class="field-row">
+                  <label class="field-row-label" for="wom-resolution-date">WOM Resolution Date</label>
+                  <div class="field-row-control">
+                    <div class="date-input-wrap" id="wom-resolution-date-wrap">
+                      <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-resolution-date-anchor">
+                        <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-resolution-date-popover" aria-label="Open calendar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </button>
+                        <input type="text" id="wom-resolution-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                      </div>
+                      <div popover id="wom-resolution-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-resolution-date-anchor">
+                        <calendar-date class="cally" data-input-id="wom-resolution-date">
+                          <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                          <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                          <calendar-month></calendar-month>
+                        </calendar-date>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -954,7 +1287,7 @@
         <div class="card-body gap-4 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
           <p class="text-sm text-base-content/60 -mt-2 mb-1">Edit freely. Changes here won't update the form.</p>
 
-          <div class="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-200/50">
+          <div class="stats stats-vertical sm:stats-horizontal shadow w-full stats">
             <div class="stat py-3 px-4">
               <div class="stat-title text-xs">Key update</div>
               <div id="stat-key-update" class="stat-value text-sm font-semibold">—</div>
@@ -980,7 +1313,7 @@
           </div>
 
           <div class="flex items-center gap-3 flex-wrap mt-auto">
-            <button type="button" id="copy-btn" class="btn btn-primary flex-1 min-h-11 transition-colors" disabled>
+            <button type="button" id="copy-btn" class="btn flex-1 min-h-11" disabled>
               Copy to clipboard
             </button>
           </div>
@@ -989,7 +1322,10 @@
     </main>
 
     <footer class="page-footer-notes text-center mt-8 max-w-xl mx-auto space-y-1.5">
-      <p>This is a static page. Nothing you enter is sent to a server or stored by the maintainer. Your information stays in your browser only.</p>
+      <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
+      <p>
+        <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
+      </p>
       <p>
         Have feedback?
         <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
@@ -998,16 +1334,55 @@
     </footer>
   </div>
 
+  <button type="button" id="preview-fab" class="fixed bottom-6 right-6 z-40 items-center gap-2 rounded-full px-5 py-3 hidden" aria-label="Open preview">
+    Preview
+    <span id="fab-field-count" class="badge badge-sm bg-white/20 text-white border-0">0</span>
+  </button>
+
+  <div id="preview-sheet" popover="auto" role="dialog" aria-labelledby="mobile-preview-heading">
+    <div class="section-header section-header--success flex items-center justify-between p-4">
+      <h2 id="mobile-preview-heading" class="section-title">Live Preview</h2>
+      <button type="button" id="preview-sheet-close" class="btn btn-ghost btn-sm btn-circle" aria-label="Close preview">✕</button>
+    </div>
+    <div class="p-4 space-y-4 overflow-y-auto max-h-[calc(85vh-4rem)]">
+      <div class="stats stats-vertical sm:stats-horizontal shadow w-full stats">
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Key update</div>
+          <div id="mobile-stat-key-update" class="stat-value text-sm font-semibold">—</div>
+        </div>
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Days from PD</div>
+          <div id="mobile-stat-days-pd" class="stat-value text-sm font-semibold">—</div>
+        </div>
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Fields filled</div>
+          <div id="mobile-stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
+        </div>
+      </div>
+      <div class="whatsapp-bubble-wrap flex flex-col min-h-48">
+        <textarea
+          id="mobile-preview"
+          class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-48"
+          rows="12"
+          placeholder="Your status update will appear here…"
+          aria-label="Mobile status update preview"
+        ></textarea>
+      </div>
+      <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11" disabled>
+        Copy to clipboard
+      </button>
+    </div>
+  </div>
+
   <div id="celebration-toast" class="toast toast-top toast-center z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
     <div class="alert alert-success shadow-lg max-w-md">
       <span id="celebration-toast-text"></span>
     </div>
   </div>
 
-  <div id="copy-toast" class="toast toast-bottom toast-end z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
-    <div class="alert alert-success shadow-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-      <span>Copied to clipboard</span>
+  <div id="restore-toast" class="toast toast-top toast-center z-50 pointer-events-none opacity-0" role="status" aria-live="polite" aria-hidden="true">
+    <div class="alert alert-info shadow-lg">
+      <span>Restored your previous draft</span>
     </div>
   </div>
 
