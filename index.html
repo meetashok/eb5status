@@ -273,17 +273,23 @@
     }
     .date-with-pending--stacked {
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       gap: 0.5rem;
     }
     .date-with-pending--stacked .date-state-toggles {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: flex-start;
       gap: 0.75rem;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      align-self: stretch;
     }
     .date-with-pending--stacked .date-input-wrap {
       width: 100%;
+      align-self: stretch;
     }
     #share-btn.is-copied,
     #mobile-share-btn.is-copied,
