@@ -130,13 +130,25 @@
     return comboCardValue;
   }
 
+  function setSelectedButtonStyle(el) {
+    el.classList.remove("btn-soft");
+    el.classList.add("btn-primary", "btn-active");
+  }
+
+  function setUnselectedButtonStyle(el) {
+    el.classList.remove("btn-active");
+    el.classList.add("btn-soft", "btn-primary");
+  }
+
   function setComboCardValue(value) {
     comboCardValue = value;
     comboCardToggle.querySelectorAll("[data-value]").forEach((option) => {
       const isSelected = option.dataset.value === value;
-      option.classList.toggle("btn-primary", isSelected);
-      option.classList.toggle("btn-ghost", !isSelected);
-      option.classList.toggle("bg-base-200/40", !isSelected);
+      if (isSelected) {
+        setSelectedButtonStyle(option);
+      } else {
+        setUnselectedButtonStyle(option);
+      }
       option.setAttribute("aria-pressed", String(isSelected));
     });
   }
@@ -155,9 +167,11 @@
   function syncChoiceButton(input) {
     const label = input.closest("label.choice-btn");
     if (!label) return;
-    label.classList.toggle("btn-primary", input.checked);
-    label.classList.toggle("btn-ghost", !input.checked);
-    label.classList.toggle("bg-base-200/40", !input.checked);
+    if (input.checked) {
+      setSelectedButtonStyle(label);
+    } else {
+      setUnselectedButtonStyle(label);
+    }
   }
 
   function syncRadioGroup(groupName) {
