@@ -57,7 +57,7 @@
       flex: 1;
       min-width: 0;
     }
-    .date-with-pending .pending-toggle {
+    .date-with-pending .date-state-toggle {
       flex-shrink: 0;
     }
     .date-input-wrap.is-disabled {
@@ -205,6 +205,10 @@
                 <label class="field-row-label" for="biometric-notice">Biometric Notice Date</label>
                 <div class="field-row-control">
                   <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="biometric-notice-pending" data-date-id="biometric-notice" data-wrap-id="biometric-notice-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
                     <div class="date-input-wrap" id="biometric-notice-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--biometric-notice-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="biometric-notice-popover" aria-label="Open calendar">
@@ -220,10 +224,6 @@
                         </calendar-date>
                       </div>
                     </div>
-                    <label class="label cursor-pointer gap-1.5 pending-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="biometric-notice-pending" data-date-id="biometric-notice" data-wrap-id="biometric-notice-wrap">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
                   </div>
                 </div>
               </div>
@@ -234,6 +234,10 @@
                 <label class="field-row-label" for="ead-approval">EAD Approval Date</label>
                 <div class="field-row-control">
                   <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="ead-approval-pending" data-date-id="ead-approval" data-wrap-id="ead-approval-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
                     <div class="date-input-wrap" id="ead-approval-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ead-approval-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none ead-approval-trigger" popovertarget="ead-approval-popover" aria-label="Open calendar">
@@ -249,10 +253,6 @@
                         </calendar-date>
                       </div>
                     </div>
-                    <label class="label cursor-pointer gap-1.5 pending-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="ead-approval-pending" data-date-id="ead-approval" data-wrap-id="ead-approval-wrap">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
                   </div>
                 </div>
               </div>
@@ -263,6 +263,10 @@
                 <label class="field-row-label" for="ap-approval">AP Approval Date</label>
                 <div class="field-row-control">
                   <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="ap-approval-pending" data-date-id="ap-approval" data-wrap-id="ap-approval-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
                     <div class="date-input-wrap" id="ap-approval-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--ap-approval-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none ap-approval-trigger" popovertarget="ap-approval-popover" aria-label="Open calendar">
@@ -278,10 +282,6 @@
                         </calendar-date>
                       </div>
                     </div>
-                    <label class="label cursor-pointer gap-1.5 pending-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="ap-approval-pending" data-date-id="ap-approval" data-wrap-id="ap-approval-wrap">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
                   </div>
                 </div>
               </div>
@@ -310,6 +310,10 @@
                 <label class="field-row-label" for="i526-date">I-526 Adjudication Date</label>
                 <div class="field-row-control">
                   <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i526-date-pending" data-date-id="i526-date" data-wrap-id="i526-date-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
                     <div class="date-input-wrap" id="i526-date-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i526-date-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i526-date-popover" aria-label="Open calendar">
@@ -325,10 +329,6 @@
                         </calendar-date>
                       </div>
                     </div>
-                    <label class="label cursor-pointer gap-1.5 pending-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i526-date-pending" data-date-id="i526-date" data-wrap-id="i526-date-wrap">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
                   </div>
                 </div>
               </div>
@@ -364,18 +364,26 @@
               <div class="field-row">
                 <label class="field-row-label" for="wom-date">WOM Filing Date</label>
                 <div class="field-row-control">
-                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-date-anchor">
-                    <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-date-popover" aria-label="Open calendar">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </button>
-                    <input type="text" id="wom-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-                  </div>
-                  <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
-                    <calendar-date class="cally" data-input-id="wom-date">
-                      <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                      <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                      <calendar-month></calendar-month>
-                    </calendar-date>
+                  <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="wom-date-not-filed" data-date-id="wom-date" data-wrap-id="wom-date-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Not filed</span>
+                    </label>
+                    <div class="date-input-wrap" id="wom-date-wrap">
+                      <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--wom-date-anchor">
+                        <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="wom-date-popover" aria-label="Open calendar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </button>
+                        <input type="text" id="wom-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
+                      </div>
+                      <div popover id="wom-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--wom-date-anchor">
+                        <calendar-date class="cally" data-input-id="wom-date">
+                          <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                          <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                          <calendar-month></calendar-month>
+                        </calendar-date>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -472,6 +480,10 @@
                 <label class="field-row-label" for="i485-date">I-485 Adjudication Date</label>
                 <div class="field-row-control">
                   <div class="date-with-pending">
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i485-date-pending" data-date-id="i485-date" data-wrap-id="i485-date-wrap">
+                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
                     <div class="date-input-wrap" id="i485-date-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i485-date-anchor">
                         <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="i485-date-popover" aria-label="Open calendar">
@@ -487,10 +499,6 @@
                         </calendar-date>
                       </div>
                     </div>
-                    <label class="label cursor-pointer gap-1.5 pending-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i485-date-pending" data-date-id="i485-date" data-wrap-id="i485-date-wrap">
-                      <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                    </label>
                   </div>
                 </div>
               </div>

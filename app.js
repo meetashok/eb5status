@@ -302,8 +302,23 @@
     return Boolean(parseIsoDate(getFieldValue("i526-date")));
   }
 
+  function isWomNotFiled() {
+    return isPending("wom-date-not-filed");
+  }
+
   function hasWomDateContext() {
+    if (isWomNotFiled()) return false;
+    return Boolean(parseIsoDate(getFieldValue("wom-date")));
+  }
+
+  function hasWomPreviewContext() {
+    if (isWomNotFiled()) return true;
     return Boolean(getFieldValue("wom-date"));
+  }
+
+  function getWomPreviewLine() {
+    if (isWomNotFiled()) return "WOM: Not filed";
+    return buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date"));
   }
 
   function ensureDefaultI526Approved() {
@@ -519,7 +534,7 @@
             )
           : null,
       ],
-      [null, hasWomDateContext() ? buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date")) : null],
+      [null, hasWomPreviewContext() ? getWomPreviewLine() : null],
       ["WOM counsel", hasWomDateContext() ? getWomCounselLine() : ""],
       ["WOM status", hasWomDateContext() ? getRadioValue("womStatus") : ""],
       ["WOM court", hasWomDateContext() ? getFieldValue("wom-court") : ""],
