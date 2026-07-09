@@ -1,13 +1,6 @@
 (function () {
   "use strict";
 
-  async function init() {
-    await Promise.all([
-      customElements.whenDefined("sl-input"),
-      customElements.whenDefined("sl-textarea"),
-      customElements.whenDefined("sl-button"),
-    ]);
-
   const form = document.getElementById("status-form");
   const preview = document.getElementById("preview");
   const copyBtn = document.getElementById("copy-btn");
@@ -32,14 +25,18 @@
   function getFieldValue(id) {
     const el = document.getElementById(id);
     if (!el) return "";
-    const value = el.value;
-    return value == null ? "" : String(value).trim();
+    return String(el.value).trim();
   }
 
   function getCheckedValues(name) {
-    return Array.from(form.querySelectorAll(`sl-checkbox[name="${name}"]`))
-      .filter((el) => el.checked)
-      .map((el) => el.value);
+    return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(
+      (el) => el.value
+    );
+  }
+
+  function getRadioValue(name) {
+    const selected = form.querySelector(`input[name="${name}"]:checked`);
+    return selected ? selected.value : "";
   }
 
   function getComboCardValue() {
@@ -68,12 +65,11 @@
       const nextValue = option.dataset.value;
       setComboCardValue(comboCardValue === nextValue ? "" : nextValue);
       updatePreviewFromFormIfAllowed();
-      updateCopyButton();
     });
   }
 
   function hasPreviewContent() {
-    return getFieldValue("preview").length > 0;
+    return preview.value.trim().length > 0;
   }
 
   function updateCopyButton() {
@@ -119,7 +115,7 @@
       ["Combo card", getComboCardValue()],
       [null, buildI526Line(getFieldValue("i526-status"), getFieldValue("i526-date"))],
       [null, buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date"))],
-      ["WOM counsel", getFieldValue("wom-counsel")],
+      ["WOM counsel", getRadioValue("womCounsel")],
       ["I-485 approved", formatDate(getFieldValue("i485-date"))],
     ];
 
@@ -146,33 +142,26 @@
     updateCopyButton();
   }
 
-  form.addEventListener("sl-input", () => {
-    updatePreviewFromFormIfAllowed();
-  });
+  form.addEventListener("input", updatePreviewFromFormIfAllowed);
+  form.addEventListener("change", updatePreviewFromFormIfAllowed);
 
-  form.addEventListener("sl-change", () => {
-    updatePreviewFromFormIfAllowed();
-  });
-
-  preview.addEventListener("sl-input", () => {
+  preview.addEventListener("input", () => {
     previewManuallyEdited = true;
     updateRefreshButton();
     updateCopyButton();
   });
 
-  refreshBtn.addEventListener("click", () => {
-    syncPreviewFromForm();
-  });
+  refreshBtn.addEventListener("click", syncPreviewFromForm);
 
   copyBtn.addEventListener("click", async () => {
-    const text = getFieldValue("preview");
+    const text = preview.value.trim();
     if (!text) return;
 
     try {
       await navigator.clipboard.writeText(text);
       copyFeedback.textContent = "Copied!";
     } catch {
-      preview.focus();
+      preview.select();
       document.execCommand("copy");
       copyFeedback.textContent = "Copied!";
     }
@@ -184,7 +173,4 @@
 
   initComboCardToggle();
   updateCopyButton();
-  }
-
-  init();
 })();

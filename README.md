@@ -25,9 +25,11 @@ Then visit `http://localhost:8080`.
 - Direct editing of the preview text before copying
 - One-click copy to clipboard
 - All fields optional — copy is enabled when at least one field has content
-- Mobile responsive with dark mode support
-- Modern UI via [Shoelace](https://shoelace.style/) components (CDN, no build step)
+- Mobile responsive layout with side-by-side live preview on desktop
+- Native form controls for fast mobile date entry (OS date picker on phone)
+- Chip multi-select for SOF and WOM filing
 - Animated Yes/No pill toggle for combo card
+- Segmented control for WOM counsel
 
 ## Fields
 

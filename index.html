@@ -7,15 +7,8 @@
   <title>EB-5 Status Update Draft</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" media="(prefers-color-scheme: dark)">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import { setBasePath } from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/utilities/base-path.js";
-    setBasePath("https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/");
-  </script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 </head>
 <body>
   <div class="app">
@@ -30,61 +23,84 @@
         <section class="form-section">
           <h2>Case basics</h2>
 
-          <sl-input
-            id="priority-date"
-            type="date"
-            label="Priority date"
-            help-text="Date USCIS received your I-526 / I-526E"
-          ></sl-input>
+          <label class="field" for="priority-date">
+            <span class="field-label">Priority date</span>
+            <input type="date" id="priority-date" name="priorityDate" class="input input-date">
+            <span class="field-hint">Date USCIS received your I-526 / I-526E</span>
+          </label>
 
-          <sl-input
-            id="regional-center"
-            label="Regional Center"
-            placeholder="e.g. XYZ Regional Center"
-            clearable
-          ></sl-input>
+          <label class="field" for="regional-center">
+            <span class="field-label">Regional Center</span>
+            <input type="text" id="regional-center" name="regionalCenter" class="input" placeholder="e.g. XYZ Regional Center">
+          </label>
 
-          <sl-input
-            id="project-name"
-            label="Project name"
-            placeholder="e.g. Downtown Tower EB-5"
-            clearable
-          ></sl-input>
+          <label class="field" for="project-name">
+            <span class="field-label">Project name</span>
+            <input type="text" id="project-name" name="projectName" class="input" placeholder="e.g. Downtown Tower EB-5">
+          </label>
 
           <fieldset class="choice-field">
-            <legend>SOF composition <span class="hint">(select all that apply)</span></legend>
-            <div class="checkbox-grid">
-              <sl-checkbox name="sof" value="Employment / salary">Employment / salary</sl-checkbox>
-              <sl-checkbox name="sof" value="Business income">Business income</sl-checkbox>
-              <sl-checkbox name="sof" value="Real estate sale">Real estate sale</sl-checkbox>
-              <sl-checkbox name="sof" value="Stocks / securities sale">Stocks / securities sale</sl-checkbox>
-              <sl-checkbox name="sof" value="Savings / accumulated funds">Savings / accumulated funds</sl-checkbox>
-              <sl-checkbox name="sof" value="Inheritance">Inheritance</sl-checkbox>
-              <sl-checkbox name="sof" value="Gift">Gift</sl-checkbox>
-              <sl-checkbox name="sof" value="Loan">Loan</sl-checkbox>
-              <sl-checkbox name="sof" value="Retirement funds">Retirement funds</sl-checkbox>
-              <sl-checkbox name="sof" value="Other">Other</sl-checkbox>
+            <legend class="field-label">SOF composition <span class="hint">(tap all that apply)</span></legend>
+            <div class="chip-grid">
+              <input class="chip-input" type="checkbox" name="sof" id="sof-employment" value="Employment / salary">
+              <label class="chip" for="sof-employment">Employment / salary</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-business" value="Business income">
+              <label class="chip" for="sof-business">Business income</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-realestate" value="Real estate sale">
+              <label class="chip" for="sof-realestate">Real estate sale</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-stocks" value="Stocks / securities sale">
+              <label class="chip" for="sof-stocks">Stocks / securities sale</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-savings" value="Savings / accumulated funds">
+              <label class="chip" for="sof-savings">Savings / accumulated funds</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-inheritance" value="Inheritance">
+              <label class="chip" for="sof-inheritance">Inheritance</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-gift" value="Gift">
+              <label class="chip" for="sof-gift">Gift</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-loan" value="Loan">
+              <label class="chip" for="sof-loan">Loan</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-retirement" value="Retirement funds">
+              <label class="chip" for="sof-retirement">Retirement funds</label>
+
+              <input class="chip-input" type="checkbox" name="sof" id="sof-other" value="Other">
+              <label class="chip" for="sof-other">Other</label>
             </div>
           </fieldset>
 
-          <sl-input
-            id="attorney"
-            label="Attorney"
-            placeholder="e.g. Smith &amp; Associates"
-            clearable
-          ></sl-input>
+          <label class="field" for="attorney">
+            <span class="field-label">Attorney</span>
+            <input type="text" id="attorney" name="attorney" class="input" placeholder="e.g. Smith &amp; Associates">
+          </label>
         </section>
 
         <section class="form-section">
           <h2>Biometrics &amp; travel documents</h2>
 
-          <sl-input id="biometric-notice" type="date" label="Biometric notice date"></sl-input>
-          <sl-input id="ead-approval" type="date" label="EAD approval date"></sl-input>
-          <sl-input id="ap-approval" type="date" label="AP approval date"></sl-input>
+          <label class="field" for="biometric-notice">
+            <span class="field-label">Biometric notice date</span>
+            <input type="date" id="biometric-notice" name="biometricNotice" class="input input-date">
+          </label>
+
+          <label class="field" for="ead-approval">
+            <span class="field-label">EAD approval date</span>
+            <input type="date" id="ead-approval" name="eadApproval" class="input input-date">
+          </label>
+
+          <label class="field" for="ap-approval">
+            <span class="field-label">AP approval date</span>
+            <input type="date" id="ap-approval" name="apApproval" class="input input-date">
+          </label>
 
           <div class="field-block">
-            <span class="field-label">Combo card</span>
-            <div class="pill-toggle" id="combo-card" role="radiogroup" aria-label="Combo card">
+            <span class="field-label" id="combo-card-label">Combo card</span>
+            <div class="pill-toggle" id="combo-card" role="radiogroup" aria-labelledby="combo-card-label">
               <span class="pill-toggle__slider" aria-hidden="true"></span>
               <button type="button" class="pill-toggle__option" data-value="No" aria-pressed="false">No</button>
               <button type="button" class="pill-toggle__option" data-value="Yes" aria-pressed="false">Yes</button>
@@ -96,34 +112,60 @@
           <h2>Adjudication &amp; mandamus</h2>
 
           <div class="field-group">
-            <sl-select id="i526-status" label="I-526 adjudication" placeholder="Select status" clearable>
-              <sl-option value="Approved">Approved</sl-option>
-              <sl-option value="RFE">RFE</sl-option>
-              <sl-option value="NOID">NOID</sl-option>
-              <sl-option value="Denied">Denied</sl-option>
-            </sl-select>
+            <label class="field" for="i526-status">
+              <span class="field-label">I-526 adjudication</span>
+              <select id="i526-status" name="i526Status" class="input input-select">
+                <option value="">Select status</option>
+                <option value="Approved">Approved</option>
+                <option value="RFE">RFE</option>
+                <option value="NOID">NOID</option>
+                <option value="Denied">Denied</option>
+              </select>
+            </label>
 
-            <sl-input id="i526-date" type="date" label="I-526 adjudication date"></sl-input>
+            <label class="field" for="i526-date">
+              <span class="field-label">I-526 adjudication date</span>
+              <input type="date" id="i526-date" name="i526Date" class="input input-date">
+            </label>
           </div>
 
           <fieldset class="choice-field">
-            <legend>WOM filing <span class="hint">(select all that apply)</span></legend>
-            <div class="checkbox-grid checkbox-grid--compact">
-              <sl-checkbox name="wom" value="I-526">I-526</sl-checkbox>
-              <sl-checkbox name="wom" value="I-485">I-485</sl-checkbox>
-              <sl-checkbox name="wom" value="EAD">EAD</sl-checkbox>
-              <sl-checkbox name="wom" value="AP">AP</sl-checkbox>
+            <legend class="field-label">WOM filing <span class="hint">(tap all that apply)</span></legend>
+            <div class="chip-grid chip-grid--compact">
+              <input class="chip-input" type="checkbox" name="wom" id="wom-526" value="I-526">
+              <label class="chip" for="wom-526">I-526</label>
+
+              <input class="chip-input" type="checkbox" name="wom" id="wom-485" value="I-485">
+              <label class="chip" for="wom-485">I-485</label>
+
+              <input class="chip-input" type="checkbox" name="wom" id="wom-ead" value="EAD">
+              <label class="chip" for="wom-ead">EAD</label>
+
+              <input class="chip-input" type="checkbox" name="wom" id="wom-ap" value="AP">
+              <label class="chip" for="wom-ap">AP</label>
             </div>
           </fieldset>
 
-          <sl-input id="wom-date" type="date" label="WOM filing date"></sl-input>
+          <label class="field" for="wom-date">
+            <span class="field-label">WOM filing date</span>
+            <input type="date" id="wom-date" name="womDate" class="input input-date">
+          </label>
 
-          <sl-radio-group id="wom-counsel" label="WOM counsel">
-            <sl-radio-button value="Attorney">Attorney</sl-radio-button>
-            <sl-radio-button value="Pro se">Pro se</sl-radio-button>
-          </sl-radio-group>
+          <fieldset class="field-block">
+            <legend class="field-label" id="wom-counsel-label">WOM counsel</legend>
+            <div class="segmented" role="radiogroup" aria-labelledby="wom-counsel-label">
+              <input class="segmented-input" type="radio" name="womCounsel" id="wom-counsel-attorney" value="Attorney">
+              <label class="segmented-option" for="wom-counsel-attorney">Attorney</label>
 
-          <sl-input id="i485-date" type="date" label="I-485 adjudication date"></sl-input>
+              <input class="segmented-input" type="radio" name="womCounsel" id="wom-counsel-prose" value="Pro se">
+              <label class="segmented-option" for="wom-counsel-prose">Pro se</label>
+            </div>
+          </fieldset>
+
+          <label class="field" for="i485-date">
+            <span class="field-label">I-485 adjudication date</span>
+            <input type="date" id="i485-date" name="i485Date" class="input input-date">
+          </label>
         </section>
       </form>
 
@@ -133,24 +175,23 @@
             <h2 id="preview-heading">Live preview</h2>
             <p class="preview-hint">Edit freely — changes here won't update the form.</p>
           </div>
-          <sl-button id="refresh-preview" variant="default" size="small" class="hidden" hidden>
+          <button type="button" id="refresh-preview" class="btn btn-secondary hidden" hidden>
             Refresh from form
-          </sl-button>
+          </button>
         </div>
 
-        <sl-textarea
+        <textarea
           id="preview"
-          class="preview"
-          placeholder="Your status update will appear here as you fill in the form…"
-          resize="auto"
+          class="preview input"
           rows="14"
-        ></sl-textarea>
+          placeholder="Your status update will appear here as you fill in the form…"
+          aria-label="Status update message preview"
+        ></textarea>
 
         <div class="actions">
-          <sl-button id="copy-btn" variant="primary" size="large" disabled>
-            <sl-icon slot="prefix" name="clipboard"></sl-icon>
+          <button type="button" id="copy-btn" class="btn btn-primary" disabled>
             Copy to clipboard
-          </sl-button>
+          </button>
           <span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>
         </div>
       </section>
@@ -161,6 +202,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
