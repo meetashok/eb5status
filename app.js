@@ -321,7 +321,7 @@
   }
 
   function generateMessage() {
-    const lines = ["EB-5 Status Update", ""];
+    const bulletLines = [];
 
     const entries = [
       ["Priority date", formatDate(getFieldValue("priority-date"))],
@@ -342,11 +342,18 @@
 
     for (const [label, value] of entries) {
       if (!value) continue;
-      lines.push(label ? `${label}: ${value}` : value);
+      bulletLines.push(label ? `${label}: ${value}` : value);
     }
 
-    if (lines.length === 2) return "";
-    return lines.join("\n");
+    if (bulletLines.length === 0) return "";
+
+    return [
+      "EB-5 Status Update",
+      "",
+      ...bulletLines.map((line) => `• ${line}`),
+      "",
+      "Generated via bit.ly/eb5status",
+    ].join("\n");
   }
 
   function updatePreviewFromFormIfAllowed() {
