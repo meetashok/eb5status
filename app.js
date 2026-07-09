@@ -54,7 +54,7 @@
     "i485-approval": "Congratulations on your I-485 approval! 🎉",
   };
   const CELEBRATION_EMOJI = "🎉";
-  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Direct"]);
+  const EXCLUSIVE_PROJECT_CATEGORIES = new Set(["Infra", "Direct"]);
   const BTN_COLOR_NAMES = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
 
   let comboCardValue = "";
