@@ -293,8 +293,13 @@
     return counsel;
   }
 
-  function hasI526DateContext() {
+  function hasI526PreviewContext() {
     return isPending("i526-date-pending") || Boolean(getFieldValue("i526-date"));
+  }
+
+  function hasI526StatusContext() {
+    if (isPending("i526-date-pending")) return false;
+    return Boolean(parseIsoDate(getFieldValue("i526-date")));
   }
 
   function hasWomDateContext() {
@@ -333,7 +338,7 @@
   function updateI526StatusVisibility() {
     const wrap = document.getElementById("i526-status-wrap");
     if (!wrap) return;
-    const show = hasI526DateContext();
+    const show = hasI526StatusContext();
     wrap.classList.toggle("hidden", !show);
     if (show) ensureDefaultI526Approved();
   }
@@ -506,9 +511,9 @@
       ["Combo card", hasEadAndApApprovalDates() ? getComboCardValue() : ""],
       [
         null,
-        hasI526DateContext()
+        hasI526PreviewContext()
           ? buildI526Line(
-              getRadioValue("i526Status"),
+              isPending("i526-date-pending") ? "" : getRadioValue("i526Status"),
               getFieldValue("i526-date"),
               isPending("i526-date-pending")
             )
