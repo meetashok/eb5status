@@ -8,6 +8,23 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    /* Flatpickr ships light-theme CSS; inherit colors from JS-themed calendar root */
+    .flatpickr-calendar .flatpickr-current-month,
+    .flatpickr-calendar .flatpickr-weekday,
+    .flatpickr-calendar .flatpickr-day,
+    .flatpickr-calendar .numInput,
+    .flatpickr-calendar .flatpickr-monthDropdown-months {
+      color: inherit;
+    }
+    .flatpickr-calendar .flatpickr-monthDropdown-months {
+      background: inherit;
+    }
+    .flatpickr-calendar .flatpickr-prev-month svg,
+    .flatpickr-calendar .flatpickr-next-month svg {
+      fill: currentColor;
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="min-h-screen bg-base-200">
@@ -37,7 +54,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="priority-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="priority-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
               <label class="label py-0"><span class="label-text-alt text-base-content/60">Date USCIS received your I-526 / I-526E</span></label>
             </div>
@@ -69,7 +86,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="biometric-notice" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="biometric-notice" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
 
@@ -79,7 +96,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ead-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="ead-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
 
@@ -89,7 +106,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="ap-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="ap-approval" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
 
@@ -135,7 +152,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i526-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="i526-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
 
@@ -170,7 +187,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="wom-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="wom-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
 
@@ -194,7 +211,7 @@
                 <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" data-toggle aria-label="Open calendar">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </button>
-                <input type="text" id="i485-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="Select date" readonly>
+                <input type="text" id="i485-date" data-input class="grow bg-transparent outline-none min-h-8" placeholder="YYYY-MM-DD">
               </div>
             </div>
           </div>

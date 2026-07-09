@@ -78,16 +78,43 @@
     return colors;
   }
 
-  function syncFlatpickrTheme() {
+  function applyFlatpickrTheme(calendarRoot) {
+    if (!calendarRoot) return;
     const colors = getThemeColors();
-    document.querySelectorAll(".flatpickr-calendar").forEach((calendar) => {
-      calendar.style.background = colors.background;
-      calendar.style.color = colors.color;
-      calendar.style.borderColor = colors.border;
+
+    calendarRoot.style.background = colors.background;
+    calendarRoot.style.color = colors.color;
+    calendarRoot.style.borderColor = colors.border;
+
+    const textSelectors = [
+      ".flatpickr-day",
+      ".flatpickr-weekday",
+      ".flatpickr-current-month",
+      ".flatpickr-monthDropdown-months",
+      ".numInput",
+    ];
+
+    textSelectors.forEach((selector) => {
+      calendarRoot.querySelectorAll(selector).forEach((el) => {
+        el.style.color = colors.color;
+        if (el.tagName === "SELECT") {
+          el.style.backgroundColor = colors.background;
+        }
+      });
     });
-    document.querySelectorAll(".flatpickr-day").forEach((day) => {
-      day.style.color = colors.color;
+
+    calendarRoot.querySelectorAll(".numInputWrapper span").forEach((el) => {
+      el.style.borderTopColor = colors.color;
+      el.style.borderBottomColor = colors.color;
     });
+
+    calendarRoot.querySelectorAll(".flatpickr-prev-month svg, .flatpickr-next-month svg").forEach((svg) => {
+      svg.style.fill = colors.color;
+    });
+  }
+
+  function syncFlatpickrTheme() {
+    document.querySelectorAll(".flatpickr-calendar").forEach(applyFlatpickrTheme);
   }
 
   function initTheme() {
@@ -104,8 +131,6 @@
   }
 
   function initDatePickers() {
-    const colors = getThemeColors();
-
     DATE_WRAP_IDS.forEach((wrapId) => {
       const instance = flatpickr(`#${wrapId}`, {
         wrap: true,
@@ -113,13 +138,13 @@
         disableMobile: true,
         position: "auto left",
         clickOpens: true,
-        allowInput: false,
+        allowInput: true,
         onReady: (_dates, _str, fp) => {
-          fp.calendarContainer.style.background = colors.background;
-          fp.calendarContainer.style.color = colors.color;
-          fp.calendarContainer.style.borderColor = colors.border;
+          applyFlatpickrTheme(fp.calendarContainer);
         },
-        onOpen: syncFlatpickrTheme,
+        onOpen: (_dates, _str, fp) => {
+          applyFlatpickrTheme(fp.calendarContainer);
+        },
         onChange: updatePreviewFromFormIfAllowed,
       });
       flatpickrInstances.push(instance);
