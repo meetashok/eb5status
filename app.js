@@ -421,14 +421,12 @@
       }
     };
 
-    const [regionalCenters, attorneys, projectNames] = await Promise.all([
+    const [regionalCenters, attorneys] = await Promise.all([
       loadJson("./data/regional-centers.json", []),
       loadJson("./data/attorneys.json", []),
-      loadJson("./data/project-names.json", []),
     ]);
 
     initAutocomplete("regional-center", "regional-center-suggestions", regionalCenters);
-    initAutocomplete("project-name", "project-name-suggestions", projectNames);
     initAutocomplete("attorney", "attorney-suggestions", attorneys);
     initAutocomplete("wom-attorney-name", "wom-attorney-name-suggestions", attorneys);
   }
