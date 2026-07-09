@@ -223,6 +223,7 @@
     toggleSofOtherDetail();
   }
 
+  function hasPreviewContent() {
     return preview.value.trim().length > 0;
   }
 
