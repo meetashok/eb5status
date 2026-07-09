@@ -405,6 +405,10 @@
       box-shadow: 0 4px 20px color-mix(in oklch, #3B9B8F 35%, transparent);
       border: none;
       transition: all 0.2s ease;
+      z-index: 40;
+    }
+    #preview-fab:not(.hidden) {
+      display: flex !important;
     }
     #preview-fab:hover {
       background: linear-gradient(135deg, #4DB8AA 0%, #3B9B8F 100%);
@@ -428,6 +432,20 @@
       padding: 0;
       background: var(--color-base-100);
       box-shadow: 0 -8px 32px color-mix(in oklch, var(--color-base-content) 15%, transparent);
+      z-index: 60;
+    }
+    #preview-sheet.is-open {
+      display: block;
+    }
+    #preview-sheet-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: color-mix(in oklch, var(--color-base-content) 30%, transparent);
+      z-index: 55;
+    }
+    #preview-sheet-backdrop.is-open {
+      display: block;
     }
     #preview-sheet::backdrop {
       background: color-mix(in oklch, var(--color-base-content) 30%, transparent);
@@ -585,8 +603,12 @@
                 <div class="field-row-control">
                   <div class="date-with-pending">
                     <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                      <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="i956f-approval-pending" data-date-id="i956f-approval" data-wrap-id="i956f-approval-wrap">
+                      <input type="checkbox" class="checkbox checkbox-sm" id="i956f-pending">
                       <span class="label-text text-sm whitespace-nowrap">Pending</span>
+                    </label>
+                    <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
+                      <input type="checkbox" class="checkbox checkbox-sm" id="i956f-approved-before-pd">
+                      <span class="label-text text-sm whitespace-nowrap">Approved before PD</span>
                     </label>
                     <div class="date-input-wrap" id="i956f-approval-wrap">
                       <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--i956f-approval-anchor">
@@ -896,72 +918,12 @@
               </div>
             </div>
 
-            <div id="rfe-details-wrap" class="space-y-2 hidden conditional-reveal">
-              <div class="form-control w-full">
-                <div class="field-row">
-                  <label class="field-row-label" for="rfe-date">RFE Date</label>
-                  <div class="field-row-control">
-                    <div class="date-with-pending">
-                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                        <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="rfe-date-pending" data-date-id="rfe-date" data-wrap-id="rfe-date-wrap">
-                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                      </label>
-                      <div class="date-input-wrap" id="rfe-date-wrap">
-                        <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--rfe-date-anchor">
-                          <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="rfe-date-popover" aria-label="Open calendar">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                          </button>
-                          <input type="text" id="rfe-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-                        </div>
-                        <div popover id="rfe-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--rfe-date-anchor">
-                          <calendar-date class="cally" data-input-id="rfe-date">
-                            <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                            <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                            <calendar-month></calendar-month>
-                          </calendar-date>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-control w-full">
-                <div class="field-row">
-                  <label class="field-row-label" for="rfe-reason">RFE Reason</label>
-                  <div class="field-row-control">
-                    <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
-                      <input type="text" id="rfe-reason" name="rfeReason" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Source of funds documentation" autocomplete="off">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-control w-full">
-                <div class="field-row">
-                  <label class="field-row-label" for="rfe-response-date">RFE Response Date</label>
-                  <div class="field-row-control">
-                    <div class="date-with-pending">
-                      <label class="label cursor-pointer gap-1.5 date-state-toggle py-0">
-                        <input type="checkbox" class="checkbox checkbox-sm pending-date-toggle" id="rfe-response-date-pending" data-date-id="rfe-response-date" data-wrap-id="rfe-response-date-wrap">
-                        <span class="label-text text-sm whitespace-nowrap">Pending</span>
-                      </label>
-                      <div class="date-input-wrap" id="rfe-response-date-wrap">
-                        <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow] join min-h-11" style="anchor-name:--rfe-response-date-anchor">
-                          <button type="button" class="join-item btn btn-ghost btn-square shrink-0 min-h-11 border-0 rounded-none" popovertarget="rfe-response-date-popover" aria-label="Open calendar">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                          </button>
-                          <input type="text" id="rfe-response-date" class="join-item input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none grow w-full" placeholder="YYYY-MM-DD" autocomplete="off">
-                        </div>
-                        <div popover id="rfe-response-date-popover" class="dropdown bg-base-100 rounded-box shadow-lg border border-base-300" style="position-anchor:--rfe-response-date-anchor">
-                          <calendar-date class="cally" data-input-id="rfe-response-date">
-                            <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                            <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                            <calendar-month></calendar-month>
-                          </calendar-date>
-                        </div>
-                      </div>
-                    </div>
+            <div id="i526-reason-wrap" class="form-control w-full hidden conditional-reveal">
+              <div class="field-row">
+                <label class="field-row-label" for="i526-reason" id="i526-reason-label">Reason</label>
+                <div class="field-row-control">
+                  <div class="w-full border border-base-300 rounded-lg overflow-hidden bg-base-100 shadow-sm focus-within:border-primary focus-within:shadow-md transition-[border-color,box-shadow]">
+                    <input type="text" id="i526-reason" name="i526Reason" class="input w-full min-h-11 border-0 rounded-none bg-transparent px-3 focus:outline-none focus:ring-0 shadow-none" placeholder="e.g. Source of funds documentation" autocomplete="off">
                   </div>
                 </div>
               </div>
@@ -1327,6 +1289,11 @@
         <button type="button" id="clear-form-btn-footer" class="clear-form-link sm:hidden">Clear form</button>
       </p>
       <p>
+        Open source on
+        <a class="underline hover:text-base-content/70" href="https://github.com/meetashok/eb5status" target="_blank" rel="noopener noreferrer">GitHub</a>
+        — contributions and pull requests welcome.
+      </p>
+      <p>
         Have feedback?
         <a class="underline hover:text-base-content/70" href="mailto:ashok.iitb@gmail.com?subject=EB5%20Status%20Update%20Builder%20feedback">Send it here</a>
         or ping me on WhatsApp if you have my number.
@@ -1339,7 +1306,9 @@
     <span id="fab-field-count" class="badge badge-sm bg-white/20 text-white border-0">0</span>
   </button>
 
-  <div id="preview-sheet" popover="auto" role="dialog" aria-labelledby="mobile-preview-heading">
+  <div id="preview-sheet-backdrop" aria-hidden="true"></div>
+
+  <div id="preview-sheet" popover="manual" role="dialog" aria-labelledby="mobile-preview-heading">
     <div class="section-header section-header--success flex items-center justify-between p-4">
       <h2 id="mobile-preview-heading" class="section-title">Live Preview</h2>
       <button type="button" id="preview-sheet-close" class="btn btn-ghost btn-sm btn-circle" aria-label="Close preview">✕</button>

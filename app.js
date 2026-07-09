@@ -13,8 +13,6 @@
     "ead-approval",
     "ap-approval",
     "i526-date",
-    "rfe-date",
-    "rfe-response-date",
     "wom-date",
     "wom-resolution-date",
     "i485-date",
@@ -22,24 +20,17 @@
 
   const DATE_FIELD_META = [
     { id: "priority-date" },
-    { id: "i956f-approval", pendingId: "i956f-approval-pending" },
+    { id: "i956f-approval" },
     { id: "biometric-notice", pendingId: "biometric-notice-pending" },
     { id: "ead-approval", pendingId: "ead-approval-pending" },
     { id: "ap-approval", pendingId: "ap-approval-pending" },
     { id: "i526-date", pendingId: "i526-date-pending" },
-    { id: "rfe-date", pendingId: "rfe-date-pending" },
-    { id: "rfe-response-date", pendingId: "rfe-response-date-pending" },
     { id: "wom-date", notFiledId: "wom-date-not-filed" },
     { id: "wom-resolution-date" },
     { id: "i485-date", pendingId: "i485-date-pending" },
   ];
 
-  const CATEGORY_INCOMPATIBLE = {
-    Rural: ["Direct"],
-    Direct: ["Rural", "Infra"],
-    Infra: ["Direct"],
-    HUA: [],
-  };
+  const I526_ADVERSE_STATUSES = new Set(["RFE", "NOID", "Denied"]);
 
   const form = document.getElementById("status-form");
   const preview = document.getElementById("preview");
@@ -815,21 +806,7 @@
   function initProjectCategory() {
     form.querySelectorAll('input[name="projectCategory"]').forEach((checkbox) => {
       checkbox.addEventListener("change", () => {
-        if (!checkbox.checked) {
-          syncChoiceButton(checkbox);
-          updatePreviewFromFormIfAllowed();
-          scheduleFormSave();
-          return;
-        }
-
-        const incompatible = CATEGORY_INCOMPATIBLE[checkbox.value] || [];
-        form.querySelectorAll('input[name="projectCategory"]').forEach((other) => {
-          if (other !== checkbox && incompatible.includes(other.value)) {
-            other.checked = false;
-          }
-        });
-
-        form.querySelectorAll('input[name="projectCategory"]').forEach(syncChoiceButton);
+        syncChoiceButton(checkbox);
         updatePreviewFromFormIfAllowed();
         scheduleFormSave();
       });
@@ -855,8 +832,30 @@
     return Boolean(parseIsoDate(getFieldValue("i526-date")));
   }
 
-  function hasRfeContext() {
-    return hasI526StatusContext() && getRadioValue("i526Status") === "RFE";
+  function hasI526AdverseContext() {
+    return hasI526StatusContext() && I526_ADVERSE_STATUSES.has(getRadioValue("i526Status"));
+  }
+
+  function getI526ReasonLabel() {
+    const status = getRadioValue("i526Status");
+    if (status === "RFE") return "RFE reason";
+    if (status === "NOID") return "NOID reason";
+    if (status === "Denied") return "Denial reason";
+    return "";
+  }
+
+  function isI956fPending() {
+    const el = document.getElementById("i956f-pending");
+    return Boolean(el && el.checked);
+  }
+
+  function isI956fApprovedBeforePd() {
+    const el = document.getElementById("i956f-approved-before-pd");
+    return Boolean(el && el.checked);
+  }
+
+  function isI956fDateDisabled() {
+    return isI956fPending() || isI956fApprovedBeforePd();
   }
 
   function isWomNotFiled() {
@@ -896,7 +895,8 @@
   }
 
   function getI956fLine() {
-    if (isPending("i956f-approval-pending")) return "I-956F: Pending";
+    if (isI956fPending()) return "I-956F: Pending";
+    if (isI956fApprovedBeforePd()) return "I-956F: Approved before PD";
     const formatted = formatDateWithPdOffset(getFieldValue("i956f-approval"), "i956f-approval");
     if (!formatted) return "";
     return `I-956F approved: ${formatted} ${CELEBRATION_EMOJI}`;
@@ -934,22 +934,56 @@
     updateWomResolutionVisibility();
   }
 
-  function clearRfeDetails() {
-    const rfeDate = document.getElementById("rfe-date");
-    const rfeReason = document.getElementById("rfe-reason");
-    const rfeResponse = document.getElementById("rfe-response-date");
-    const rfeDatePending = document.getElementById("rfe-date-pending");
-    const rfeResponsePending = document.getElementById("rfe-response-date-pending");
-    if (rfeDate) rfeDate.value = "";
-    if (rfeReason) rfeReason.value = "";
-    if (rfeResponse) rfeResponse.value = "";
-    if (rfeDatePending) rfeDatePending.checked = false;
-    if (rfeResponsePending) rfeResponsePending.checked = false;
-    form.querySelectorAll(".pending-date-toggle").forEach((toggle) => {
-      if (toggle.id === "rfe-date-pending" || toggle.id === "rfe-response-date-pending") {
-        setPendingState(toggle);
+  function clearI526Reason() {
+    const reasonInput = document.getElementById("i526-reason");
+    if (reasonInput) reasonInput.value = "";
+  }
+
+  function clearI956fDate() {
+    const input = document.getElementById("i956f-approval");
+    const calendar = document.querySelector('calendar-date[data-input-id="i956f-approval"]');
+    if (input) input.value = "";
+    if (calendar) calendar.value = "";
+  }
+
+  function syncI956fDateState() {
+    const wrap = document.getElementById("i956f-approval-wrap");
+    const input = document.getElementById("i956f-approval");
+    if (!wrap || !input) return;
+
+    const disabled = isI956fDateDisabled();
+    if (disabled) {
+      input.value = "";
+      input.disabled = true;
+      wrap.classList.add("is-disabled");
+      wrap.querySelector("button[popovertarget]")?.setAttribute("disabled", "");
+      const calendar = document.querySelector('calendar-date[data-input-id="i956f-approval"]');
+      if (calendar) calendar.value = "";
+    } else {
+      input.disabled = false;
+      wrap.classList.remove("is-disabled");
+      wrap.querySelector("button[popovertarget]")?.removeAttribute("disabled");
+    }
+  }
+
+  function initI956fStateToggles() {
+    const pendingToggle = document.getElementById("i956f-pending");
+    const beforePdToggle = document.getElementById("i956f-approved-before-pd");
+    if (!pendingToggle || !beforePdToggle) return;
+
+    const handleToggle = (activeToggle) => {
+      if (activeToggle.checked) {
+        if (activeToggle === pendingToggle) beforePdToggle.checked = false;
+        if (activeToggle === beforePdToggle) pendingToggle.checked = false;
       }
-    });
+      syncI956fDateState();
+      updatePreviewFromFormIfAllowed();
+      scheduleFormSave();
+    };
+
+    pendingToggle.addEventListener("change", () => handleToggle(pendingToggle));
+    beforePdToggle.addEventListener("change", () => handleToggle(beforePdToggle));
+    syncI956fDateState();
   }
 
   function updateI526StatusVisibility() {
@@ -958,15 +992,19 @@
     const show = hasI526StatusContext();
     wrap.classList.toggle("hidden", !show);
     if (show) ensureDefaultI526Approved();
-    updateRfeDetailsVisibility();
+    updateI526ReasonVisibility();
   }
 
-  function updateRfeDetailsVisibility() {
-    const wrap = document.getElementById("rfe-details-wrap");
+  function updateI526ReasonVisibility() {
+    const wrap = document.getElementById("i526-reason-wrap");
+    const label = document.getElementById("i526-reason-label");
     if (!wrap) return;
-    const show = hasRfeContext();
+    const show = hasI526AdverseContext();
     wrap.classList.toggle("hidden", !show);
-    if (!show) clearRfeDetails();
+    if (label) {
+      label.textContent = getI526ReasonLabel() || "Reason";
+    }
+    if (!show) clearI526Reason();
   }
 
   function updateWomDetailsVisibility() {
@@ -1097,7 +1135,7 @@
     });
     form.querySelectorAll('input[name="i526Status"]').forEach((radio) => {
       radio.addEventListener("change", () => {
-        updateRfeDetailsVisibility();
+        updateI526ReasonVisibility();
         updatePreviewFromFormIfAllowed();
         scheduleFormSave();
       });
@@ -1149,9 +1187,10 @@
 
   function updateCopyButton() {
     const hasContent = hasPreviewContent();
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
     if (copyBtn) copyBtn.disabled = !hasContent;
     if (mobileCopyBtn) mobileCopyBtn.disabled = !hasContent;
-    if (previewFab) previewFab.classList.toggle("hidden", !hasContent);
+    if (previewFab) previewFab.classList.toggle("hidden", !hasContent || isDesktop);
   }
 
   function updateRefreshButton() {
@@ -1216,11 +1255,9 @@
             )
           : null,
       ],
-      ["RFE received", hasRfeContext() ? formatPendingDateValue("rfe-date", "rfe-date-pending") : ""],
-      ["RFE reason", hasRfeContext() ? getFieldValue("rfe-reason") : ""],
       [
-        "RFE response submitted",
-        hasRfeContext() ? formatPendingDateValue("rfe-response-date", "rfe-response-date-pending") : "",
+        getI526ReasonLabel(),
+        hasI526AdverseContext() ? getFieldValue("i526-reason") : "",
       ],
       ["WOM filed on", hasWomPreviewContext() ? getWomFiledOnValue() : ""],
       ["WOM filed for", hasWomDateContext() ? getWomFiledForValue() : ""],
@@ -1388,6 +1425,8 @@
       setPendingState(toggle);
     });
 
+    syncI956fDateState();
+
     DATE_FIELD_IDS.forEach((inputId) => {
       const input = document.getElementById(inputId);
       const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
@@ -1453,6 +1492,12 @@
       setPendingState(toggle);
     });
 
+    const i956fPending = document.getElementById("i956f-pending");
+    const i956fBeforePd = document.getElementById("i956f-approved-before-pd");
+    if (i956fPending) i956fPending.checked = false;
+    if (i956fBeforePd) i956fBeforePd.checked = false;
+    syncI956fDateState();
+
     DATE_FIELD_IDS.forEach((inputId) => {
       const input = document.getElementById(inputId);
       const calendar = document.querySelector(`calendar-date[data-input-id="${inputId}"]`);
@@ -1483,24 +1528,69 @@
     });
   }
 
+  function openPreviewSheet() {
+    syncMobilePreview();
+    updatePreviewStats();
+    if (!previewSheet) return;
+
+    if (typeof previewSheet.showPopover === "function") {
+      try {
+        previewSheet.showPopover();
+        return;
+      } catch {
+        /* fall through to class-based fallback */
+      }
+    }
+
+    previewSheet.classList.add("is-open");
+    document.getElementById("preview-sheet-backdrop")?.classList.add("is-open");
+    document.body.classList.add("overflow-hidden");
+  }
+
+  function closePreviewSheet() {
+    if (!previewSheet) return;
+
+    if (typeof previewSheet.hidePopover === "function") {
+      try {
+        if (previewSheet.matches(":popover-open")) {
+          previewSheet.hidePopover();
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+
+    previewSheet.classList.remove("is-open");
+    document.getElementById("preview-sheet-backdrop")?.classList.remove("is-open");
+    document.body.classList.remove("overflow-hidden");
+  }
+
   function initMobilePreview() {
     if (!previewFab || !previewSheet) return;
 
-    previewFab.addEventListener("click", () => {
-      syncMobilePreview();
-      if (typeof previewSheet.showPopover === "function") {
-        previewSheet.showPopover();
-      }
+    previewFab.addEventListener("click", (event) => {
+      event.preventDefault();
+      openPreviewSheet();
     });
 
     const closeBtn = document.getElementById("preview-sheet-close");
     if (closeBtn) {
-      closeBtn.addEventListener("click", () => {
-        if (typeof previewSheet.hidePopover === "function") {
-          previewSheet.hidePopover();
-        }
+      closeBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        closePreviewSheet();
       });
     }
+
+    const backdrop = document.getElementById("preview-sheet-backdrop");
+    if (backdrop) {
+      backdrop.addEventListener("click", closePreviewSheet);
+    }
+
+    previewSheet.addEventListener("toggle", () => {
+      if (!previewSheet.matches(":popover-open")) {
+        document.body.classList.remove("overflow-hidden");
+      }
+    });
 
     if (mobilePreview) {
       mobilePreview.addEventListener("input", () => {
@@ -1575,6 +1665,7 @@
   initChoiceButtons();
   initProjectCategory();
   initPendingDateToggles();
+  initI956fStateToggles();
   initConditionalSections();
   initSofConditionalDetails();
   initOptionalRadioDeselect("i526Status");
