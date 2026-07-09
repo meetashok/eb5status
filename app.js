@@ -234,6 +234,129 @@
     });
   }
 
+  function filterSuggestions(suggestions, query, limit = 8) {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return suggestions.slice(0, limit);
+
+    return suggestions
+      .filter((item) => item.toLowerCase().includes(normalized))
+      .slice(0, limit);
+  }
+
+  function initAutocomplete(inputId, listId, suggestions) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    if (!input || !list || !suggestions.length) return;
+
+    let activeIndex = -1;
+    let hideTimer = null;
+
+    function hideSuggestions() {
+      list.classList.add("hidden");
+      list.innerHTML = "";
+      activeIndex = -1;
+    }
+
+    function selectSuggestion(value) {
+      input.value = value;
+      hideSuggestions();
+      updatePreviewFromFormIfAllowed();
+    }
+
+    function renderSuggestions(items) {
+      list.innerHTML = "";
+      activeIndex = -1;
+
+      if (!items.length) {
+        hideSuggestions();
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const option = document.createElement("li");
+        option.className = "autocomplete-option";
+        option.textContent = item;
+        option.setAttribute("role", "option");
+        option.addEventListener("mousedown", (event) => {
+          event.preventDefault();
+          selectSuggestion(item);
+        });
+        option.addEventListener("mouseenter", () => {
+          activeIndex = index;
+          list.querySelectorAll(".autocomplete-option").forEach((el, idx) => {
+            el.classList.toggle("is-active", idx === activeIndex);
+          });
+        });
+        list.appendChild(option);
+      });
+
+      list.classList.remove("hidden");
+    }
+
+    function updateSuggestions() {
+      renderSuggestions(filterSuggestions(suggestions, input.value));
+    }
+
+    input.addEventListener("input", updateSuggestions);
+    input.addEventListener("focus", updateSuggestions);
+    input.addEventListener("blur", () => {
+      hideTimer = setTimeout(hideSuggestions, 150);
+    });
+    input.addEventListener("keydown", (event) => {
+      const options = Array.from(list.querySelectorAll(".autocomplete-option"));
+      if (!options.length) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, options.length - 1);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+      } else if (event.key === "Enter" && activeIndex >= 0) {
+        event.preventDefault();
+        selectSuggestion(options[activeIndex].textContent);
+        return;
+      } else if (event.key === "Escape") {
+        hideSuggestions();
+        return;
+      } else {
+        return;
+      }
+
+      options.forEach((el, idx) => {
+        el.classList.toggle("is-active", idx === activeIndex);
+      });
+    });
+
+    list.addEventListener("mousedown", () => {
+      if (hideTimer) clearTimeout(hideTimer);
+    });
+  }
+
+  async function initAutocompleteFields() {
+    const loadJson = async (path, fallback) => {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) return fallback;
+        const data = await response.json();
+        return Array.isArray(data) ? data : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+
+    const [regionalCenters, attorneys, projectNames] = await Promise.all([
+      loadJson("./data/regional-centers.json", []),
+      loadJson("./data/attorneys.json", []),
+      loadJson("./data/project-names.json", []),
+    ]);
+
+    initAutocomplete("regional-center", "regional-center-suggestions", regionalCenters);
+    initAutocomplete("project-name", "project-name-suggestions", projectNames);
+    initAutocomplete("attorney", "attorney-suggestions", attorneys);
+    initAutocomplete("wom-attorney-name", "wom-attorney-name-suggestions", attorneys);
+  }
+
   function initTheme() {
     const saved = localStorage.getItem(THEME_KEY) || "dark";
     document.documentElement.setAttribute("data-theme", saved);
@@ -807,6 +930,7 @@
   initOptionalRadioDeselect("applicationLocation");
   initOptionalRadioDeselect("keyUpdate");
   initKeyUpdateCelebration();
+  initAutocompleteFields();
   updatePreviewPanelVisibility();
   updateCopyButton();
 })();
