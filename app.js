@@ -42,20 +42,40 @@
     return Boolean(el && el.checked);
   }
 
+  function formatDateWithPdOffset(isoDate) {
+    const formatted = formatDate(isoDate);
+    if (!formatted) return "";
+    const offset = daysFromPriorityDate(isoDate);
+    return offset ? `${formatted} (${offset})` : formatted;
+  }
+
+  function daysFromPriorityDate(isoDate) {
+    const priorityDate = parseIsoDate(getFieldValue("priority-date"));
+    const eventDate = parseIsoDate(isoDate);
+    if (!priorityDate || !eventDate) return "";
+
+    const toLocalDate = (iso) => {
+      const [year, month, day] = iso.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    };
+
+    const diffDays = Math.round(
+      (toLocalDate(eventDate).getTime() - toLocalDate(priorityDate).getTime()) /
+        (24 * 60 * 60 * 1000)
+    );
+    const sign = diffDays >= 0 ? "+" : "";
+    return `${sign}${diffDays} days from PD`;
+  }
+
   function formatPendingDateValue(inputId, pendingId) {
     if (isPending(pendingId)) return "Pending";
-    return formatDate(getFieldValue(inputId));
+    return formatDateWithPdOffset(getFieldValue(inputId));
   }
 
   function formatApprovalValue(inputId, pendingId) {
     const formatted = formatPendingDateValue(inputId, pendingId);
     if (!formatted || formatted === "Pending") return formatted;
     return `${formatted} ${CELEBRATION_EMOJI}`;
-  }
-
-  function withApprovedEmoji(status, text) {
-    if (status === "Approved") return `${text} ${CELEBRATION_EMOJI}`;
-    return text;
   }
 
   function formatDate(isoDate) {
@@ -316,9 +336,13 @@
     return Boolean(getFieldValue("wom-date"));
   }
 
-  function getWomPreviewLine() {
-    if (isWomNotFiled()) return "WOM: Not filed";
-    return buildWomLine(getCheckedValues("wom"), getFieldValue("wom-date"));
+  function getWomFiledOnValue() {
+    if (isWomNotFiled()) return "Not filed";
+    return formatDateWithPdOffset(getFieldValue("wom-date"));
+  }
+
+  function getWomFiledForValue() {
+    return getCheckedValues("wom").join(", ");
   }
 
   function ensureDefaultI526Approved() {
@@ -487,26 +511,32 @@
     refreshBtn.classList.toggle("hidden", !show);
   }
 
+  const I526_STATUS_LABELS = {
+    Approved: "approved",
+    RFE: "RFE",
+    NOID: "NOID",
+    Denied: "denied",
+  };
+
   function buildI526Line(status, date, pending) {
-    const formattedDate = formatDate(date);
-    if (pending && !formattedDate) {
-      if (status) return withApprovedEmoji(status, `I-526: ${status} (Pending)`);
+    if (pending && !parseIsoDate(date)) {
       return "I-526: Pending";
     }
-    if (!status && !formattedDate) return null;
-    if (status && formattedDate) return withApprovedEmoji(status, `I-526: ${status} (${formattedDate})`);
-    if (status) return withApprovedEmoji(status, `I-526: ${status}`);
-    return `I-526 adjudication date: ${formattedDate}`;
-  }
 
-  function buildWomLine(forms, date) {
-    if (!forms.length && !date) return null;
-    const formattedDate = formatDate(date);
-    if (forms.length && formattedDate) {
-      return `WOM filed for ${forms.join(", ")} (${formattedDate})`;
+    const formattedDate = formatDateWithPdOffset(date);
+    if (!status && !formattedDate) return null;
+    if (!status && formattedDate) return `I-526 adjudication date: ${formattedDate}`;
+
+    const label = I526_STATUS_LABELS[status] || status;
+    if (status && formattedDate) {
+      const line = `I-526 ${label}: ${formattedDate}`;
+      return status === "Approved" ? `${line} ${CELEBRATION_EMOJI}` : line;
     }
-    if (forms.length) return `WOM filed for: ${forms.join(", ")}`;
-    return `WOM filing date: ${formattedDate}`;
+    if (status) {
+      const line = `I-526 ${label}`;
+      return status === "Approved" ? `${line} ${CELEBRATION_EMOJI}` : line;
+    }
+    return null;
   }
 
   function generateMessage() {
@@ -517,7 +547,6 @@
       ["Project category", getProjectCategory()],
       ["Regional Center", getFieldValue("regional-center")],
       ["Project", getFieldValue("project-name")],
-      ["SOF composition", getSofComposition()],
       ["Attorney", getFieldValue("attorney")],
       ["Service center", getRadioValue("applicationLocation")],
       ["Biometric notice", formatPendingDateValue("biometric-notice", "biometric-notice-pending")],
@@ -534,11 +563,13 @@
             )
           : null,
       ],
-      [null, hasWomPreviewContext() ? getWomPreviewLine() : null],
+      ["WOM filed on", hasWomPreviewContext() ? getWomFiledOnValue() : ""],
+      ["WOM filed for", hasWomDateContext() ? getWomFiledForValue() : ""],
       ["WOM counsel", hasWomDateContext() ? getWomCounselLine() : ""],
-      ["WOM status", hasWomDateContext() ? getRadioValue("womStatus") : ""],
       ["WOM court", hasWomDateContext() ? getFieldValue("wom-court") : ""],
+      ["WOM status", hasWomDateContext() ? getRadioValue("womStatus") : ""],
       ["I-485 approved", formatApprovalValue("i485-date", "i485-date-pending")],
+      ["SOF composition", getSofComposition()],
     ];
 
     for (const [label, value] of entries) {
