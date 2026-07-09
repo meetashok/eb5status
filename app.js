@@ -100,16 +100,16 @@
 
   function buildTitleLine() {
     const keyUpdate = getRadioValue("keyUpdate");
-    if (!keyUpdate) return "EB-5 Status Update";
+    if (!keyUpdate) return "EB5 Status Update";
 
     const title = KEY_UPDATE_TITLES[keyUpdate];
-    if (!title) return "EB-5 Status Update";
+    if (!title) return "EB5 Status Update";
 
     const referenceDate = getKeyUpdateReferenceDate(keyUpdate);
     const daysAfter = referenceDate ? daysAfterPriorityDate(referenceDate) : "";
     return daysAfter
-      ? `EB-5 Status Update: ${title} (${daysAfter})`
-      : `EB-5 Status Update: ${title}`;
+      ? `EB5 Status Update: ${title} (${daysAfter})`
+      : `EB5 Status Update: ${title}`;
   }
 
   function daysFromPriorityDate(isoDate) {
