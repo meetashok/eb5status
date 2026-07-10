@@ -291,8 +291,6 @@
       width: 100%;
       align-self: stretch;
     }
-    #share-btn.is-copied,
-    #mobile-share-btn.is-copied,
     #share-tool-btn.is-copied {
       color: var(--color-success);
     }
@@ -1321,10 +1319,9 @@
               <div class="field-row">
                 <div class="field-row-label flex items-center gap-1.5">
                   <span>Source of Funds</span>
-                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Source of Funds: documentation proving where your investment capital came from (savings, property sale, gift, loan, etc.).">
+                  <span class="tooltip tooltip-right z-50 max-w-xs" data-tip="Source of Funds: documentation proving where your investment capital came from (savings, property sale, gift, loan, etc.). Select all that apply.">
                     <button type="button" class="help-tip" aria-label="What is SOF?">?</button>
                   </span>
-                  <span class="font-normal text-base-content/60">(tap all that apply)</span>
                 </div>
                 <div class="field-row-control">
                   <div class="flex flex-wrap gap-2">
@@ -1487,12 +1484,8 @@
           <p class="text-sm text-base-content/60 -mt-1 mb-0">Edit freely. Changes here won't update the form.</p>
 
           <div class="flex items-center gap-3 flex-wrap mt-auto">
-            <button type="button" id="copy-btn" class="btn flex-1 min-h-11" disabled>
-              Copy to share
-            </button>
-            <button type="button" id="share-btn" class="btn btn-ghost border border-base-content/20 min-h-11 gap-2" disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-              Share status
+            <button type="button" id="copy-btn" class="btn w-full min-h-11 gap-2" disabled>
+              Copy status
             </button>
           </div>
         </div>
@@ -1578,11 +1571,7 @@
         ></textarea>
       </div>
       <p class="text-sm text-base-content/60">Edit freely. Changes here won't update the form.</p>
-      <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11" disabled>
-        Copy to share
-      </button>
-      <button type="button" id="mobile-share-btn" class="btn btn-ghost border border-base-content/20 w-full min-h-11 gap-2" disabled>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11 gap-2" disabled>
         Share status
       </button>
     </div>
