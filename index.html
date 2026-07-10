@@ -598,7 +598,7 @@
       flex: 0 0 auto;
       border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
       background: var(--color-base-100);
-      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
     }
     #preview-sheet-backdrop {
       display: none;
@@ -1574,21 +1574,7 @@
         </svg>
       </button>
     </div>
-    <div id="preview-sheet-body" class="p-4 space-y-4">
-      <div class="stats stats-vertical sm:stats-horizontal shadow w-full stats">
-        <div class="stat py-3 px-4">
-          <div class="stat-title text-xs">Key update</div>
-          <div id="mobile-stat-key-update" class="stat-value text-sm font-semibold">—</div>
-        </div>
-        <div class="stat py-3 px-4">
-          <div class="stat-title text-xs">From PD</div>
-          <div id="mobile-stat-days-pd" class="stat-value text-sm font-semibold">—</div>
-        </div>
-        <div class="stat py-3 px-4">
-          <div class="stat-title text-xs">Sections filled</div>
-          <div id="mobile-stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
-        </div>
-      </div>
+    <div id="preview-sheet-body" class="px-4 pt-3 pb-2 space-y-2">
       <div class="whatsapp-bubble-wrap flex flex-col min-h-40">
         <textarea
           id="mobile-preview"
@@ -1598,7 +1584,7 @@
           aria-label="Mobile status update preview"
         ></textarea>
       </div>
-      <p class="text-sm text-base-content/60">Edit freely. Changes here won't update the form.</p>
+      <p class="text-sm text-base-content/60 mb-0">Edit freely. Changes here won't update the form.</p>
     </div>
     <div id="preview-sheet-footer">
       <button type="button" id="mobile-copy-btn" class="btn w-full min-h-12 gap-2" disabled>

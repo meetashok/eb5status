@@ -463,17 +463,6 @@
     if (fabFieldCount) {
       fabFieldCount.textContent = String(filledSections);
     }
-
-    const mobileStatFields = document.getElementById("mobile-stat-fields-filled");
-    const mobileStatKey = document.getElementById("mobile-stat-key-update");
-    const mobileStatDays = document.getElementById("mobile-stat-days-pd");
-    if (mobileStatFields) mobileStatFields.textContent = String(filledSections);
-    if (mobileStatKey) {
-      mobileStatKey.textContent = keyUpdate ? KEY_UPDATE_TITLES[keyUpdate] || "—" : "—";
-    }
-    if (mobileStatDays) {
-      mobileStatDays.textContent = fromPdValue;
-    }
   }
 
   function showCelebrationToast(message) {
