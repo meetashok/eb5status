@@ -591,8 +591,29 @@
     #preview-sheet-body {
       flex: 1 1 auto;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem 0.5rem;
+      overflow: hidden;
+    }
+    #preview-sheet-body .whatsapp-bubble-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    #preview-sheet-body #mobile-preview {
+      flex: 1 1 auto;
+      width: 100%;
+      min-height: 0;
+      height: 100%;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+    }
+    #preview-sheet-body .preview-edit-hint {
+      flex: 0 0 auto;
+      margin: 0;
     }
     #preview-sheet-footer {
       flex: 0 0 auto;
@@ -1574,17 +1595,16 @@
         </svg>
       </button>
     </div>
-    <div id="preview-sheet-body" class="px-4 pt-3 pb-2 space-y-2">
-      <div class="whatsapp-bubble-wrap flex flex-col min-h-40">
+    <div id="preview-sheet-body">
+      <div class="whatsapp-bubble-wrap">
         <textarea
           id="mobile-preview"
-          class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-40"
-          rows="8"
+          class="textarea w-full border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none"
           placeholder="Your status update will appear here..."
           aria-label="Mobile status update preview"
         ></textarea>
       </div>
-      <p class="text-sm text-base-content/60 mb-0">Edit freely. Changes here won't update the form.</p>
+      <p class="preview-edit-hint text-sm text-base-content/60">Edit freely. Changes here won't update the form.</p>
     </div>
     <div id="preview-sheet-footer">
       <button type="button" id="mobile-copy-btn" class="btn w-full min-h-12 gap-2" disabled>
