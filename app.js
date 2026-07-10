@@ -90,7 +90,29 @@
 
   const CELEBRATION_EMOJI = "🎉";
   const BTN_COLOR_NAMES = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
-  const COPY_BTN_DEFAULT_HTML = copyBtn ? copyBtn.innerHTML : "Copy to share";
+
+  function canNativeShareText(text) {
+    if (typeof navigator.share !== "function") return false;
+    if (!navigator.canShare) return true;
+    try {
+      return navigator.canShare({ text: text || "status" });
+    } catch {
+      return false;
+    }
+  }
+
+  function getPrimaryActionLabel() {
+    return canNativeShareText("status") ? "Share status" : "Copy status";
+  }
+
+  function getPrimaryActionDefaultHtml() {
+    if (canNativeShareText("status")) {
+      return '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Share status';
+    }
+    return "Copy status";
+  }
+
+  const COPY_BTN_DEFAULT_HTML = getPrimaryActionDefaultHtml();
 
   let comboCardValue = "";
   let previewManuallyEdited = false;
@@ -325,11 +347,7 @@
     if (copyBtnResetTimer) clearTimeout(copyBtnResetTimer);
     copyBtnResetTimer = setTimeout(() => {
       button.classList.remove("is-copied");
-      if (button === copyBtn) {
-        button.innerHTML = COPY_BTN_DEFAULT_HTML;
-      } else {
-        button.textContent = "Copy to share";
-      }
+      button.innerHTML = getPrimaryActionDefaultHtml();
     }, 2000);
   }
 
@@ -1287,10 +1305,14 @@
   function updateCopyButton() {
     const hasContent = hasPreviewContent();
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    if (copyBtn) copyBtn.disabled = !hasContent;
-    if (mobileCopyBtn) mobileCopyBtn.disabled = !hasContent;
-    if (shareBtn) shareBtn.disabled = !hasContent;
-    if (mobileShareBtn) mobileShareBtn.disabled = !hasContent;
+    const labelHtml = getPrimaryActionDefaultHtml();
+    [copyBtn, mobileCopyBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.disabled = !hasContent;
+      if (!btn.classList.contains("is-copied")) {
+        btn.innerHTML = labelHtml;
+      }
+    });
     if (previewFab) previewFab.classList.toggle("hidden", !hasContent || isDesktop);
   }
 
@@ -1299,8 +1321,6 @@
   const SHARE_TITLE = "EB5 Status Update Builder";
   const SHARE_TEXT = "Check out this tool for sharing your EB-5 case status";
   let shareBtnResetTimer = null;
-  const shareBtn = document.getElementById("share-btn");
-  const mobileShareBtn = document.getElementById("mobile-share-btn");
   const shareToolBtn = document.getElementById("share-tool-btn");
 
   function showShareCopied(button, label = "Link copied!") {
@@ -1336,20 +1356,16 @@
     }
   }
 
-  /** Share the generated status message (desktop preview + mobile sheet). */
-  async function shareStatusMessage(button) {
-    const fromMobile = button && button.id === "mobile-share-btn";
+  /** Primary CTA: native share when available, otherwise copy to clipboard. */
+  async function shareOrCopyStatus(button) {
+    const fromMobile = button && button.id === "mobile-copy-btn";
     const raw = fromMobile
       ? mobilePreview?.value || preview?.value || ""
       : preview?.value || mobilePreview?.value || "";
     const text = raw.trim();
     if (!text) return;
 
-    const canNativeShare =
-      typeof navigator.share === "function" &&
-      (!navigator.canShare || navigator.canShare({ text }));
-
-    if (canNativeShare) {
+    if (canNativeShareText(text)) {
       try {
         await navigator.share({ text });
         return;
@@ -1360,7 +1376,7 @@
     }
 
     await copyTextToClipboard(text);
-    showShareCopied(button, "Copied!");
+    showCopySuccess(button);
   }
 
   /** Share a link to the tool itself (footer "Share this tool"). */
@@ -1389,15 +1405,6 @@
   }
 
   function initShareButtons() {
-    ["share-btn", "mobile-share-btn"].forEach((id) => {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-      btn.addEventListener("click", (event) => {
-        event.preventDefault();
-        shareStatusMessage(btn);
-      });
-    });
-
     if (shareToolBtn) {
       shareToolBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -1502,7 +1509,7 @@
       bulletLines.push(label ? `${label}: ${value}` : value);
     }
 
-    if (!getRadioValue("keyUpdate") || bulletLines.length === 0) return "";
+    if (bulletLines.length === 0) return "";
 
     const footerLines = ["Generated via bit.ly/eb5status"];
     if (isMonthsOnlyPrivacy()) {
@@ -1850,33 +1857,10 @@
     }
 
     if (mobileCopyBtn) {
-      mobileCopyBtn.addEventListener("click", async () => {
-        const text = (mobilePreview?.value || preview.value).trim();
-        if (!text) return;
-
-        try {
-          await navigator.clipboard.writeText(text);
-          showCopySuccess(mobileCopyBtn);
-        } catch {
-          mobilePreview?.select();
-          document.execCommand("copy");
-          showCopySuccess(mobileCopyBtn);
-        }
+      mobileCopyBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        shareOrCopyStatus(mobileCopyBtn);
       });
-    }
-  }
-
-  async function copyPreviewText() {
-    const text = preview.value.trim();
-    if (!text) return;
-
-    try {
-      await navigator.clipboard.writeText(text);
-      showCopySuccess(copyBtn);
-    } catch {
-      preview.select();
-      document.execCommand("copy");
-      showCopySuccess(copyBtn);
     }
   }
 
@@ -1905,7 +1889,12 @@
   });
 
   refreshBtn.addEventListener("click", syncPreviewFromForm);
-  copyBtn.addEventListener("click", copyPreviewText);
+  if (copyBtn) {
+    copyBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      shareOrCopyStatus(copyBtn);
+    });
+  }
 
   initTheme();
   initCallyDatePickers();
