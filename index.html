@@ -565,6 +565,7 @@
       width: 100%;
       max-width: 100%;
       max-height: 85vh;
+      height: min(85vh, 100%);
       margin: 0;
       border: none;
       border-radius: 1rem 1rem 0 0;
@@ -572,9 +573,32 @@
       background: var(--color-base-100);
       box-shadow: 0 -8px 32px color-mix(in oklch, var(--color-base-content) 15%, transparent);
       z-index: 60;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
     }
-    #preview-sheet.is-open {
-      display: block;
+    #preview-sheet.is-open,
+    #preview-sheet:popover-open {
+      display: flex;
+    }
+    #preview-sheet-close {
+      width: 2.75rem;
+      height: 2.75rem;
+      min-height: 2.75rem;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    #preview-sheet-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #preview-sheet-footer {
+      flex: 0 0 auto;
+      border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
+      background: var(--color-base-100);
+      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
     }
     #preview-sheet-backdrop {
       display: none;
@@ -1542,11 +1566,15 @@
   <div id="preview-sheet-backdrop" aria-hidden="true"></div>
 
   <div id="preview-sheet" popover="manual" role="dialog" aria-labelledby="mobile-preview-heading">
-    <div class="section-header section-header--success flex items-center justify-between p-4">
+    <div class="section-header section-header--success flex items-center justify-between gap-3 px-4 py-3 shrink-0">
       <h2 id="mobile-preview-heading" class="section-title">Live Preview</h2>
-      <button type="button" id="preview-sheet-close" class="btn btn-ghost btn-sm btn-circle" aria-label="Close preview">✕</button>
+      <button type="button" id="preview-sheet-close" class="btn btn-ghost btn-circle" aria-label="Close preview">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
-    <div class="p-4 space-y-4 overflow-y-auto max-h-[calc(85vh-4rem)]">
+    <div id="preview-sheet-body" class="p-4 space-y-4">
       <div class="stats stats-vertical sm:stats-horizontal shadow w-full stats">
         <div class="stat py-3 px-4">
           <div class="stat-title text-xs">Key update</div>
@@ -1561,17 +1589,19 @@
           <div id="mobile-stat-fields-filled" class="stat-value text-sm font-semibold">0</div>
         </div>
       </div>
-      <div class="whatsapp-bubble-wrap flex flex-col min-h-48">
+      <div class="whatsapp-bubble-wrap flex flex-col min-h-40">
         <textarea
           id="mobile-preview"
-          class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-48"
-          rows="12"
+          class="textarea w-full flex-1 border-0 rounded-2xl bg-transparent px-4 py-3 focus:outline-none focus:ring-0 shadow-none resize-none min-h-40"
+          rows="8"
           placeholder="Your status update will appear here..."
           aria-label="Mobile status update preview"
         ></textarea>
       </div>
       <p class="text-sm text-base-content/60">Edit freely. Changes here won't update the form.</p>
-      <button type="button" id="mobile-copy-btn" class="btn w-full min-h-11 gap-2" disabled>
+    </div>
+    <div id="preview-sheet-footer">
+      <button type="button" id="mobile-copy-btn" class="btn w-full min-h-12 gap-2" disabled>
         Share status
       </button>
     </div>
