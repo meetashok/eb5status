@@ -1790,6 +1790,7 @@
     if (typeof previewSheet.showPopover === "function") {
       try {
         previewSheet.showPopover();
+        document.body.classList.add("overflow-hidden");
         return;
       } catch {
         /* fall through to class-based fallback */
