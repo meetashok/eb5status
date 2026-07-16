@@ -684,12 +684,17 @@
   }
 
   function initTheme() {
-    const saved = localStorage.getItem(THEME_KEY) || "dark";
-    document.documentElement.setAttribute("data-theme", saved);
-    themeToggle.checked = saved === "light";
+    const THEME_LIGHT = "eb5base";
+    const THEME_DARK = "eb5base-dark";
+    const legacy = { light: THEME_LIGHT, dark: THEME_DARK };
+    const raw = localStorage.getItem(THEME_KEY) || THEME_LIGHT;
+    const saved = legacy[raw] || raw;
+    const theme = saved === THEME_DARK ? THEME_DARK : THEME_LIGHT;
+    document.documentElement.setAttribute("data-theme", theme);
+    themeToggle.checked = theme === THEME_LIGHT;
 
     themeToggle.addEventListener("change", () => {
-      const next = themeToggle.checked ? "light" : "dark";
+      const next = themeToggle.checked ? THEME_LIGHT : THEME_DARK;
       document.documentElement.setAttribute("data-theme", next);
       localStorage.setItem(THEME_KEY, next);
     });
