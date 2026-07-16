@@ -25,8 +25,8 @@ Then visit `http://localhost:8080`.
 - Direct editing of the preview text before copying
 - One-click copy to clipboard
 - All fields optional — copy is enabled when at least one field has content
-- **Tailwind CSS + DaisyUI** components via CDN (no build step)
-- **Dark/light theme toggle** (default dark), preference saved in `localStorage`
+- **Tailwind CSS + DaisyUI** components via CDN (no build step), visual language shared with [EB5 Base](https://eb5base.com) (navy / gold / forest / warm cream)
+- **Light/dark theme toggle** (default light, EB5 Base design language), preference saved in `localStorage`
 - **Cally** calendar date fields (DaisyUI) with calendar icon on the left — type or pick
 - Chip multi-select for SOF; equal-width pills for WOM filing
 - Segmented option picker for I-526 adjudication status

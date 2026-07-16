@@ -684,7 +684,7 @@
   }
 
   function initTheme() {
-    const saved = localStorage.getItem(THEME_KEY) || "dark";
+    const saved = localStorage.getItem(THEME_KEY) || "light";
     document.documentElement.setAttribute("data-theme", saved);
     themeToggle.checked = saved === "light";
 
