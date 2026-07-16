@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="eb5base">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +15,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module" src="https://unpkg.com/cally"></script>
   <style>
-    /* Design language aligned with EB5 Base (eb5base.com): navy, gold, forest, warm cream */
-    [data-theme="light"] {
+    /* Design language aligned with EB5 Base (eb5base.com): navy, gold, forest, warm cream.
+       Custom theme names avoid DaisyUI's built-in light/dark :root:has(.theme-controller) overrides. */
+    :root,
+    [data-theme="eb5base"] {
       color-scheme: light;
       --color-base-100: #FAF7F2;
       --color-base-200: #F3EFE8;
@@ -34,7 +36,7 @@
       --color-warning: #B87333;
       --color-neutral: #2C3338;
     }
-    [data-theme="dark"] {
+    [data-theme="eb5base-dark"] {
       color-scheme: dark;
       --color-base-100: #0F1C30;
       --color-base-200: #0A1628;
@@ -63,7 +65,7 @@
         radial-gradient(ellipse 40% 30% at 50% 100%, rgba(45, 90, 71, 0.08), transparent 50%),
         linear-gradient(180deg, #ebe4d8, #f5f0e8 40%, #faf7f2);
     }
-    [data-theme="dark"] .hero-glow {
+    [data-theme="eb5base-dark"] .hero-glow {
       background:
         radial-gradient(ellipse 95% 60% at 50% -20%, rgba(212, 175, 55, 0.16), transparent 60%),
         radial-gradient(ellipse 55% 45% at 95% 15%, rgba(184, 115, 51, 0.1), transparent 55%),
@@ -92,7 +94,7 @@
       letter-spacing: 0.04em;
       color: color-mix(in oklch, var(--color-primary) 70%, transparent);
     }
-    [data-theme="dark"] .brand-eb5 {
+    [data-theme="eb5base-dark"] .brand-eb5 {
       color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
     }
     .brand-product {
@@ -126,12 +128,12 @@
         transform: translateY(-1px);
       }
     }
-    [data-theme="dark"] .section-card {
+    [data-theme="eb5base-dark"] .section-card {
       background: color-mix(in oklch, var(--color-base-100) 88%, transparent);
       backdrop-filter: blur(12px);
       border: 1px solid color-mix(in oklch, var(--color-accent) 18%, transparent);
     }
-    [data-theme="light"] .section-card {
+    [data-theme="eb5base"] .section-card {
       background: color-mix(in oklch, var(--color-base-100) 92%, #ffffff);
       border: 1px solid color-mix(in oklch, var(--color-base-300) 90%, transparent);
       box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.08), 0 2px 8px -2px rgba(10, 22, 40, 0.04);
@@ -149,7 +151,7 @@
     .section-header--info .section-title {
       color: var(--color-secondary);
     }
-    [data-theme="dark"] .section-header--info .section-title {
+    [data-theme="eb5base-dark"] .section-header--info .section-title {
       color: var(--color-accent);
     }
     .section-header--neutral {
@@ -166,11 +168,11 @@
     .field-row-label {
       color: color-mix(in oklch, var(--color-base-content) 88%, transparent);
     }
-    [data-theme="dark"] .field-row-label {
+    [data-theme="eb5base-dark"] .field-row-label {
       color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
     }
-    [data-theme="dark"] input::placeholder,
-    [data-theme="dark"] textarea::placeholder {
+    [data-theme="eb5base-dark"] input::placeholder,
+    [data-theme="eb5base-dark"] textarea::placeholder {
       color: color-mix(in oklch, var(--color-base-content) 48%, transparent);
     }
     .choice-btn {
@@ -197,15 +199,15 @@
       box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-accent) 55%, transparent),
                   0 2px 8px color-mix(in oklch, var(--color-accent) 22%, transparent);
     }
-    [data-theme="light"] .choice-btn:has(input:checked) {
+    [data-theme="eb5base"] .choice-btn:has(input:checked) {
       color: #0A1628;
     }
-    [data-theme="dark"] .choice-btn {
+    [data-theme="eb5base-dark"] .choice-btn {
       background: color-mix(in oklch, var(--color-base-content) 7%, transparent);
       border-color: color-mix(in oklch, var(--color-base-content) 28%, transparent);
       color: #FAF7F2;
     }
-    [data-theme="dark"] .choice-btn:has(input:checked) {
+    [data-theme="eb5base-dark"] .choice-btn:has(input:checked) {
       background: color-mix(in oklch, var(--color-accent) 24%, transparent);
       color: #F0E0A0;
     }
@@ -218,7 +220,7 @@
       position: relative;
       z-index: 50;
     }
-    [data-theme="light"] .tooltip {
+    [data-theme="eb5base"] .tooltip {
       --tt-bg: #0A1628;
       --tt-fg: #FAF7F2;
     }
@@ -416,7 +418,7 @@
       background: color-mix(in oklch, #dcf8c6 18%, var(--color-base-100));
       box-shadow: 0 4px 16px color-mix(in oklch, var(--color-base-content) 8%, transparent);
     }
-    [data-theme="dark"] .whatsapp-bubble-wrap {
+    [data-theme="eb5base-dark"] .whatsapp-bubble-wrap {
       background: linear-gradient(
         145deg,
         color-mix(in oklch, #25d366 12%, var(--color-base-100)),
@@ -424,7 +426,7 @@
       );
       border: 1px solid color-mix(in oklch, #25d366 18%, transparent);
     }
-    [data-theme="light"] .whatsapp-bubble-wrap {
+    [data-theme="eb5base"] .whatsapp-bubble-wrap {
       background: color-mix(in oklch, #dcf8c6 45%, var(--color-base-100));
       border: 1px solid color-mix(in oklch, var(--color-secondary) 18%, transparent);
       box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.08);
@@ -718,7 +720,7 @@
     <header class="page-header-band text-center mb-6 relative">
       <div class="absolute right-0 top-0 flex items-center gap-2">
         <label class="swap swap-rotate btn btn-ghost btn-circle text-base-content border border-base-content/20 hover:border-accent/50" aria-label="Toggle light or dark theme">
-          <input type="checkbox" id="theme-toggle" class="theme-controller" value="light" checked>
+          <input type="checkbox" id="theme-toggle" value="eb5base" checked>
           <svg class="swap-off h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
           </svg>
