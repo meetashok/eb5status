@@ -7,6 +7,7 @@
   <title>EB5 Status Update Builder</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
+  <link rel="apple-touch-icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,21 +21,21 @@
     :root,
     [data-theme="eb5base"] {
       color-scheme: light;
-      --color-base-100: #FAF7F2;
+      --color-base-100: #FFFFFF;
       --color-base-200: #F3EFE8;
-      --color-base-300: #E6DFD4;
+      --color-base-300: #D4CBBC;
       --color-base-content: #0A1628;
       --color-primary: #0A1628;
       --color-primary-content: #F5F1EA;
-      --color-secondary: #2D5A47;
+      --color-secondary: #245041;
       --color-secondary-content: #FFFFFF;
-      --color-accent: #D4AF37;
+      --color-accent: #B8922A;
       --color-accent-content: #0A1628;
-      --color-success: #25D366;
+      --color-success: #1DAA52;
       --color-error: #9E3A3A;
-      --color-info: #4A6274;
-      --color-warning: #B87333;
-      --color-neutral: #2C3338;
+      --color-info: #3A5164;
+      --color-warning: #A86328;
+      --color-neutral: #1F2933;
     }
     [data-theme="eb5base-dark"] {
       color-scheme: dark;
@@ -59,11 +60,11 @@
     }
     .hero-glow {
       background:
-        radial-gradient(ellipse 95% 60% at 50% -20%, rgba(212, 175, 55, 0.2), transparent 60%),
-        radial-gradient(ellipse 55% 45% at 95% 15%, rgba(184, 115, 51, 0.14), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 5% 75%, rgba(45, 90, 71, 0.14), transparent 55%),
+        radial-gradient(ellipse 95% 60% at 50% -20%, rgba(212, 175, 55, 0.18), transparent 60%),
+        radial-gradient(ellipse 55% 45% at 95% 15%, rgba(184, 115, 51, 0.12), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 5% 75%, rgba(45, 90, 71, 0.12), transparent 55%),
         radial-gradient(ellipse 40% 30% at 50% 100%, rgba(45, 90, 71, 0.08), transparent 50%),
-        linear-gradient(180deg, #ebe4d8, #f5f0e8 40%, #faf7f2);
+        linear-gradient(180deg, #e4dccf, #ebe4d8 35%, #f3efe8);
     }
     [data-theme="eb5base-dark"] .hero-glow {
       background:
@@ -81,29 +82,69 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.22em;
-      color: var(--color-accent);
+      color: var(--color-secondary);
+    }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      flex-wrap: nowrap;
+      max-width: 100%;
+    }
+    .brand-logo {
+      width: 2.35rem;
+      height: 2.35rem;
+      flex-shrink: 0;
+      border-radius: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      .brand-lockup {
+        gap: 0.75rem;
+      }
+      .brand-logo {
+        width: 3.25rem;
+        height: 3.25rem;
+      }
     }
     .brand-mark {
       display: inline-flex;
       align-items: baseline;
-      gap: 0.35rem;
-      line-height: 1;
+      flex-wrap: nowrap;
+      justify-content: center;
+      column-gap: 0.28rem;
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+    @media (max-width: 389px) {
+      .brand-mark {
+        white-space: normal;
+        flex-wrap: wrap;
+      }
     }
     .brand-eb5 {
-      font-weight: 400;
+      font-weight: 500;
       letter-spacing: 0.04em;
-      color: color-mix(in oklch, var(--color-primary) 70%, transparent);
+      color: color-mix(in oklch, var(--color-primary) 82%, transparent);
     }
     [data-theme="eb5base-dark"] .brand-eb5 {
-      color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 82%, transparent);
     }
     .brand-product {
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--color-accent);
     }
+    .brand-rest {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-primary);
+    }
+    [data-theme="eb5base-dark"] .brand-rest {
+      color: var(--color-base-content);
+    }
     .shadow-soft {
-      box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.12), 0 2px 8px -2px rgba(10, 22, 40, 0.06);
+      box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.14), 0 2px 8px -2px rgba(10, 22, 40, 0.08);
     }
     .section-title {
       font-size: 0.875rem;
@@ -129,47 +170,50 @@
       }
     }
     [data-theme="eb5base-dark"] .section-card {
-      background: color-mix(in oklch, var(--color-base-100) 88%, transparent);
+      background: color-mix(in oklch, var(--color-base-100) 92%, transparent);
       backdrop-filter: blur(12px);
-      border: 1px solid color-mix(in oklch, var(--color-accent) 18%, transparent);
+      border: 1px solid color-mix(in oklch, var(--color-accent) 28%, transparent);
     }
     [data-theme="eb5base"] .section-card {
-      background: color-mix(in oklch, var(--color-base-100) 92%, #ffffff);
-      border: 1px solid color-mix(in oklch, var(--color-base-300) 90%, transparent);
-      box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.08), 0 2px 8px -2px rgba(10, 22, 40, 0.04);
+      background: #FFFFFF;
+      border: 1px solid var(--color-base-300);
+      box-shadow: 0 4px 20px -4px rgba(10, 22, 40, 0.12), 0 2px 8px -2px rgba(10, 22, 40, 0.06);
     }
     .section-header--info {
       background: linear-gradient(
         135deg,
-        rgba(184, 115, 51, 0.12),
-        rgba(212, 175, 55, 0.08)
+        rgba(184, 115, 51, 0.16),
+        rgba(212, 175, 55, 0.1)
       );
       border-left-width: 4px;
       border-left-style: solid;
       border-left-color: var(--color-accent);
     }
     .section-header--info .section-title {
-      color: var(--color-secondary);
+      color: var(--color-primary);
     }
     [data-theme="eb5base-dark"] .section-header--info .section-title {
       color: var(--color-accent);
     }
     .section-header--neutral {
-      background: color-mix(in oklch, var(--color-neutral) 10%, transparent);
+      background: color-mix(in oklch, var(--color-neutral) 12%, transparent);
       border-left-color: var(--color-neutral);
     }
+    .section-header--neutral .section-title {
+      color: var(--color-neutral);
+    }
     .section-header--success {
-      background: color-mix(in oklch, var(--color-secondary) 12%, transparent);
+      background: color-mix(in oklch, var(--color-secondary) 14%, transparent);
       border-left-color: var(--color-secondary);
     }
     .section-header--success .section-title {
       color: var(--color-secondary);
     }
     .field-row-label {
-      color: color-mix(in oklch, var(--color-base-content) 88%, transparent);
+      color: var(--color-base-content);
     }
     [data-theme="eb5base-dark"] .field-row-label {
-      color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 96%, transparent);
     }
     [data-theme="eb5base-dark"] input::placeholder,
     [data-theme="eb5base-dark"] textarea::placeholder {
@@ -180,9 +224,9 @@
       align-items: center;
       justify-content: center;
       transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-      background: color-mix(in oklch, var(--color-base-content) 4%, transparent);
-      border: 1px solid color-mix(in oklch, var(--color-base-content) 22%, transparent);
-      color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
+      background: color-mix(in oklch, var(--color-base-content) 5%, transparent);
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 32%, transparent);
+      color: var(--color-base-content);
       opacity: 1;
     }
     .choice-btn.tooltip {
@@ -191,25 +235,25 @@
       justify-content: center;
     }
     .choice-btn:has(input:checked) {
-      background: color-mix(in oklch, var(--color-accent) 22%, transparent);
+      background: color-mix(in oklch, var(--color-accent) 28%, transparent);
       border-color: var(--color-accent);
       color: var(--color-primary);
       opacity: 1;
-      font-weight: 600;
-      box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-accent) 55%, transparent),
-                  0 2px 8px color-mix(in oklch, var(--color-accent) 22%, transparent);
+      font-weight: 700;
+      box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-accent) 65%, transparent),
+                  0 2px 10px color-mix(in oklch, var(--color-accent) 28%, transparent);
     }
     [data-theme="eb5base"] .choice-btn:has(input:checked) {
       color: #0A1628;
     }
     [data-theme="eb5base-dark"] .choice-btn {
-      background: color-mix(in oklch, var(--color-base-content) 7%, transparent);
-      border-color: color-mix(in oklch, var(--color-base-content) 28%, transparent);
+      background: color-mix(in oklch, var(--color-base-content) 8%, transparent);
+      border-color: color-mix(in oklch, var(--color-base-content) 36%, transparent);
       color: #FAF7F2;
     }
     [data-theme="eb5base-dark"] .choice-btn:has(input:checked) {
-      background: color-mix(in oklch, var(--color-accent) 24%, transparent);
-      color: #F0E0A0;
+      background: color-mix(in oklch, var(--color-accent) 30%, transparent);
+      color: #F5E6A8;
     }
     .choice-btn:active {
       transform: scale(0.98);
@@ -303,19 +347,19 @@
       width: 0.875rem;
       height: 0.875rem;
       border-radius: 999px;
-      border: 1px solid color-mix(in oklch, var(--color-base-content) 30%, transparent);
+      border: 1px solid color-mix(in oklch, var(--color-base-content) 42%, transparent);
       font-size: 0.625rem;
       font-weight: 700;
       line-height: 1;
-      color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 58%, transparent);
       cursor: help;
       flex-shrink: 0;
       vertical-align: middle;
     }
     .help-tip:hover,
     .help-tip:focus-visible {
-      color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
-      border-color: color-mix(in oklch, var(--color-base-content) 50%, transparent);
+      color: var(--color-base-content);
+      border-color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
       outline: none;
     }
     .date-with-pending--stacked {
@@ -539,7 +583,7 @@
     .page-footer-notes {
       font-size: 0.75rem;
       line-height: 1.4;
-      color: color-mix(in oklch, var(--color-base-content) 42%, transparent);
+      color: color-mix(in oklch, var(--color-base-content) 58%, transparent);
     }
     .form-control:has(.autocomplete-wrap) {
       overflow: visible;
@@ -728,14 +772,17 @@
         </label>
       </div>
       <p class="hero-eyebrow mb-3">Community tool</p>
-      <h1 class="brand-mark text-4xl sm:text-5xl tracking-tight">
-        <span class="brand-eb5">EB5</span>
-        <span class="brand-product">Status</span>
+      <h1 class="brand-lockup text-[1.35rem] sm:text-4xl tracking-tight">
+        <img class="brand-logo" src="logo.png" width="52" height="52" alt="EB5 Base">
+        <span class="brand-mark">
+          <span class="brand-eb5">EB5</span>
+          <span class="brand-product">Status</span>
+          <span class="brand-rest">Update Builder</span>
+        </span>
       </h1>
-      <p class="mt-2 text-lg sm:text-xl font-semibold tracking-tight text-base-content/85">Update Builder</p>
       <div class="mt-3 max-w-xl mx-auto space-y-1">
-        <p class="text-base sm:text-lg text-base-content/80 leading-relaxed">Fill in your milestones, preview the message live, and paste to WhatsApp to share with the investor community.</p>
-        <p class="text-sm text-base-content/50 leading-relaxed">All fields are optional. The live preview updates as you fill in whatever applies.</p>
+        <p class="text-base sm:text-lg text-base-content/90 leading-relaxed">Fill in your milestones, preview the message live, and paste to WhatsApp to share with the investor community.</p>
+        <p class="text-sm text-base-content/65 leading-relaxed">All fields are optional. The live preview updates as you fill in whatever applies.</p>
       </div>
       <div
         id="section-progress"
@@ -776,7 +823,7 @@
                 </div>
               </div>
             </div>
-            <p class="text-xs text-base-content/50 leading-relaxed">Months only hides day-of-month for dates older than 7 days. Recent dates stay exact.</p>
+            <p class="text-xs text-base-content/65 leading-relaxed">Months only hides day-of-month for dates older than 7 days. Recent dates stay exact.</p>
           </div>
         </section>
 
@@ -1548,7 +1595,7 @@
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
               <h2 id="preview-heading" class="section-title">Live Preview</h2>
-              <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1.5">
+              <p class="text-xs text-base-content/65 mt-1 flex items-center gap-1.5">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 Live share preview
               </p>
@@ -1616,7 +1663,7 @@
           <button type="button" id="share-tool-btn" class="clear-form-link text-left underline hover:text-base-content/80">
             Share this tool
           </button>
-          <p class="text-xs text-base-content/45">bit.ly/eb5status</p>
+          <p class="text-xs text-base-content/60">bit.ly/eb5status</p>
         </div>
         <div class="space-y-1.5 text-sm text-base-content/60 text-left">
           <p>This is a static page. Your draft is saved locally in your browser and is never sent to a server.</p>
